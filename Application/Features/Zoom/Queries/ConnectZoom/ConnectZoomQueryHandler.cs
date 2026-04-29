@@ -14,10 +14,11 @@ namespace Application.Features.Zoom.Queries.ConnectZoom
         private readonly ITenantRepository _tenantRepository;
         private readonly IZoomOAuthStateRepository _zoomOAuthStateRepository;
         private readonly ISubscriptionRepository _subscriptionRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
         public ConnectZoomQueryHandler(IZoomService zoomService, ICurrentUserId currentUserId,IHttpContextAccessor httpContextAccessor,
             ITenantRepository tenantRepository, IZoomOAuthStateRepository zoomOAuthStateRepository, ISubscriptionRepository subscriptionRepository,
-            IPlanRepository planRepository)
+            IPlanRepository planRepository, IUnitOfWork unitOfWork)
         {
             _zoomService = zoomService;
             _currentUserId = currentUserId;
@@ -25,6 +26,7 @@ namespace Application.Features.Zoom.Queries.ConnectZoom
             _tenantRepository = tenantRepository;
             _zoomOAuthStateRepository = zoomOAuthStateRepository;
             _subscriptionRepository = subscriptionRepository;
+            _unitOfWork = unitOfWork;
         }
         public async Task<OneOf<ConnectZoomDto, Error>> Handle(ConnectZoomQuery request, CancellationToken cancellationToken)
         {
@@ -47,7 +49,7 @@ namespace Application.Features.Zoom.Queries.ConnectZoom
                 UserId = userId
             };
             await _zoomOAuthStateRepository.CreateAsync(oAuthState, cancellationToken);
-            await _zoomOAuthStateRepository.SaveAsync(cancellationToken);
+            await _unitOfWork.SaveAsync(cancellationToken);
 
             string authorizationUrl = _zoomService.GetAuthorizationUrl(stateToken, cancellationToken);
             return new ConnectZoomDto { AuthorizationUrl = authorizationUrl };

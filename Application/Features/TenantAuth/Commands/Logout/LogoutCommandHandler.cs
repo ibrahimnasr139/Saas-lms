@@ -7,10 +7,14 @@ namespace Application.Features.TenantAuth.Commands.Logout
     {
         private readonly IRefreshRepository _refreshRepository;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        public LogoutCommandHandler(IRefreshRepository refreshRepository, IHttpContextAccessor httpContextAccessor)
+        private readonly IUnitOfWork _unitOfWork;
+
+        public LogoutCommandHandler(IRefreshRepository refreshRepository, IHttpContextAccessor httpContextAccessor,
+            IUnitOfWork unitOfWork)
         {
             _refreshRepository = refreshRepository;
             _httpContextAccessor = httpContextAccessor;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<OneOf<bool, Error>> Handle(LogoutCommand request, CancellationToken cancellationToken)
@@ -26,7 +30,7 @@ namespace Application.Features.TenantAuth.Commands.Logout
             {
                 token.RevokedAt = DateTime.UtcNow;
             }
-            await _refreshRepository.SaveAsync(cancellationToken);
+            await _unitOfWork.SaveAsync(cancellationToken);
             httpContext.Response.Cookies.Delete(AuthConstants.AccessToken, new CookieOptions { Domain = AuthConstants.CookieDomain });
             httpContext.Response.Cookies.Delete(AuthConstants.RefreshToken, new CookieOptions { Domain = AuthConstants.CookieDomain });
             return true;

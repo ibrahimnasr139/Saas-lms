@@ -1,5 +1,4 @@
-﻿using Application.Contracts.Repositories;
-using Application.Contracts.Zoom;
+﻿using Application.Contracts.Zoom;
 using Application.Features.Tenants.Dtos;
 using Application.Helpers;
 using Domain.Enums;
@@ -20,10 +19,11 @@ namespace Application.Features.Tenants.Commands.CreateLiveSession
         private readonly ITenantMemberRepository _tenantMemberRepository;
         private readonly IEmailSender _emailSender;
         private readonly ISubscriptionRepository _subscriptionRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
         public CreateLiveSessionCommandHandler(IZoomService zoomService, IHttpContextAccessor httpContextAccessor,
-            IZoomIntegrationRepository zoomIntegrationRepository, ILiveSessionRepository liveSessionRepository,
-            ITenantRepository tenantRepository, ICourseRepository courseRepository, ICurrentUserId currentUserId,
+            IZoomIntegrationRepository zoomIntegrationRepository, ILiveSessionRepository liveSessionRepository, IUnitOfWork unitOfWork,
+            ITenantRepository tenantRepository, ICourseRepository courseRepository, ICurrentUserId currentUserId, 
             ITenantMemberRepository tenantMemberRepository, IEmailSender emailSender, ISubscriptionRepository subscriptionRepository)
         {
             _zoomService = zoomService;
@@ -36,6 +36,7 @@ namespace Application.Features.Tenants.Commands.CreateLiveSession
             _tenantMemberRepository = tenantMemberRepository;
             _emailSender = emailSender;
             _subscriptionRepository = subscriptionRepository;
+            _unitOfWork = unitOfWork;
         }
         public async Task<OneOf<CreateLiveSessionDto, Error>> Handle(CreateLiveSessionCommand request, CancellationToken cancellationToken)
         {
@@ -95,10 +96,10 @@ namespace Application.Features.Tenants.Commands.CreateLiveSession
                 WaitingRoom = request.Settings.WaitingRoom
             };
             await _liveSessionRepository.CreateAsync(session, cancellationToken);
-            await _liveSessionRepository.SaveAsync(cancellationToken);
+            await _unitOfWork.SaveAsync(cancellationToken);
 
             zoomIntegration.LastSyncAt = DateTime.UtcNow;
-            await _zoomIntegrationRepository.SaveAsync(cancellationToken);
+            await _unitOfWork.SaveAsync(cancellationToken);
 
             if (request.Notifications.SendEmail)
             {

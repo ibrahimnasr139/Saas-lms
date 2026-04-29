@@ -155,10 +155,6 @@ namespace Infrastructure.Repositories
                 ThreadsLast24h = threadsLast24h
             };
         }
-        public async Task<int> SaveAsync(CancellationToken cancellationToken)
-        {
-            return await _context.SaveChangesAsync(cancellationToken);
-        }
         public async Task<bool> DeleteDiscussionThreadAsync(int threadId, string subDomain, CancellationToken cancellationToken)
         {
             var thread = await _context.DicussionThreads.FirstOrDefaultAsync(dt => dt.Id == threadId && dt.Tenant.SubDomain == subDomain);

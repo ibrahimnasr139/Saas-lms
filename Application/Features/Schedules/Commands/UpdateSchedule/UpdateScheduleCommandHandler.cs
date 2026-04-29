@@ -10,13 +10,15 @@ namespace Application.Features.Schedules.Commands.UpdateSchedule
         private readonly IScheduleRepository _scheduleRepository;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IMapper _mapper;
+        private readonly IUnitOfWork _unitOfWork;
 
         public UpdateScheduleCommandHandler(IScheduleRepository scheduleRepository, IHttpContextAccessor httpContextAccessor,
-            IMapper mapper)
+            IMapper mapper, IUnitOfWork unitOfWork)
         {
             _scheduleRepository = scheduleRepository;
             _httpContextAccessor = httpContextAccessor;
             _mapper = mapper;
+            _unitOfWork = unitOfWork;
         }
         public async Task<OneOf<ScheduleResponse, Error>> Handle(UpdateScheduleCommand request, CancellationToken cancellationToken)
         {
@@ -49,7 +51,7 @@ namespace Application.Features.Schedules.Commands.UpdateSchedule
             existingSchedule.EndAt = endAt;
 
             await _scheduleRepository.UpdateScheduleAsync(existingSchedule, cancellationToken);
-            await _scheduleRepository.SaveAsync(cancellationToken);
+            await _unitOfWork.SaveAsync(cancellationToken);
             return new ScheduleResponse { Message = MessagesConstants.ScheduleUpdated };
         }
     }

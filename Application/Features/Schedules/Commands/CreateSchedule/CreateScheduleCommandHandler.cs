@@ -12,15 +12,17 @@ namespace Application.Features.Schedules.Commands.CreateSchedule
         private readonly ITenantRepository _tenantRepository;
         private readonly ICourseRepository _courseRepository;
         private readonly IMapper _mapper;
+        private readonly IUnitOfWork _unitOfWork;
 
         public CreateScheduleCommandHandler(IScheduleRepository scheduleRepository, IHttpContextAccessor httpContextAccessor,
-            ITenantRepository tenantRepository, ICourseRepository courseRepository, IMapper mapper)
+            ITenantRepository tenantRepository, ICourseRepository courseRepository, IMapper mapper, IUnitOfWork unitOfWork)
         {
             _scheduleRepository = scheduleRepository;
             _httpContextAccessor = httpContextAccessor;
             _tenantRepository = tenantRepository;
             _courseRepository = courseRepository;
             _mapper = mapper;
+            _unitOfWork = unitOfWork;
         }
         public async Task<OneOf<ScheduleResponse, Error>> Handle(CreateScheduleCommand request, CancellationToken cancellationToken)
         {
@@ -56,7 +58,7 @@ namespace Application.Features.Schedules.Commands.CreateSchedule
             schedule.CourseId = request.CourseId;
 
             await _scheduleRepository.CreateScheduleAsync(schedule, cancellationToken);
-            await _scheduleRepository.SaveAsync(cancellationToken);
+            await _unitOfWork.SaveAsync(cancellationToken);
             return new ScheduleResponse { Message = MessagesConstants.ScheduleCreated };
         }
     }

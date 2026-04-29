@@ -13,8 +13,9 @@ namespace Application.Features.Friends.Commands.SendRequest
         private readonly IFriendRepository _friendRepository;
         private readonly IStudentRepository _studentRepository;
         private readonly IEmailSender _emailSender;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public SendRequestCommandHandler(HybridCache hybridCache, IHttpContextAccessor httpContextAccessor,
+        public SendRequestCommandHandler(HybridCache hybridCache, IHttpContextAccessor httpContextAccessor,IUnitOfWork unitOfWork,
             IFriendRepository friendRepository, IStudentRepository studentRepository, IEmailSender emailSender)
         {
             _hybridCache = hybridCache;
@@ -22,6 +23,7 @@ namespace Application.Features.Friends.Commands.SendRequest
             _friendRepository = friendRepository;
             _studentRepository = studentRepository;
             _emailSender = emailSender;
+            _unitOfWork = unitOfWork;
         }
         public async Task<OneOf<FriendResponse, Error>> Handle(SendRequestCommand request, CancellationToken cancellationToken)
         {
@@ -50,7 +52,7 @@ namespace Application.Features.Friends.Commands.SendRequest
                 ActionStudentId = session.StudentId
             };
             await _friendRepository.CreateRequestAsync(newRequestFriend, cancellationToken);
-            await _friendRepository.SaveAsync(cancellationToken);
+            await _unitOfWork.SaveAsync(cancellationToken);
 
             var emailBody = EmailConfirmationHelper.GenerateEmailBodyHelper(
                 EmailConstants.RequestFriendTemplate,

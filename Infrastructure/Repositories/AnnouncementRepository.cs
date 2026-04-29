@@ -17,10 +17,6 @@ namespace Infrastructure.Repositories
         {
             await _context.Announcements.AddAsync(announcement, cancellationToken);
         }
-        public async Task<int> SaveAsync(CancellationToken cancellationToken)
-        {
-            return await _context.SaveChangesAsync(cancellationToken);
-        }
         public async Task<bool> DeleteAnnouncementAsync(int announcementId, string subDomain, CancellationToken cancellationToken)
         {
             var announcement = await _context.Announcements

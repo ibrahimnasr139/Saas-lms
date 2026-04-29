@@ -13,10 +13,11 @@ namespace Application.Features.StudentLessons.Commands.CreateStudentDiscussion
         private readonly IStudentSubscriptionRepository _studentSubscriptionRepository;
         private readonly IModuleItemRepository _moduleItemRepository;
         private readonly IDiscussionRepository _discussionRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
         public CreateStudentDiscussionCommandHandler(HybridCache hybridCache, IHttpContextAccessor httpContextAccessor,
             IEnrollmentRepository enrollmentRepository, IStudentSubscriptionRepository studentSubscriptionRepository,
-            IModuleItemRepository moduleItemRepository, IDiscussionRepository discussionRepository)
+            IModuleItemRepository moduleItemRepository, IDiscussionRepository discussionRepository,IUnitOfWork unitOfWork)
         {
             _hybridCache = hybridCache;
             _httpContextAccessor = httpContextAccessor;
@@ -24,6 +25,7 @@ namespace Application.Features.StudentLessons.Commands.CreateStudentDiscussion
             _studentSubscriptionRepository = studentSubscriptionRepository;
             _moduleItemRepository = moduleItemRepository;
             _discussionRepository = discussionRepository;
+            _unitOfWork = unitOfWork;
         }
         public async Task<OneOf<StudentLessonResponse, Error>> Handle(CreateStudentDiscussionCommand request, CancellationToken cancellationToken)
         {
@@ -62,7 +64,7 @@ namespace Application.Features.StudentLessons.Commands.CreateStudentDiscussion
                 ModuleId = moduleId
             };
             await _discussionRepository.CreateDiscussionThreadAsync(newDiscussion, cancellationToken);
-            await _discussionRepository.SaveAsync(cancellationToken);
+            await _unitOfWork.SaveAsync(cancellationToken);
             return new StudentLessonResponse { Messsage = MessagesConstants.DiscussionThreadCreated };
         }
     }

@@ -7,7 +7,6 @@
         {
             _context = context;
         }
-
         public async void AddRefreshToken(ApplicationUser user, string token, DateTime expiresAt, CancellationToken cancellationToken)
         {
             user.RefreshTokens.Add(new RefreshToken
@@ -20,11 +19,6 @@
         {
             return await _context.RefreshTokens
                 .FirstOrDefaultAsync(rt => rt.Token == token, cancellationToken);
-        }
-
-        public async Task<int> SaveAsync(CancellationToken cancellationToken)
-        {
-            return await _context.SaveChangesAsync(cancellationToken);
         }
     }
 }

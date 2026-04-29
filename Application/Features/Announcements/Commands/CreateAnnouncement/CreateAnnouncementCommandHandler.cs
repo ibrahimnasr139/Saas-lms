@@ -1,5 +1,4 @@
-﻿using Application.Contracts.Repositories;
-using Application.Features.Announcements.Dtos;
+﻿using Application.Features.Announcements.Dtos;
 using Application.Helpers;
 using Hangfire;
 using Microsoft.AspNetCore.Http;
@@ -15,10 +14,11 @@ namespace Application.Features.Announcements.Commands.CreateAnnouncement
         private readonly ICurrentUserId _currentUserId;
         private readonly IEnrollmentRepository _enrollmentRepository;
         private readonly IEmailSender _emailSender;
+        private readonly IUnitOfWork _unitOfWork;
 
         public CreateAnnouncementCommandHandler(IAnnouncementRepository announcementRepository, IHttpContextAccessor httpContextAccessor,
             ITenantRepository tenantRepository, ITenantMemberRepository tenantMemberRepository, ICurrentUserId currentUserId,
-            IEnrollmentRepository enrollmentRepository, IEmailSender emailSender)
+            IEnrollmentRepository enrollmentRepository, IEmailSender emailSender, IUnitOfWork unitOfWork)
         {
             _announcementRepository = announcementRepository;
             _httpContextAccessor = httpContextAccessor;
@@ -27,6 +27,7 @@ namespace Application.Features.Announcements.Commands.CreateAnnouncement
             _currentUserId = currentUserId;
             _enrollmentRepository = enrollmentRepository;
             _emailSender = emailSender;
+            _unitOfWork = unitOfWork;
         }
         public async Task<AnnouncementResponse> Handle(CreateAnnouncementCommand request, CancellationToken cancellationToken)
         {
@@ -48,7 +49,7 @@ namespace Application.Features.Announcements.Commands.CreateAnnouncement
             };
 
             await _announcementRepository.CreateAnnouncementAsync(announcement, cancellationToken);
-            await _announcementRepository.SaveAsync(cancellationToken);
+            await _unitOfWork.SaveAsync(cancellationToken);
 
             var studentEmails = request.TargetCourseIds is not null
                 ? await _enrollmentRepository.GetEmailsByCourseIdsAsync(request.TargetCourseIds, cancellationToken)

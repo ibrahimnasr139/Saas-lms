@@ -1,7 +1,4 @@
 ﻿using Application.Features.Assignments.Dtos;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Infrastructure.Repositories
 {
@@ -15,16 +12,15 @@ namespace Infrastructure.Repositories
 
         public async Task<List<GradeDistribution>> GetSubmissionGradeDistributionAsync(int itemId, CancellationToken cancellationToken)
         {
-             return await _context.AssignmentSubmissions.Where(s => s.AssignmentId == itemId)
-                    .GroupBy(g => (g.EarnedMarks / 10) * 10)
-                    .Select(g => new GradeDistribution
-                    {
-                        Range = $"{g.Key}-{g.Key + 9}",
-                        Count = g.Count()
-                    })
-                    .ToListAsync(cancellationToken);
+            return await _context.AssignmentSubmissions.Where(s => s.AssignmentId == itemId)
+                   .GroupBy(g => (g.EarnedMarks / 10) * 10)
+                   .Select(g => new GradeDistribution
+                   {
+                       Range = $"{g.Key}-{g.Key + 9}",
+                       Count = g.Count()
+                   })
+                   .ToListAsync(cancellationToken);
         }
-
         public async Task<List<SubmissionOverTime>> GetSubmissionsOverTimeAsync(int itemId, CancellationToken cancellationToken)
         {
             return await _context.AssignmentSubmissions.Where(s => s.AssignmentId == itemId)
@@ -36,7 +32,6 @@ namespace Infrastructure.Repositories
                 })
                 .ToListAsync(cancellationToken);
         }
-
         public async Task GradeSubmission(int submissionId, double grade, string? feedback, CancellationToken cancellationToken)
         {
             await _context.AssignmentSubmissions.Where(s => s.Id == submissionId && s.Assignment.Marks >= grade)
@@ -46,7 +41,7 @@ namespace Infrastructure.Repositories
         public async Task<bool> IsSubmissionFound(int submissionId, int itemId, CancellationToken cancellationToken)
         {
             return await _context.AssignmentSubmissions
-                .AnyAsync(s => s.Id == submissionId && s.AssignmentId == itemId , cancellationToken);
+                .AnyAsync(s => s.Id == submissionId && s.AssignmentId == itemId, cancellationToken);
         }
     }
 }

@@ -1,9 +1,6 @@
 ﻿using Application.Features.Attempts.Dtos;
 using Application.Features.Quizzes.Dtos;
 using Domain.Enums;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Infrastructure.Repositories
 {
@@ -31,13 +28,12 @@ namespace Infrastructure.Repositories
                          GradingStatus = quizAttempt != null ? quizAttempt.GradingStatus : GradingStatus.NotGraded,
                          SubmittedAt = quizAttempt != null ? quizAttempt.SubmittedAt : null,
                          StartedAt = quizAttempt != null ? quizAttempt.StartedAt : null,
-                            TimeSpent = quizAttempt != null ? quizAttempt.TimeSpent : null, 
-                            Score = quizAttempt != null ? quizAttempt.Score : null,
-                            TotalMarks = quizAttempt != null ? quizAttempt.TotalMarks : 0,
-                            IsPassed = quizAttempt != null ? quizAttempt.Score >= quizAttempt.Quiz.PassingScore : null
+                         TimeSpent = quizAttempt != null ? quizAttempt.TimeSpent : null,
+                         Score = quizAttempt != null ? quizAttempt.Score : null,
+                         TotalMarks = quizAttempt != null ? quizAttempt.TotalMarks : 0,
+                         IsPassed = quizAttempt != null ? quizAttempt.Score >= quizAttempt.Quiz.PassingScore : null
                      }).ToListAsync(cancellationToken);
         }
-
         public async Task<QuizMetadata?> GetQuizMetadata(int quizId, int courseId, int moduleId, string subdomain, CancellationToken cancellationToken)
         {
             return await _dbContext.ModuleItems
@@ -52,7 +48,6 @@ namespace Infrastructure.Repositories
                     Grade = mi.Course.Grade.Label
                 }).FirstOrDefaultAsync(cancellationToken);
         }
-
         public async Task<OverviewDto?> GetQuizOverview(int itemId, CancellationToken cancellationToken)
         {
             return await _dbContext.QuizAttempts.Where(sv => sv.ModuleItemId == itemId)
@@ -73,7 +68,6 @@ namespace Infrastructure.Repositories
                 .Include(x => x.Question)
                 .FirstOrDefaultAsync(q => q.QuizId == quizId && q.QuestionId == questionId && q.Question.Tenant.SubDomain == subdomain, cancellationToken);
         }
-
         public async Task RemoveQuizQuestion(QuizQuestion quizQuestion, CancellationToken cancellationToken)
         {
             _dbContext.QuizQuestions.Remove(quizQuestion);

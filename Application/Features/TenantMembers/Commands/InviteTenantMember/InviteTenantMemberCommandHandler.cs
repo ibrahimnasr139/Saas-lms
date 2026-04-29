@@ -9,6 +9,7 @@ namespace Application.Features.TenantMembers.Commands.InviteTenantMember
     internal sealed class InviteTenantMemberCommandHandler : IRequestHandler<InviteTenantMemberCommand, OneOf<InviteTenantMemberDto, Error>>
     {
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly ITenantMemberRepository _tenantMemberRepository;
         private readonly ITenantRepository _tenantRepository;
         private readonly IHttpContextAccessor _httpContextAccessor;
@@ -17,12 +18,13 @@ namespace Application.Features.TenantMembers.Commands.InviteTenantMember
         private readonly IEmailSender _emailSender;
         private readonly ICurrentUserId _currentUserId;
 
-        public InviteTenantMemberCommandHandler(UserManager<ApplicationUser> userManager,
+        public InviteTenantMemberCommandHandler(UserManager<ApplicationUser> userManager, IUnitOfWork unitOfWork,
             ITenantMemberRepository tenantMemberRepository, ITenantRepository tenantRepository,
             IHttpContextAccessor httpContextAccessor, ITenantInviteRepository tenantInviteRepository,
             ITenantRoleRepository tenantRoleRepository, IEmailSender emailSender, ICurrentUserId currentUserId)
         {
             _userManager = userManager;
+            _unitOfWork = unitOfWork;
             _tenantMemberRepository = tenantMemberRepository;
             _tenantRepository = tenantRepository;
             _httpContextAccessor = httpContextAccessor;
@@ -63,7 +65,7 @@ namespace Application.Features.TenantMembers.Commands.InviteTenantMember
                 InvitedBy = invitedByMemberId
             };
             await _tenantInviteRepository.CreateTenantInviteAsync(tenantInvite, cancellationToken);
-            await _tenantInviteRepository.SaveAsync(cancellationToken);
+            await _unitOfWork.SaveAsync(cancellationToken);
 
             var emailBody = EmailConfirmationHelper.GenerateEmailBodyHelper(
                 EmailConstants.TenantInviteTemplate,

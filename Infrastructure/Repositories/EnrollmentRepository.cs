@@ -17,10 +17,6 @@ namespace Infrastructure.Repositories
         {
             await _context.Enrollments.AddAsync(enrollment);
         }
-        public async Task<int> SaveAsync(CancellationToken cancellationToken)
-        {
-            return await _context.SaveChangesAsync(cancellationToken);
-        }
         public async Task<bool> StudentIsAlreadyEnrolledAsync(int studentId, int courseId, CancellationToken cancellationToken)
         {
             return await _context.Enrollments

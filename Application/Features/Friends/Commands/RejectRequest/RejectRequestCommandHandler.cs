@@ -1,5 +1,4 @@
-﻿using Application.Contracts.Repositories;
-using Application.Features.Friends.Dtos;
+﻿using Application.Features.Friends.Dtos;
 using Application.Helpers;
 using Domain.Enums;
 using Hangfire;
@@ -14,7 +13,9 @@ namespace Application.Features.Friends.Commands.RejectRequest
         private readonly IFriendRepository _friendRepository;
         private readonly IStudentRepository _studentRepository;
         private readonly IEmailSender _emailSender;
-        public RejectRequestCommandHandler(HybridCache hybridCache, IHttpContextAccessor httpContextAccessor,
+        private readonly IUnitOfWork _unitOfWork;
+
+        public RejectRequestCommandHandler(HybridCache hybridCache, IHttpContextAccessor httpContextAccessor, IUnitOfWork unitOfWork,
             IFriendRepository friendRepository, IStudentRepository studentRepository, IEmailSender emailSender)
         {
             _hybridCache = hybridCache;
@@ -22,6 +23,7 @@ namespace Application.Features.Friends.Commands.RejectRequest
             _friendRepository = friendRepository;
             _studentRepository = studentRepository;
             _emailSender = emailSender;
+            _unitOfWork = unitOfWork;
         }
         public async Task<OneOf<FriendResponse, Error>> Handle(RejectRequestCommand request, CancellationToken cancellationToken)
         {
@@ -46,7 +48,7 @@ namespace Application.Features.Friends.Commands.RejectRequest
             friendRequest.ActionStudentId = session.StudentId;
             friendRequest.Status = FriendStatus.Declined;
             await _friendRepository.UpdateRequestStatusAsync(friendRequest, cancellationToken);
-            await _friendRepository.SaveAsync(cancellationToken);
+            await _unitOfWork.SaveAsync(cancellationToken);
 
             var emailBody = EmailConfirmationHelper.GenerateEmailBodyHelper(
                 EmailConstants.RejectRequestTemplate,

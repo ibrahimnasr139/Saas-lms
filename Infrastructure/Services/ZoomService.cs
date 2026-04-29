@@ -15,15 +15,15 @@ namespace Infrastructure.Services
     {
         private readonly IOptions<ZoomOptions> _zoomOptions;
         private readonly HttpClient _httpClient;
-        private readonly IZoomIntegrationRepository _zoomIntegrationRepository;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IHttpClientFactory _httpClientFactory;
 
-        public ZoomService(IOptions<ZoomOptions> options, HttpClient httpClient,
-            IZoomIntegrationRepository zoomIntegrationRepository, IHttpClientFactory httpClientFactory)
+        public ZoomService(IOptions<ZoomOptions> options, HttpClient httpClient, IUnitOfWork unitOfWork,
+            IHttpClientFactory httpClientFactory)
         {
             _zoomOptions = options;
             _httpClient = httpClient;
-            _zoomIntegrationRepository = zoomIntegrationRepository;
+            _unitOfWork = unitOfWork;
             _httpClientFactory = httpClientFactory;
         }
 
@@ -105,7 +105,7 @@ namespace Infrastructure.Services
             integration.RefreshToken = tokenData.refresh_token;
             integration.TokenExpiresAt = DateTime.UtcNow.AddSeconds(tokenData.expires_in);
 
-            await _zoomIntegrationRepository.SaveAsync(cancellationToken);
+            await _unitOfWork.SaveAsync(cancellationToken);
             return true;
         }
         public async Task<ZoomMeetingResponse?> CreateZoomMeetingAsync(string accessToken, CreateLiveSessionCommand request, CancellationToken cancellationToken)

@@ -13,10 +13,11 @@ namespace Application.Features.StudentLessons.Commands.DeleteStudentDiscussion
         private readonly IEnrollmentRepository _enrollmentRepository;
         private readonly IModuleItemRepository _moduleItemRepository;
         private readonly IDiscussionRepository _discussionRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
         public DeleteStudentDiscussionCommandHandler(HybridCache hybridCache, IHttpContextAccessor httpContextAccessor,
             IStudentSubscriptionRepository studentSubscriptionRepository, IEnrollmentRepository enrollmentRepository,
-            IModuleItemRepository moduleItemRepository, IDiscussionRepository discussionRepository)
+            IModuleItemRepository moduleItemRepository, IDiscussionRepository discussionRepository, IUnitOfWork unitOfWork)
         {
             _hybridCache = hybridCache;
             _httpContextAccessor = httpContextAccessor;
@@ -24,6 +25,7 @@ namespace Application.Features.StudentLessons.Commands.DeleteStudentDiscussion
             _enrollmentRepository = enrollmentRepository;
             _moduleItemRepository = moduleItemRepository;
             _discussionRepository = discussionRepository;
+            _unitOfWork = unitOfWork;
         }
         public async Task<OneOf<StudentLessonResponse, Error>> Handle(DeleteStudentDiscussionCommand request, CancellationToken cancellationToken)
         {
@@ -58,7 +60,7 @@ namespace Application.Features.StudentLessons.Commands.DeleteStudentDiscussion
                 return DiscussionErrors.NotDiscussionOwner;
 
             await _discussionRepository.DeleteDiscussionThreadAsync(discussion, cancellationToken);
-            await _discussionRepository.SaveAsync(cancellationToken);
+            await _unitOfWork.SaveAsync(cancellationToken);
             return new StudentLessonResponse { Messsage = MessagesConstants.DiscussionThreadDelete };
         }
     }

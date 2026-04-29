@@ -13,15 +13,17 @@ namespace Application.Features.Files.Commands.UploadFile
         private readonly ICurrentUserId _currentUserId;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ITenantRepository _tenantRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
         public UploadFileCommandHandler(IFileService fileService, IFileRepository fileRepository, ICurrentUserId currentUserId,
-            IHttpContextAccessor httpContextAccessor, ITenantRepository tenantRepository)
+            IHttpContextAccessor httpContextAccessor, ITenantRepository tenantRepository, IUnitOfWork unitOfWork)
         {
             _fileService = fileService;
             _fileRepository = fileRepository;
             _currentUserId = currentUserId;
             _httpContextAccessor = httpContextAccessor;
             _tenantRepository = tenantRepository;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<OneOf<UploadFileDto, Error>> Handle(UploadFileCommand request, CancellationToken cancellationToken)
@@ -56,7 +58,7 @@ namespace Application.Features.Files.Commands.UploadFile
                 TenantId = tenantId
             };
             await _fileRepository.CreateAsync(newFile, cancellationToken);
-            await _fileRepository.SaveAsync(cancellationToken);
+            await _unitOfWork.SaveAsync(cancellationToken);
 
             if (request.EnableEmbedding)
                 await _fileService.CallAIService(request.File, fileType, fileId);

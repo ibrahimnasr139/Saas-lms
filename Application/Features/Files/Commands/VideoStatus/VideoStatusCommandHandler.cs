@@ -1,6 +1,4 @@
-﻿using Application.Constants;
-using Application.Contracts.Repositories;
-using Domain.Enums;
+﻿using Domain.Enums;
 using Microsoft.AspNetCore.Http;
 
 namespace Application.Features.Files.Commands.VideoStatus
@@ -12,8 +10,9 @@ namespace Application.Features.Files.Commands.VideoStatus
         private readonly ISubscriptionRepository _subscriptionRepository;
         private readonly ITenantRepository _tenantRepository;
         private readonly IFileRepository _fileRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public VideoStatusCommandHandler(IHttpContextAccessor httpContextAccessor, IPlanRepository planRepository,
+        public VideoStatusCommandHandler(IHttpContextAccessor httpContextAccessor, IPlanRepository planRepository, IUnitOfWork unitOfWork,
             ISubscriptionRepository subscriptionRepository, ITenantRepository tenantRepository, IFileRepository fileRepository)
         {
             _httpContextAccessor = httpContextAccessor;
@@ -21,6 +20,7 @@ namespace Application.Features.Files.Commands.VideoStatus
             _subscriptionRepository = subscriptionRepository;
             _tenantRepository = tenantRepository;
             _fileRepository = fileRepository;
+            _unitOfWork = unitOfWork;
         }
         public async Task<Unit> Handle(VideoStatusCommand request, CancellationToken cancellationToken)
         {
@@ -46,7 +46,7 @@ namespace Application.Features.Files.Commands.VideoStatus
             else
                 await _fileRepository.DeleteFileAsync(file, cancellationToken);
 
-            await _fileRepository.SaveAsync(cancellationToken);
+            await _unitOfWork.SaveAsync(cancellationToken);
             return Unit.Value;
         }
     }

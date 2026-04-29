@@ -1,5 +1,4 @@
-﻿using Application.Contracts.Repositories;
-using Application.Features.TenantStudents.Dtos;
+﻿using Application.Features.TenantStudents.Dtos;
 using Microsoft.AspNetCore.Http;
 using System.Net;
 
@@ -12,11 +11,11 @@ namespace Application.Features.StudentUsers.Commands.Onboarding
         private readonly IMapper _mapper;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IStudentSubjectRepository _studentSubjectRepository;
-        private readonly ITenantRepository _tenantRepository;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IStudentStreakRepository _studentStreakRepository;
 
         public OnboardingCommandHandler(IStudentRepository studentRepository, HybridCache hybridCache, IMapper mapper,
-            IHttpContextAccessor httpContextAccessor, IStudentSubjectRepository studentSubjectRepository, ITenantRepository tenantRepository,
+            IHttpContextAccessor httpContextAccessor, IStudentSubjectRepository studentSubjectRepository, IUnitOfWork unitOfWork,
             IStudentStreakRepository studentStreakRepository)
         {
             _studentRepository = studentRepository;
@@ -24,7 +23,7 @@ namespace Application.Features.StudentUsers.Commands.Onboarding
             _mapper = mapper;
             _httpContextAccessor = httpContextAccessor;
             _studentSubjectRepository = studentSubjectRepository;
-            _tenantRepository = tenantRepository;
+            _unitOfWork = unitOfWork;
             _studentStreakRepository = studentStreakRepository;
         }
         public async Task<OneOf<StudentResponse, Error>> Handle(OnboardingCommand request, CancellationToken cancellationToken)
@@ -43,12 +42,12 @@ namespace Application.Features.StudentUsers.Commands.Onboarding
             if (student is null)
                 return UserErrors.Unauthorized;
 
-            await _tenantRepository.BeginTransactionAsync(cancellationToken);
+            await _unitOfWork.BeginTransactionAsync(cancellationToken);
             try
             {
                 _mapper.Map(request, student);
                 await _studentRepository.UpdateHasOnboardedAsync(session.UserId, cancellationToken);
-                
+
                 var subjectIds = await _studentSubjectRepository.GetSubjectIdsAsync(request.Subjects, cancellationToken);
                 var missingSubjects = request.Subjects.Except(subjectIds.Keys).ToList();
                 if (missingSubjects.Any())
@@ -65,12 +64,12 @@ namespace Application.Features.StudentUsers.Commands.Onboarding
 
                 await _studentSubjectRepository.CreateStudentSubjectAsync(newStudentSubjects, cancellationToken);
                 await _studentStreakRepository.CreateStudentStreakAsync(newStudentStreak, cancellationToken);
-                await _tenantRepository.CommitTransactionAsync(cancellationToken);
+                await _unitOfWork.CommitTransactionAsync(cancellationToken);
                 return new StudentResponse { Message = MessagesConstants.StudentOnboardingCompleted };
             }
             catch
             {
-                await _tenantRepository.RollbackTransactionAsync(cancellationToken);
+                await _unitOfWork.RollbackTransactionAsync(cancellationToken);
                 throw;
             }
         }

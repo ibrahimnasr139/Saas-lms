@@ -9,19 +9,22 @@ namespace Application.Features.Tenants.Commands.DeleteContentLibraryResource
             IRequestHandler<DeleteContentLibraryResourceCommand, OneOf<DeleteContentLibraryResourceResponse, Error>>
     {
         private readonly IFileRepository _fileRepository;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IPlanRepository _planRepository;
         private readonly ISubscriptionRepository _subscriptionRepository;
         private readonly ITenantRepository _tenantRepository;
 
         public DeleteContentLibraryResourceCommandHandler(IHttpContextAccessor httpContextAccessor, IPlanRepository planRepository,
-            ISubscriptionRepository subscriptionRepository, ITenantRepository tenantRepository, IFileRepository fileRepository)
+            ISubscriptionRepository subscriptionRepository, ITenantRepository tenantRepository, IFileRepository fileRepository,
+            IUnitOfWork unitOfWork)
         {
             _httpContextAccessor = httpContextAccessor;
             _planRepository = planRepository;
             _subscriptionRepository = subscriptionRepository;
             _tenantRepository = tenantRepository;
             _fileRepository = fileRepository;
+            _unitOfWork = unitOfWork;
         }
         public async Task<OneOf<DeleteContentLibraryResourceResponse, Error>> Handle(DeleteContentLibraryResourceCommand request,
             CancellationToken cancellationToken)
@@ -32,7 +35,7 @@ namespace Application.Features.Tenants.Commands.DeleteContentLibraryResource
 
             var size = file.Size;
             await _fileRepository.DeleteFileAsync(file, cancellationToken);
-            await _fileRepository.SaveAsync(cancellationToken);
+            await _unitOfWork.SaveAsync(cancellationToken);
 
             var subDomain = _httpContextAccessor.HttpContext?.Request.Cookies[AuthConstants.SubDomain];
             var tenantId = await _tenantRepository.GetTenantIdAsync(subDomain!, cancellationToken);

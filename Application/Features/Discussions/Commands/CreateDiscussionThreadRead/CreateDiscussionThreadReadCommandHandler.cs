@@ -9,13 +9,15 @@ namespace Application.Features.Discussions.Commands.MarkThreadAsRead
         private readonly IDiscussionRepository _discussionRepository;
         private readonly ICurrentUserId _currentUserId;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IUnitOfWork _unitOfWork;
 
         public CreateDiscussionThreadReadCommandHandler(IDiscussionRepository discussionRepository, ICurrentUserId currentUserId,
-            IHttpContextAccessor httpContextAccessor)
+            IHttpContextAccessor httpContextAccessor, IUnitOfWork unitOfWork)
         {
             _discussionRepository = discussionRepository;
             _currentUserId = currentUserId;
             _httpContextAccessor = httpContextAccessor;
+            _unitOfWork = unitOfWork;
         }
         public async Task<OneOf<bool, Error>> Handle(CreateDiscussionThreadReadCommand request, CancellationToken cancellationToken)
         {
@@ -32,7 +34,7 @@ namespace Application.Features.Discussions.Commands.MarkThreadAsRead
                 TenantId = thread.TenantId,
             };
             await _discussionRepository.CreateDiscussionThreadReadAsync(newDiscussionThreadRead, cancellationToken);
-            await _discussionRepository.SaveAsync(cancellationToken);
+            await _unitOfWork.SaveAsync(cancellationToken);
             return true;
         }
     }

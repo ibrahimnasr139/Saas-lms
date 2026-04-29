@@ -6,10 +6,12 @@ namespace Application.Features.Files.Commands.CallBack
     internal class CallBackCommandHandler : IRequestHandler<CallBackCommand, Unit>
     {
         private readonly IFileRepository _fileRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public CallBackCommandHandler(IFileRepository fileRepository)
+        public CallBackCommandHandler(IFileRepository fileRepository, IUnitOfWork unitOfWork)
         {
             _fileRepository = fileRepository;
+            _unitOfWork = unitOfWork;
         }
         public async Task<Unit> Handle(CallBackCommand request, CancellationToken cancellationToken)
         {
@@ -22,7 +24,7 @@ namespace Application.Features.Files.Commands.CallBack
             else
                 await _fileRepository.DeleteFileAsync(file, cancellationToken);
 
-            await _fileRepository.SaveAsync(cancellationToken);
+            await _unitOfWork.SaveAsync(cancellationToken);
             return Unit.Value;
         }
     }

@@ -15,10 +15,11 @@ namespace Application.Features.Assignments.Commands.UpdateAssignment
         private readonly ICourseRepository _courseRepository;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IModuleItemRepository _moduleItemRepository;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         public UpdateAssignmentCommandHandler(ITenantMemberRepository tenantMemberRepository, ICurrentUserId currentUserId,
             ISubscriptionRepository subscriptionRepository, IHttpContextAccessor httpContextAccessor, ICourseRepository courseRepository,
-            IMapper mapper, IModuleItemRepository moduleItemRepository)
+            IMapper mapper, IModuleItemRepository moduleItemRepository, IUnitOfWork unitOfWork)
         {
             _tenantMemberRepository = tenantMemberRepository;
             _currentUserId = currentUserId;
@@ -27,6 +28,7 @@ namespace Application.Features.Assignments.Commands.UpdateAssignment
             _courseRepository = courseRepository;
             _mapper = mapper;
             _moduleItemRepository = moduleItemRepository;
+            _unitOfWork = unitOfWork;
         }
         public async Task<OneOf<SuccessDto, Error>> Handle(UpdateAssignmentCommand request, CancellationToken cancellationToken)
         {
@@ -48,7 +50,7 @@ namespace Application.Features.Assignments.Commands.UpdateAssignment
                 return ModuleItemErrors.ModuleItemNotFound;
             }
             _mapper.Map(request, assignment);
-            await _courseRepository.SaveAsync(cancellationToken);
+            await _unitOfWork.SaveAsync(cancellationToken);
             return new SuccessDto
             {
                 Id = assignment.ModuleItemId.ToString(),

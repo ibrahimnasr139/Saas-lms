@@ -12,10 +12,10 @@ namespace Application.Features.StudentLessons.Commands.CreateStudentDiscussionRe
         private readonly IEnrollmentRepository _enrollmentRepository;
         private readonly IDiscussionRepository _discussionRepository;
         private readonly IModuleItemRepository _moduleItemRepository;
-
+        private readonly IUnitOfWork _unitOfWork;
         public CreateStudentDiscussionReplyCommandHandler(HybridCache hybridCache, IHttpContextAccessor httpContextAccessor,
             IStudentSubscriptionRepository studentSubscriptionRepository, IEnrollmentRepository enrollmentRepository,
-            IDiscussionRepository discussionRepository, IModuleItemRepository moduleItemRepository)
+            IDiscussionRepository discussionRepository, IModuleItemRepository moduleItemRepository, IUnitOfWork unitOfWork)
         {
             _hybridCache = hybridCache;
             _httpContextAccessor = httpContextAccessor;
@@ -23,6 +23,7 @@ namespace Application.Features.StudentLessons.Commands.CreateStudentDiscussionRe
             _enrollmentRepository = enrollmentRepository;
             _discussionRepository = discussionRepository;
             _moduleItemRepository = moduleItemRepository;
+            _unitOfWork = unitOfWork;
         }
         public async Task<OneOf<StudentLessonResponse, Error>> Handle(CreateStudentDiscussionReplyCommand request, CancellationToken cancellationToken)
         {
@@ -57,7 +58,7 @@ namespace Application.Features.StudentLessons.Commands.CreateStudentDiscussionRe
                 TenantId = tenantId,
             };
             await _discussionRepository.CreateDiscussionThreadReplyAsync(newDiscussionReply, cancellationToken);
-            await _discussionRepository.SaveAsync(cancellationToken);
+            await _unitOfWork.SaveAsync(cancellationToken);
             return new StudentLessonResponse { Messsage = MessagesConstants.DiscussionReplyCreated };
         }
     }

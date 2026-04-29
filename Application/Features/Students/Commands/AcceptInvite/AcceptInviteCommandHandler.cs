@@ -1,5 +1,4 @@
-﻿using Application.Contracts.Repositories;
-using Application.Features.TenantStudents.Dtos;
+﻿using Application.Features.TenantStudents.Dtos;
 using Domain.Enums;
 using Microsoft.AspNetCore.Http;
 
@@ -14,15 +13,15 @@ namespace Application.Features.Students.Commands.AcceptInvite
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IStudentSubscriptionRepository _studentSubscriptionRepository;
         private readonly ICourseRepository _courseRepository;
-        private readonly ITenantRepository _tenantRepository;
         private readonly IModuleRepository _moduleRepository;
         private readonly IModuleItemRepository _moduleItemRepository;
         private readonly ITenantMemberRepository _tenantMemberRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
         public AcceptInviteCommandHandler(ICourseInviteRepository courseInviteRepository, IHttpContextAccessor httpContextAccessor,
             IEnrollmentRepository enrollmentRepository, HybridCache hybridCache, UserManager<ApplicationUser> userManager,
             IStudentSubscriptionRepository studentSubscriptionRepository, ICourseRepository courseRepository,
-            ITenantRepository tenantRepository, IModuleRepository moduleRepository, IModuleItemRepository moduleItemRepository,
+            IModuleRepository moduleRepository, IModuleItemRepository moduleItemRepository, IUnitOfWork unitOfWork,
             ITenantMemberRepository tenantMemberRepository)
         {
             _courseInviteRepository = courseInviteRepository;
@@ -32,10 +31,10 @@ namespace Application.Features.Students.Commands.AcceptInvite
             _userManager = userManager;
             _studentSubscriptionRepository = studentSubscriptionRepository;
             _courseRepository = courseRepository;
-            _tenantRepository = tenantRepository;
             _moduleRepository = moduleRepository;
             _moduleItemRepository = moduleItemRepository;
             _tenantMemberRepository = tenantMemberRepository;
+            _unitOfWork = unitOfWork;
         }
         public async Task<OneOf<StudentResponse, Error>> Handle(AcceptInviteCommand request, CancellationToken cancellationToken)
         {
@@ -91,19 +90,19 @@ namespace Application.Features.Students.Commands.AcceptInvite
                 TenantId = tenantId
             };
 
-            await _tenantRepository.BeginTransactionAsync(cancellationToken);
+            await _unitOfWork.BeginTransactionAsync(cancellationToken);
             try
             {
                 await _enrollmentRepository.CreateEnrollmentAsync(newEnrollment, cancellationToken);
                 await _studentSubscriptionRepository.CreateSubscriptionAsync(newSubscription, cancellationToken);
                 await _courseInviteRepository.AcceptInviteAsync(request.Token, cancellationToken);
-                await _tenantRepository.CommitTransactionAsync(cancellationToken);
+                await _unitOfWork.CommitTransactionAsync(cancellationToken);
                 await _hybridCache.RemoveAsync($"{CacheKeysConstants.StudentCoursesKey}_{session.StudentId}", cancellationToken);
                 return new StudentResponse { Message = MessagesConstants.CourseInviteAccepted };
             }
             catch
             {
-                await _tenantRepository.RollbackTransactionAsync(cancellationToken);
+                await _unitOfWork.RollbackTransactionAsync(cancellationToken);
                 return CourseInviteErrors.InviteError;
             }
         }

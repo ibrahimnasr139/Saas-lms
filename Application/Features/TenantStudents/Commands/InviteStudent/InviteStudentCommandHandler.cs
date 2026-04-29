@@ -18,11 +18,12 @@ namespace Application.Features.TenantStudents.Commands.InviteStudent
         private readonly ICourseRepository _courseRepository;
         private readonly IStudentRepository _studentRepository;
         private readonly IEnrollmentRepository _enrollmentRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
         public InviteStudentCommandHandler(ICourseInviteRepository courseInviteRepository, UserManager<ApplicationUser> userManager,
             ITenantMemberRepository tenantMemberRepository, ITenantRepository tenantRepository, IHttpContextAccessor httpContextAccessor,
             IEmailSender emailSender, ICurrentUserId currentUserId, ICourseRepository courseRepository, IStudentRepository studentRepository,
-            IEnrollmentRepository enrollmentRepository)
+            IEnrollmentRepository enrollmentRepository, IUnitOfWork unitOfWork)
         {
             _courseInviteRepository = courseInviteRepository;
             _userManager = userManager;
@@ -34,6 +35,7 @@ namespace Application.Features.TenantStudents.Commands.InviteStudent
             _courseRepository = courseRepository;
             _studentRepository = studentRepository;
             _enrollmentRepository = enrollmentRepository;
+            _unitOfWork = unitOfWork;
         }
         public async Task<OneOf<StudentResponse, Error>> Handle(InviteStudentCommand request, CancellationToken cancellationToken)
         {
@@ -76,7 +78,7 @@ namespace Application.Features.TenantStudents.Commands.InviteStudent
                 TenantId = tenantId,
             };
             await _courseInviteRepository.CreateCourseInviteAsync(courseInvite, cancellationToken);
-            await _courseInviteRepository.SaveAsync(cancellationToken);
+            await _unitOfWork.SaveAsync(cancellationToken);
             await _tenantRepository.IncreasePlanFeatureUsageByKeyAsync(subDomain!, FeatureConstants.STUDENT_LIMIT, cancellationToken);
             
             var emailBody = EmailConfirmationHelper.GenerateEmailBodyHelper(

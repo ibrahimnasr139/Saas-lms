@@ -14,9 +14,11 @@ namespace Application.Features.TenantAuth.Commands.Login
         private readonly ITokenProvider _tokenProvider;
         private readonly HybridCache _hybridCache;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IEmailSender _emailSender;
         public LoginCommandHandler(UserManager<ApplicationUser> userManager, IRefreshRepository refreshRepository, IMapper mapper,
-            ITokenProvider tokenProvider, HybridCache hybridCache, IHttpContextAccessor httpContextAccessor, IEmailSender emailSender)
+            ITokenProvider tokenProvider, HybridCache hybridCache, IHttpContextAccessor httpContextAccessor, IUnitOfWork unitOfWork,
+            IEmailSender emailSender)
         {
             _userManager = userManager;
             _refreshRepository = refreshRepository;
@@ -24,6 +26,7 @@ namespace Application.Features.TenantAuth.Commands.Login
             _tokenProvider = tokenProvider;
             _hybridCache = hybridCache;
             _httpContextAccessor = httpContextAccessor;
+            _unitOfWork = unitOfWork;
             _emailSender = emailSender;
         }
 
@@ -62,7 +65,7 @@ namespace Application.Features.TenantAuth.Commands.Login
             _tokenProvider.GenerateJwtToken(user!);
             var refreshToken = _tokenProvider.GenerateRefreshToken();
             _refreshRepository.AddRefreshToken(user, refreshToken.token, refreshToken.expiresOn, cancellationToken);
-            await _refreshRepository.SaveAsync(cancellationToken);
+            await _unitOfWork.SaveAsync(cancellationToken);
             return _mapper.Map<LoginDto>(user);
         }
     }

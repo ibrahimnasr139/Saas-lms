@@ -13,14 +13,11 @@ namespace Application.Features.Courses.Commands.UpdateCourse
         private readonly ICurrentUserId _currentUserId;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly HybridCache _hybridCache;
-        public UpdateCourseCommandHandler(
-            ICourseRepository courseRepository,
-            IMapper mapper,
-            ITenantMemberRepository tenantMemberRepository,
-            ISubscriptionRepository subscriptionRepository,
-            ICurrentUserId currentUserId,
-            IHttpContextAccessor httpContextAccessor,
-            HybridCache hybridCache)
+        private readonly IUnitOfWork _unitOfWork;
+
+        public UpdateCourseCommandHandler(ICourseRepository courseRepository,IMapper mapper,IUnitOfWork unitOfWork,
+            ITenantMemberRepository tenantMemberRepository, ISubscriptionRepository subscriptionRepository,
+            ICurrentUserId currentUserId,IHttpContextAccessor httpContextAccessor,HybridCache hybridCache)
         {
             _courseRepository = courseRepository;
             _mapper = mapper;
@@ -29,6 +26,7 @@ namespace Application.Features.Courses.Commands.UpdateCourse
             _currentUserId = currentUserId;
             _httpContextAccessor = httpContextAccessor;
             _hybridCache = hybridCache;
+            _unitOfWork = unitOfWork;   
         }
 
         public async Task<OneOf<SuccessDto, Error>> Handle(UpdateCourseCommand request, CancellationToken cancellationToken)
@@ -51,7 +49,7 @@ namespace Application.Features.Courses.Commands.UpdateCourse
                 return CourseErrors.CourseNotFound;
             }
             _mapper.Map(request, course);
-            await _courseRepository.SaveAsync(cancellationToken);
+            await _unitOfWork.SaveAsync(cancellationToken);
             await _hybridCache.RemoveByTagAsync(tags: new[] { $"{CacheKeysConstants.AllCoursesKey}_{subDomain}" }, cancellationToken);
             return new SuccessDto
             {

@@ -8,13 +8,15 @@ namespace Application.Features.Zoom.Commands.Callback
         private readonly IZoomService _zoomService;
         private readonly IZoomOAuthStateRepository _zoomOAuthStateRepository;
         private readonly IZoomIntegrationRepository _zoomIntegrationRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
         public CallbackCommandHandler(IZoomService zoomService, IZoomOAuthStateRepository zoomOAuthStateRepository,
-            IZoomIntegrationRepository zoomIntegrationRepository)
+            IZoomIntegrationRepository zoomIntegrationRepository, IUnitOfWork unitOfWork)
         {
             _zoomService = zoomService;
             _zoomOAuthStateRepository = zoomOAuthStateRepository;
             _zoomIntegrationRepository = zoomIntegrationRepository;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<string> Handle(CallbackCommand request, CancellationToken cancellationToken)
@@ -38,7 +40,7 @@ namespace Application.Features.Zoom.Commands.Callback
                 return errorUrl;
 
             await _zoomIntegrationRepository.SaveOrUpdateIntegrationAsync(oauthState.UserId, oauthState.TenantId, zoomTokenResponse, zoomUserInfo, cancellationToken);
-            await _zoomIntegrationRepository.SaveAsync(cancellationToken);
+            await _unitOfWork.SaveAsync(cancellationToken);
             return successUrl;
         }
     }

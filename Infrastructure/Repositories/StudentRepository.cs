@@ -22,7 +22,6 @@ namespace Infrastructure.Repositories
                 .Select(s => s.User.Email!)
                 .ToListAsync(cancellationToken);
         }
-
         public Task<Student?> GetStudentAsync(int studentId, CancellationToken cancellationToken)
         {
             return _context.Students

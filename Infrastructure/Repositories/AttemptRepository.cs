@@ -2,9 +2,6 @@
 using Application.Features.Quizzes.Dtos;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Infrastructure.Repositories
 {
@@ -23,7 +20,6 @@ namespace Infrastructure.Repositories
                 .Where(a => a.Id == attemptId && a.ModuleItemId == quizId && a.Quiz.Course.Tenant.SubDomain == subdomain)
                 .FirstOrDefaultAsync(cancellationToken);
         }
-
         public async Task<List<GradeDistribution>> GetAttemptGradeDistributionAsync(int quizId, CancellationToken cancellationToken)
         {
             return await _context.QuizAttempts
@@ -51,7 +47,6 @@ namespace Infrastructure.Repositories
                 .Take(5)
                 .ToListAsync(cancellationToken);
         }
-
         public async Task<AttemptResponse?> GetAttemptResponseByIdAsync(int attemptId, int quizId, string subdomain, CancellationToken cancellationToken)
         {
             return await _context.QuizAttempts
@@ -59,7 +54,6 @@ namespace Infrastructure.Repositories
                 .ProjectTo<AttemptResponse>(_mapper.ConfigurationProvider)
                 .FirstOrDefaultAsync(cancellationToken);
         }
-
         public async Task<List<AttemptOverTime>> GetAttemptsOverTimeAsync(int quizId, CancellationToken cancellationToken)
         {
             return await _context.QuizAttempts

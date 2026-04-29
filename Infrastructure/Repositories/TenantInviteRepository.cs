@@ -19,10 +19,6 @@ namespace Infrastructure.Repositories
         {
             await _context.TenantInvites.AddAsync(tenantInvite, cancellationToken);
         }
-        public async Task<int> SaveAsync(CancellationToken cancellationToken)
-        {
-            return await _context.SaveChangesAsync(cancellationToken);
-        }
         public async Task<ValidateTenanInviteDto> GetValidateTenanInviteAsync(string token, CancellationToken cancellationToken)
         {
             var result = await _context.TenantInvites

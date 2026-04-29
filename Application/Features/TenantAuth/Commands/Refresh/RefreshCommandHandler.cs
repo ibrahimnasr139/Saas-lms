@@ -1,5 +1,4 @@
 ﻿using Application.Contracts.Authentication;
-using Application.Contracts.Repositories;
 
 namespace Application.Features.TenantAuth.Commands.Refresh
 {
@@ -7,11 +6,14 @@ namespace Application.Features.TenantAuth.Commands.Refresh
     {
         private readonly IRefreshRepository _refreshRepository;
         private readonly ITokenProvider _tokenProvider;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly UserManager<ApplicationUser> _userManager;
-        public RefreshCommandHandler(IRefreshRepository refreshRepository, ITokenProvider tokenProvider, UserManager<ApplicationUser> userManager)
+        public RefreshCommandHandler(IRefreshRepository refreshRepository, ITokenProvider tokenProvider, IUnitOfWork unitOfWork,
+            UserManager<ApplicationUser> userManager)
         {
             _refreshRepository = refreshRepository;
             _tokenProvider = tokenProvider;
+            _unitOfWork = unitOfWork;
             _userManager = userManager;
         }
         public async Task<OneOf<bool, Error>> Handle(RefreshCommand request, CancellationToken cancellationToken)
@@ -30,7 +32,7 @@ namespace Application.Features.TenantAuth.Commands.Refresh
             _tokenProvider.GenerateJwtToken(user);
             var newRefreshToken = _tokenProvider.GenerateRefreshToken();
             _refreshRepository.AddRefreshToken(user, newRefreshToken.token, newRefreshToken.expiresOn, cancellationToken);
-            await _refreshRepository.SaveAsync(cancellationToken);
+            await _unitOfWork.SaveAsync(cancellationToken);
             return true;
         }
     }

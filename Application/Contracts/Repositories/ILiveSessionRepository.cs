@@ -11,7 +11,6 @@ namespace Application.Contracts.Repositories
         Task<List<LiveSessionDto>> GetLiveSessionsByTenantIdAsync(int tenantId, CancellationToken cancellationToken);
         Task<LiveSessionDto> GetLiveSessionBySessionIdAsync(int sessionId, int tenantId, CancellationToken cancellationToken);
         Task CreateAsync(LiveSession session, CancellationToken cancellationToken);
-        Task<int> SaveAsync(CancellationToken cancellationToken);
         Task DeleteAsync(int SessionId, CancellationToken cancellationToken);
         Task<GetLiveSessionsStatisticsResponse> GetStatisticsAsync(string userId, int tenantId, CancellationToken cancellationToken);
         Task<List<StudentCourseLiveSessionsDto>> GetStudentCourseLiveSessionsAsync(int courseId, CancellationToken cancellationToken);

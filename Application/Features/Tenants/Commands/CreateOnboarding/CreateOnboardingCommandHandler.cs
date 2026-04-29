@@ -72,7 +72,7 @@ namespace Application.Features.Tenants.Commands.CreateOnboarding
                 var subscriptionId = await _subscriptionRepository.CreateFreeSubcscription(createdTenantId, freePlanPricingId, cancellationToken);
 
                 var (ownerRoleId, assistantRoleId) = await _tenantRepository.AddTenantRoles(createdTenantId, cancellationToken);
-                await _tenantRepository.SaveAsync(cancellationToken);
+                await _unitOfWork.SaveAsync(cancellationToken);
 
                 var tenantMember = _mapper.Map<TenantMember>(request, opt =>
                     opt.AfterMap((src, dest) =>

@@ -1,6 +1,5 @@
 ﻿using Application.Features.ModuleItems.Commands.ReorderModuleItem;
 using Application.Features.ModuleItems.Dtos;
-using Application.Features.TenantMembers.Dtos;
 using Application.Features.StudentLessons.Dtos;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
@@ -57,7 +56,6 @@ namespace Infrastructure.Repositories
                 .ProjectTo<AllItemsDto>(_mapper.ConfigurationProvider)
                 .ToListAsync(cancellationToken);
         }
-
         public async Task<AssignmentDto?> GetAssignmentAsync(int moduleItemId, int moduleId, int courseId, string subdomain, CancellationToken cancellationToken)
         {
             return await _dbContext.Assignments
@@ -66,42 +64,36 @@ namespace Infrastructure.Repositories
                 .ProjectTo<AssignmentDto>(_mapper.ConfigurationProvider)
                 .FirstOrDefaultAsync(cancellationToken);
         }
-
         public async Task<Assignment?> GetAssignmentByModuleItemIdAsync(int moduleItemId, int moduleId, int courseId, string subdomain, CancellationToken cancellationToken)
         {
             return await _dbContext.Assignments.
                  Include(x => x.ModuleItem).
                  FirstOrDefaultAsync(l => l.ModuleItemId == moduleItemId && l.ModuleId == moduleId && l.CourseId == courseId && l.Course.Tenant.SubDomain == subdomain, cancellationToken);
         }
-
         public async Task<ModuleItem?> GetAsync(int moduleItemId, int moduleId, int courseId, string subdomain, CancellationToken cancellationToken)
         {
             return await _dbContext.ModuleItems.AsNoTracking().FirstOrDefaultAsync(m => m.Id == moduleItemId && m.ModuleId == moduleId
             && m.CourseId == courseId && m.Course.Tenant.SubDomain == subdomain
             , cancellationToken);
         }
-
         public async Task<ModuleItem?> GetItemConditions(int moduleItemId, int moduleId, int courseId, string subdomain, CancellationToken cancellationToken)
         {
             return await _dbContext.ModuleItems
                 .Include(mi => mi.Conditions)
                 .FirstOrDefaultAsync(m => m.Id == moduleItemId && m.ModuleId == moduleId && m.CourseId == courseId && m.Course.Tenant.SubDomain == subdomain, cancellationToken);
         }
-
         public async Task<Lesson?> GetLessonByModuleItemIdAsync(int moduleItemId, int moduleId, int courseId, string subdomain, CancellationToken cancellationToken)
         {
             return await _dbContext.Lessons.
                  Include(x => x.ModuleItem).
                  FirstOrDefaultAsync(l => l.ModuleItemId == moduleItemId && l.ModuleId == moduleId && l.CourseId == courseId && l.Course.Tenant.SubDomain == subdomain, cancellationToken);
         }
-
         public async Task<Quiz?> GetQuizAsync(int moduleItemId, int moduleId, int courseId, string subdomain, CancellationToken cancellationToken)
         {
             return await _dbContext.Quizzes.
                  FirstOrDefaultAsync(l => l.ModuleItemId == moduleItemId && l.ModuleId == moduleId && l.CourseId == courseId && l.Course.Tenant.SubDomain == subdomain, cancellationToken);
 
         }
-
         public async Task<QuizDto?> GetQuizWithQuestions(int moduleItemId, int moduleId, int courseId, string subdomain, CancellationToken cancellationToken)
         {
             return await _dbContext.Quizzes
@@ -110,7 +102,6 @@ namespace Infrastructure.Repositories
                 .ProjectTo<QuizDto>(_mapper.ConfigurationProvider)
                 .FirstOrDefaultAsync(cancellationToken);
         }
-
         public async Task<SettingsDto?> GetSettingsAsync(int moduleItemId, int moduleId, int courseId, string subdomain, CancellationToken cancellationToken)
         {
             return await _dbContext.ModuleItems
@@ -124,7 +115,6 @@ namespace Infrastructure.Repositories
             _dbContext.ModuleItems.Remove(moduleItem);
             await _dbContext.SaveChangesAsync(cancellationToken);
         }
-
         public async Task ReorderItems(IEnumerable<OrderDto> orders, CancellationToken cancellationToken)
         {
             foreach (var order in orders)

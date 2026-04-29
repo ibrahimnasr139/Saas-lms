@@ -16,10 +16,11 @@ namespace Application.Features.Questions.Commands.UpdateQuizQuestion
         private readonly IQuizRepository _quizRepository;
         private readonly IMapper _mapper;
         private readonly IQuestionRepository _questionRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
         public UpdateQuizQuestionCommandHandler(ITenantMemberRepository tenantMemberRepository, ICurrentUserId currentUserId,
             ISubscriptionRepository subscriptionRepository, IHttpContextAccessor httpContextAccessor, ICourseRepository courseRepository,
-            IQuizRepository quizRepository, IMapper mapper, IQuestionRepository questionRepository)
+            IQuizRepository quizRepository, IMapper mapper, IQuestionRepository questionRepository, IUnitOfWork unitOfWork)
         {
             _tenantMemberRepository = tenantMemberRepository;
             _currentUserId = currentUserId;
@@ -28,6 +29,7 @@ namespace Application.Features.Questions.Commands.UpdateQuizQuestion
             _courseRepository = courseRepository;
             _quizRepository = quizRepository;
             _questionRepository = questionRepository;
+            _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
         public async Task<OneOf<bool, Error>> Handle(UpdateQuizQuestionCommand request, CancellationToken cancellationToken)
@@ -56,7 +58,7 @@ namespace Application.Features.Questions.Commands.UpdateQuizQuestion
                 return QuestionErrors.CategoryNotFound;
             }
             _mapper.Map(request, quizQuestion);
-            await _courseRepository.SaveAsync(cancellationToken);
+            await _unitOfWork.SaveAsync(cancellationToken);
             return true;
         }
     }

@@ -22,10 +22,6 @@ namespace Infrastructure.Repositories
         {
             await _context.Orders.AddAsync(order, cancellationToken);
         }
-        public async Task<int> SaveAsync(CancellationToken cancellationToken)
-        {
-            return await _context.SaveChangesAsync(cancellationToken);
-        }
         public async Task<List<TenantOrderDto>> GetTenantOrdersAsync(int tenantId, CancellationToken cancellationToken)
         {
             return await _context.Orders

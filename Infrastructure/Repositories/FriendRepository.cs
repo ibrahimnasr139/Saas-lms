@@ -20,10 +20,6 @@ namespace Infrastructure.Repositories
         {
             await _context.Friends.AddAsync(friend, cancellationToken);
         }
-        public async Task<int> SaveAsync(CancellationToken cancellationToken)
-        {
-            return await _context.SaveChangesAsync(cancellationToken);
-        }
         public async Task<List<FriendsDto>> GetFriendsAsync(int studentId, CancellationToken cancellationToken)
         {
             return await _context.Friends

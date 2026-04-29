@@ -11,14 +11,16 @@ namespace Application.Features.Friends.Commands.AcceptRequest
     {
         private readonly HybridCache _hybridCache;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IFriendRepository _friendRepository;
         private readonly IStudentRepository _studentRepository;
         private readonly IEmailSender _emailSender;
-        public AcceptRequestCommandHandler(HybridCache hybridCache, IHttpContextAccessor httpContextAccessor,
+        public AcceptRequestCommandHandler(HybridCache hybridCache, IHttpContextAccessor httpContextAccessor, IUnitOfWork unitOfWork,
             IFriendRepository friendRepository, IStudentRepository studentRepository, IEmailSender emailSender)
         {
             _hybridCache = hybridCache;
             _httpContextAccessor = httpContextAccessor;
+            _unitOfWork = unitOfWork;
             _friendRepository = friendRepository;
             _studentRepository = studentRepository;
             _emailSender = emailSender;
@@ -46,7 +48,7 @@ namespace Application.Features.Friends.Commands.AcceptRequest
             friendRequest.ActionStudentId = session.StudentId;
             friendRequest.Status = FriendStatus.Accepted;
             await _friendRepository.UpdateRequestStatusAsync(friendRequest, cancellationToken);
-            await _friendRepository.SaveAsync(cancellationToken);
+            await _unitOfWork.SaveAsync(cancellationToken);
 
             var emailBody = EmailConfirmationHelper.GenerateEmailBodyHelper(
                 EmailConstants.AcceptRequestTemplate,

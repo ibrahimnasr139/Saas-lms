@@ -1,7 +1,4 @@
 ﻿using Application.Features.Attempts.Dtos;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Infrastructure.Repositories
 {
@@ -12,7 +9,6 @@ namespace Infrastructure.Repositories
         {
             _context = context;
         }
-
         public async Task UpdateTeacherScore(int attemptId, List<QuestionDto> questions, CancellationToken cancellationToken)
         {
             foreach (var question in questions)

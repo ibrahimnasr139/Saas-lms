@@ -1,8 +1,4 @@
-﻿using AutoMapper;
-using Microsoft.EntityFrameworkCore.Storage;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Microsoft.EntityFrameworkCore.Storage;
 
 namespace Infrastructure.Repositories
 {
@@ -39,7 +35,6 @@ namespace Infrastructure.Repositories
             await _transaction.DisposeAsync();
             _transaction = null;
         }
-
         public async Task SaveAsync(CancellationToken cancellationToken)
         {
             await _dbContext.SaveChangesAsync(cancellationToken);

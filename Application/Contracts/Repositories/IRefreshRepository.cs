@@ -4,7 +4,6 @@
     {
         Task<RefreshToken?> GetRefreshTokenAsync(string token, CancellationToken cancellationToken);
         void AddRefreshToken(ApplicationUser user, string token, DateTime expiresAt, CancellationToken cancellationToken);
-        Task<int> SaveAsync(CancellationToken cancellationToken);
 
     }
 }

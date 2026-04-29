@@ -37,27 +37,27 @@ namespace Infrastructure.Repositories
             {
                 query = query.Where(c => c.SubjectId == subjectId.Value);
             }
-            if(status.HasValue)
+            if (status.HasValue)
             {
                 query = query.Where(c => c.CourseStatus == status.Value);
             }
             var studentCountQuery = _dbContext.Enrollments.AsNoTracking().Where(e => e.Course.Tenant.SubDomain == subDomain)
                 .GroupBy(e => e.CourseId)
-                .Select(g => new { CourseId = g.Key, StudentCount = g.Select(e => e.StudentId).Count().ToString()})
+                .Select(g => new { CourseId = g.Key, StudentCount = g.Select(e => e.StudentId).Count().ToString() })
                 .DefaultIfEmpty();
             var courseProgressQuery = _dbContext.CourseProgresses.AsNoTracking().Where(p => p.Course.Tenant.SubDomain == subDomain)
                 .GroupBy(e => e.CourseId)
-                .Select(g => new { CourseId = g.Key, CompletionRate = g.Where(p => p.TotalLessons > 0).Average(p => (double)p.CompletedLessons / p.TotalLessons).ToString()});
+                .Select(g => new { CourseId = g.Key, CompletionRate = g.Where(p => p.TotalLessons > 0).Average(p => (double)p.CompletedLessons / p.TotalLessons).ToString() });
             var lessonsQuery = _dbContext.Lessons.AsNoTracking().Where(l => l.Course.Tenant.SubDomain == subDomain)
                 .GroupBy(l => l.CourseId)
                 .Select(g => new { CourseId = g.Key, LessonsCount = g.Count().ToString() })
                 .DefaultIfEmpty();
             var queryWithCounts = query.LeftJoin(studentCountQuery, c => c.Id, sc => sc.CourseId, (c, sc) => new { Course = c, StudentCount = sc != null ? sc.StudentCount : null! })
-                .LeftJoin(courseProgressQuery, c => c.Course.Id, cp => cp.CourseId, (c, cp) => new { c.Course, c.StudentCount, CompletionRate = cp != null ? cp.CompletionRate: null! })
+                .LeftJoin(courseProgressQuery, c => c.Course.Id, cp => cp.CourseId, (c, cp) => new { c.Course, c.StudentCount, CompletionRate = cp != null ? cp.CompletionRate : null! })
                 .LeftJoin(lessonsQuery, c => c.Course.Id, lc => lc.CourseId, (c, lc) => new { c.Course, c.StudentCount, c.CompletionRate, LessonsCount = lc != null ? lc.LessonsCount : null! });
             if (!string.IsNullOrEmpty(sortBy))
             {
-                if(sortBy == SortBy.Date)
+                if (sortBy == SortBy.Date)
                 {
                     queryWithCounts = sortOrder == SortDirections.Ascending
                     ? queryWithCounts.OrderBy(c => c.Course.CreatedAt)
@@ -69,7 +69,7 @@ namespace Infrastructure.Repositories
                             : queryWithCounts.Where(c => c.Course.CreatedAt <= lastDate);
                     }
                 }
-                else if(sortBy == SortBy.Students)
+                else if (sortBy == SortBy.Students)
                 {
                     queryWithCounts = sortOrder == SortDirections.Ascending
                     ? queryWithCounts.OrderBy(c => c.StudentCount)
@@ -81,8 +81,8 @@ namespace Infrastructure.Repositories
                             : queryWithCounts.Where(c => c.StudentCount != null && int.Parse(c.StudentCount) <= lastCount);
                     }
                 }
-                else if(sortBy == SortBy.Completion)
-                 {
+                else if (sortBy == SortBy.Completion)
+                {
                     queryWithCounts = sortOrder == SortDirections.Ascending
                     ? queryWithCounts.OrderBy(c => c.CompletionRate)
                     : queryWithCounts.OrderByDescending(c => c.CompletionRate);
@@ -176,11 +176,7 @@ namespace Infrastructure.Repositories
         public async Task RemoveCourseAsync(Course course, CancellationToken cancellationToken)
         {
             _dbContext.Courses.Remove(course);
-            await SaveAsync(cancellationToken);
-        }
-        public async Task<int> SaveAsync(CancellationToken cancellationToken)
-        {
-            return await _dbContext.SaveChangesAsync(cancellationToken);
+            await _dbContext.SaveChangesAsync(cancellationToken);
         }
         public async Task<WebsiteCourseDetailsDto?> GetWebsiteCourseDetailsAsync(int courseId, string subDomain, string? studentUserId, CancellationToken cancellationToken)
         {

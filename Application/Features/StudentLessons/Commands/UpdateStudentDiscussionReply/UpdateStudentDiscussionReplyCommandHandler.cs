@@ -12,10 +12,11 @@ namespace Application.Features.StudentLessons.Commands.UpdateStudentDiscussionRe
         private readonly IEnrollmentRepository _enrollmentRepository;
         private readonly IModuleItemRepository _moduleItemRepository;
         private readonly IDiscussionRepository _discussionRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
         public UpdateStudentDiscussionReplyCommandHandler(HybridCache hybridCache, IHttpContextAccessor httpContextAccessor,
             IStudentSubscriptionRepository studentSubscriptionRepository, IEnrollmentRepository enrollmentRepository,
-            IModuleItemRepository moduleItemRepository, IDiscussionRepository discussionRepository)
+            IModuleItemRepository moduleItemRepository, IDiscussionRepository discussionRepository, IUnitOfWork unitOfWork)
         {
             _hybridCache = hybridCache;
             _httpContextAccessor = httpContextAccessor;
@@ -23,6 +24,7 @@ namespace Application.Features.StudentLessons.Commands.UpdateStudentDiscussionRe
             _enrollmentRepository = enrollmentRepository;
             _moduleItemRepository = moduleItemRepository;
             _discussionRepository = discussionRepository;
+            _unitOfWork = unitOfWork;
         }
         public async Task<OneOf<StudentLessonResponse, Error>> Handle(UpdateStudentDiscussionReplyCommand request, CancellationToken cancellationToken)
         {
@@ -57,7 +59,7 @@ namespace Application.Features.StudentLessons.Commands.UpdateStudentDiscussionRe
                 return DiscussionErrors.NotDiscussionReplyOwner;
 
             discussionReply.Body = request.Content;
-            await _discussionRepository.SaveAsync(cancellationToken);
+            await _unitOfWork.SaveAsync(cancellationToken);
             return new StudentLessonResponse { Messsage = MessagesConstants.DiscussionReplyUpdated };
         }
     }

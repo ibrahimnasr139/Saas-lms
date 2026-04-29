@@ -39,10 +39,6 @@ namespace Infrastructure.Repositories
             };
             await _context.AddAsync(tenantPage, cancellationToken);
         }
-        public Task<int> SaveAsync(CancellationToken cancellationToken)
-        {
-            return _context.SaveChangesAsync(cancellationToken);
-        }
         public async Task<int> DeleteTenantPageAsync(int tenantId, int pageId, CancellationToken cancellationToken)
         {
             return await _context.TenantPages.Where(tp => tp.Id == pageId && tp.TenantId == tenantId).ExecuteDeleteAsync(cancellationToken);

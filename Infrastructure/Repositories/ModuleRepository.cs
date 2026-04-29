@@ -25,25 +25,21 @@ namespace Infrastructure.Repositories
             await _context.Modules.Where(m => m.CourseId == courseId && m.Order > minOrder && m.Order <= maxOrder && m.Id != moduleId)
            .ExecuteUpdateAsync(m => m.SetProperty(p => p.Order, p => p.Order - 1), cancellationToken);
         }
-
         public async Task<List<AllModulesDto>> GetAllModulesAsync(int courseId, CancellationToken cancellationToken)
         {
             return await _context.Modules.Where(m => m.CourseId == courseId)
                 .ProjectTo<AllModulesDto>(_mapper.ConfigurationProvider)
                 .ToListAsync(cancellationToken);
         }
-
         public async Task<int> GetMaxOrder(int courseId, CancellationToken cancellationToken)
         {
             var maxOrder = await _context.Modules.Where(m => m.CourseId == courseId).MaxAsync(m => (int?)m.Order, cancellationToken);
             return maxOrder ?? 0;
         }
-
         public async Task<Module?> GetModuleByIdAsync(int moduleId, int courseId, string subdomain, CancellationToken cancellationToken)
         {
             return await _context.Modules.FirstOrDefaultAsync(c => c.Id == moduleId && c.CourseId == courseId && c.Course.Tenant.SubDomain == subdomain, cancellationToken);
         }
-
         public async Task<ModuleDto?> GetModuleWithItemsAsync(int moduleId, int courseId, string subdomain, CancellationToken cancellationToken)
         {
             return await _context.Modules.Where(m => m.Id == moduleId && m.CourseId == courseId && m.Course.Tenant.SubDomain == subdomain)

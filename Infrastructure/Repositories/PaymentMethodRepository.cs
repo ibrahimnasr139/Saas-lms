@@ -79,9 +79,5 @@ namespace Infrastructure.Repositories
             await _context.SaveChangesAsync(cancellationToken);
             return true;
         }
-        public Task SaveAsync(CancellationToken cancellationToken)
-        {
-            return _context.SaveChangesAsync(cancellationToken);
-        }
     }
 }

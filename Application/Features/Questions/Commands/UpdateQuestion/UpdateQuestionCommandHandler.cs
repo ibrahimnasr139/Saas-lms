@@ -14,14 +14,18 @@ namespace Application.Features.Questions.Commands.UpdateQuestion
         private readonly ITenantRepository _tenantRepository;
         private readonly IMapper _mapper;
         private readonly ISubscriptionRepository _subscriptionRepository;
+        private readonly IUnitOfWork _unitOfWork;
+
         public UpdateQuestionCommandHandler(IQuestionRepository questionRepository, IHttpContextAccessor httpContextAccessor,
-            ITenantRepository tenantRepository, IMapper mapper, ISubscriptionRepository subscriptionRepository)
+            ITenantRepository tenantRepository, IMapper mapper, ISubscriptionRepository subscriptionRepository,
+            IUnitOfWork unitOfWork)
         {
             _questionRepository = questionRepository;
             _httpContextAccessor = httpContextAccessor;
             _tenantRepository = tenantRepository;
             _mapper = mapper;
             _subscriptionRepository = subscriptionRepository;
+            _unitOfWork = unitOfWork;
         }
         public async Task<OneOf<SuccessDto, Error>> Handle(UpdateQuestionCommand request, CancellationToken cancellationToken)
         {
@@ -42,7 +46,7 @@ namespace Application.Features.Questions.Commands.UpdateQuestion
                 return QuestionErrors.QuestionNotFound;
             }
             _mapper.Map(request, question);
-            await _questionRepository.SaveAsync(cancellationToken);
+            await _unitOfWork.SaveAsync(cancellationToken);
             return new SuccessDto
             {
                 Id = question.Id.ToString(),

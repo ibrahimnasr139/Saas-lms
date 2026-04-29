@@ -14,10 +14,6 @@ namespace Infrastructure.Repositories
         {
             await _context.ZoomOAuthStates.AddAsync(oauthState, cancellationToken);
         }
-        public async Task<int> SaveAsync(CancellationToken cancellationToken)
-        {
-            return await _context.SaveChangesAsync(cancellationToken);
-        }
         public async Task<ZoomOAuthState?> GetOAuthStateAsync(string state, CancellationToken cancellationToken)
         {
             return await _context.ZoomOAuthStates

@@ -1,7 +1,4 @@
-﻿using Application.Common;
-using Application.Constants;
-using Application.Contracts.Repositories;
-using Application.Features.TenantMembers.Dtos;
+﻿using Application.Features.TenantMembers.Dtos;
 using Microsoft.AspNetCore.Http;
 
 namespace Application.Features.TenantMembers.Commands.AcceptTenanInvite
@@ -12,16 +9,18 @@ namespace Application.Features.TenantMembers.Commands.AcceptTenanInvite
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ITenantInviteRepository _tenantInviteRepository;
         private readonly ITenantRepository _tenantRepository;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
         public AcceptTenanInviteCommandHandler(ICurrentUserId currentUserId, UserManager<ApplicationUser> userManager,
-            ITenantInviteRepository tenantInviteRepository, ITenantRepository tenantRepository,
+            ITenantInviteRepository tenantInviteRepository, ITenantRepository tenantRepository, IUnitOfWork unitOfWork,
             IHttpContextAccessor httpContextAccessor)
         {
             _currentUserId = currentUserId;
             _userManager = userManager;
             _tenantInviteRepository = tenantInviteRepository;
             _tenantRepository = tenantRepository;
+            _unitOfWork = unitOfWork;
             _httpContextAccessor = httpContextAccessor;
         }
         public async Task<OneOf<AcceptTenanInviteDto, Error>> Handle(AcceptTenanInviteCommand request, CancellationToken cancellationToken)
@@ -56,11 +55,11 @@ namespace Application.Features.TenantMembers.Commands.AcceptTenanInvite
             };
 
             await _tenantRepository.AddTenantMemberAsync(tenantMember, cancellationToken);
-            await _tenantInviteRepository.SaveAsync(cancellationToken);
+            await _unitOfWork.SaveAsync(cancellationToken);
             await _tenantInviteRepository.AcceptInviteAsync(request.token, cancellationToken);
 
             var subdomain = await _tenantRepository.GetSubDomainAsync(invite.TenantId, cancellationToken);
-            _httpContextAccessor?.HttpContext?.Response.Cookies.Append(AuthConstants.SubDomain, subdomain , new CookieOptions
+            _httpContextAccessor?.HttpContext?.Response.Cookies.Append(AuthConstants.SubDomain, subdomain, new CookieOptions
             {
                 HttpOnly = true,
                 Secure = true,

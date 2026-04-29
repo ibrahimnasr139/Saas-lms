@@ -19,10 +19,6 @@ namespace Infrastructure.Repositories
         {
             await _context.Schedules.AddAsync(schedule);
         }
-        public async Task<int> SaveAsync(CancellationToken cancellationToken)
-        {
-            return await _context.SaveChangesAsync(cancellationToken);
-        }
         public async Task<bool> HasConflictAsync(string subDomain, DateTime start, DateTime end, bool allDay, CancellationToken cancellationToken, int? scheduleId = null)
         {
             var startOfDay = start.Date;

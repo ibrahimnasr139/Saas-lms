@@ -11,14 +11,16 @@ namespace Application.Features.Public.Commands.UpdateReceipt
         private readonly IOrderRepository _orderRepository;
         private readonly HybridCache _hybridCache;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IUnitOfWork _unitOfWork;
 
         public UpdateReceiptCommandHandler(ITenantRepository tenantRepository, HybridCache hybridCache, IOrderRepository orderRepository,
-            IHttpContextAccessor httpContextAccessor)
+            IHttpContextAccessor httpContextAccessor, IUnitOfWork unitOfWork)
         {
             _tenantRepository = tenantRepository;
             _orderRepository = orderRepository;
             _hybridCache = hybridCache;
             _httpContextAccessor = httpContextAccessor;
+            _unitOfWork = unitOfWork;
         }
         public async Task<OneOf<TenantOrderResponse, Error>> Handle(UpdateReceiptCommand request, CancellationToken cancellationToken)
         {
@@ -52,7 +54,7 @@ namespace Application.Features.Public.Commands.UpdateReceipt
 
             order.PaymentReference = request.PaymentReference;
             order.PaymentProof = request.PaymentProof;
-            await _orderRepository.SaveAsync(cancellationToken);
+            await _unitOfWork.SaveAsync(cancellationToken);
             return new TenantOrderResponse { Message = MessagesConstants.OrderUpdated };
         }
     }

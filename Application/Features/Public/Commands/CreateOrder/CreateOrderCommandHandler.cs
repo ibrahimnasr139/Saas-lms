@@ -13,10 +13,11 @@ namespace Application.Features.Public.Commands.CreateOrder
         private readonly ICourseRepository _courseRepository;
         private readonly IEnrollmentRepository _enrollmentRepository;
         private readonly IStudentSubscriptionRepository _studentSubscriptionRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
         public CreateOrderCommandHandler(ITenantRepository tenantRepository, HybridCache hybridCache, IOrderRepository orderRepository,
             IHttpContextAccessor httpContextAccessor, ICourseRepository courseRepository, IEnrollmentRepository enrollmentRepository,
-            IStudentSubscriptionRepository studentSubscriptionRepository)
+            IStudentSubscriptionRepository studentSubscriptionRepository, IUnitOfWork unitOfWork)
         {
             _tenantRepository = tenantRepository;
             _orderRepository = orderRepository;
@@ -25,6 +26,7 @@ namespace Application.Features.Public.Commands.CreateOrder
             _courseRepository = courseRepository;
             _enrollmentRepository = enrollmentRepository;
             _studentSubscriptionRepository = studentSubscriptionRepository;
+            _unitOfWork = unitOfWork;
         }
         public async Task<OneOf<PublicOrderDto, Error>> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
         {
@@ -70,7 +72,7 @@ namespace Application.Features.Public.Commands.CreateOrder
                 StudentId = session.StudentId,
             };
             await _orderRepository.CreateOrderAsync(newOrder, cancellationToken);
-            await _orderRepository.SaveAsync(cancellationToken);
+            await _unitOfWork.SaveAsync(cancellationToken);
             return new PublicOrderDto
             {
                 Id = newOrder.Id,

@@ -8,10 +8,12 @@ namespace Application.Features.Zoom.Commands.Webhook
     internal sealed class ZoomWebhookCommandHandler : IRequestHandler<ZoomWebhookCommand>
     {
         private readonly ILiveSessionRepository _liveSessionRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public ZoomWebhookCommandHandler(ILiveSessionRepository liveSessionRepository)
+        public ZoomWebhookCommandHandler(ILiveSessionRepository liveSessionRepository, IUnitOfWork unitOfWork)
         {
             _liveSessionRepository = liveSessionRepository;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task Handle(ZoomWebhookCommand request, CancellationToken cancellationToken)
@@ -50,7 +52,7 @@ namespace Application.Features.Zoom.Commands.Webhook
                 default:
                     return;
             }
-            await _liveSessionRepository.SaveAsync(cancellationToken);
+            await _unitOfWork.SaveAsync(cancellationToken);
         }
     }
 }

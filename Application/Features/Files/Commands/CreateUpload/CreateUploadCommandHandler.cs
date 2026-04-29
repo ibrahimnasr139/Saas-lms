@@ -14,12 +14,13 @@ namespace Application.Features.Files.Commands.CreateUpload
         private readonly IFileService _fileService;
         private readonly IFileRepository _fileRepository;
         private readonly ICurrentUserId _currentUserId;
+        private readonly IUnitOfWork _unitOfWork;
 
         private const int OverFlowSizeMB = 20;
 
         public CreateUploadCommandHandler(IHttpContextAccessor httpContextAccessor, IPlanRepository planRepository,
             ISubscriptionRepository subscriptionRepository, ITenantRepository tenantRepository, IFileService fileService,
-            IFileRepository fileRepository, ICurrentUserId currentUserId)
+            IFileRepository fileRepository, ICurrentUserId currentUserId, IUnitOfWork unitOfWork)
         {
             _httpContextAccessor = httpContextAccessor;
             _planRepository = planRepository;
@@ -28,6 +29,7 @@ namespace Application.Features.Files.Commands.CreateUpload
             _fileService = fileService;
             _fileRepository = fileRepository;
             _currentUserId = currentUserId;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<OneOf<CreateUploadDto, Error>> Handle(CreateUploadCommand request, CancellationToken cancellationToken)
@@ -67,7 +69,7 @@ namespace Application.Features.Files.Commands.CreateUpload
                 UploadedById = userId
             };
             await _fileRepository.CreateAsync(newFile, cancellationToken);
-            await _fileRepository.SaveAsync(cancellationToken);
+            await _unitOfWork.SaveAsync(cancellationToken);
             return credentials;
         }
     }

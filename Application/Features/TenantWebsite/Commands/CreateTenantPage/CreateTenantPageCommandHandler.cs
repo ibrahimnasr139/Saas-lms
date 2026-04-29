@@ -10,15 +10,16 @@ namespace Application.Features.TenantWebsite.Commands.CreateTenantPage
         private readonly ITenantRepository _tenantRepository;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ISubscriptionRepository _subscriptionRepository;
-
+        private readonly IUnitOfWork _unitOfWork;
 
         public CreateTenantPageCommandHandler(ITenantPageRepository tenantWebsiteRepository, ITenantRepository tenantRepository,
-            IHttpContextAccessor httpContextAccessor, ISubscriptionRepository subscriptionRepository)
+            IHttpContextAccessor httpContextAccessor, ISubscriptionRepository subscriptionRepository, IUnitOfWork unitOfWork)
         {
             _tenantWebsiteRepository = tenantWebsiteRepository;
             _tenantRepository = tenantRepository;
             _subscriptionRepository = subscriptionRepository;
             _httpContextAccessor = httpContextAccessor;
+            _unitOfWork = unitOfWork;
         }
         public async Task<OneOf<TenantPageResponse, Error>> Handle(CreateTenantPageCommand request, CancellationToken cancellationToken)
         {
@@ -34,7 +35,7 @@ namespace Application.Features.TenantWebsite.Commands.CreateTenantPage
                 return TenantWebsiteErrors.PageUrlAlreadyExists;
 
             await _tenantWebsiteRepository.CreateTenantPageAsync(request, tenantId, cancellationToken);
-            await _tenantWebsiteRepository.SaveAsync(cancellationToken);
+            await _unitOfWork.SaveAsync(cancellationToken);
             return new TenantPageResponse { Message = MessagesConstants.TenantWebsiteCreated };
         }
     }

@@ -18,9 +18,10 @@ namespace Application.Features.Tenants.Commands.UpdateLiveSession
         private readonly ITenantMemberRepository _tenantMemberRepository;
         private readonly IEmailSender _emailSender;
         private readonly IZoomService _zoomService;
+        private readonly IUnitOfWork _unitOfWork;
 
         public UpdateLiveSessionCommandHandler(ICurrentUserId currentUserId, ILiveSessionRepository liveSessionRepository,
-            IZoomService zoomService, IEmailSender emailSender, ICourseRepository courseRepository,
+            IZoomService zoomService, IEmailSender emailSender, ICourseRepository courseRepository,IUnitOfWork unitOfWork,
             IHttpContextAccessor httpContextAccessor, ITenantRepository tenantRepository, ITenantMemberRepository tenantMemberRepository)
         {
             _currentUserId = currentUserId;
@@ -31,6 +32,7 @@ namespace Application.Features.Tenants.Commands.UpdateLiveSession
             _httpContextAccessor = httpContextAccessor;
             _tenantRepository = tenantRepository;
             _tenantMemberRepository = tenantMemberRepository;
+            _unitOfWork = unitOfWork;
         }
         public async Task<OneOf<UpdateLiveSessionDto, Error>> Handle(UpdateLiveSessionCommand request, CancellationToken cancellationToken)
         {
@@ -82,7 +84,7 @@ namespace Application.Features.Tenants.Commands.UpdateLiveSession
             session.EnableChat = request.Settings.EnableChat;
             session.WaitingRoom = request.Settings.WaitingRoom;
             session.ParticipantVideo = request.Settings.ParticipantVideo;
-            await _liveSessionRepository.SaveAsync(cancellationToken);
+            await _unitOfWork.SaveAsync(cancellationToken);
 
             if (request.Notifications.SendEmail)
             {

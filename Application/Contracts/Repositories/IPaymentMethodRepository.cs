@@ -14,6 +14,5 @@ namespace Application.Contracts.Repositories
         Task<PaymentMethodDto?> UpdatePaymentMethodAsync(int PaymentMethodId, Dictionary<string, JsonElement> Details, CancellationToken cancellationToken);
         Task<PaymentMethodDto?> UpdatePaymentMethodStatusAsync(int PaymentMethodId, bool IsActive, CancellationToken cancellationToken);
         Task<bool> DeletePayMentMethodAsync(int PaymentMethodId, CancellationToken cancellationToken);
-        Task SaveAsync(CancellationToken cancellationToken);
     }
 }

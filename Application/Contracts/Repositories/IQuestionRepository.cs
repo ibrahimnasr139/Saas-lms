@@ -24,6 +24,5 @@ namespace Application.Contracts.Repositories
         Task AddQuestionsToQuiz(IEnumerable<QuizQuestion> quizQuestions, CancellationToken cancellationToken);
         Task<IEnumerable<QuestionTypeDto>> GetQuestionsByType(string subdomain, CancellationToken cancellationToken);
         Task<IEnumerable<CategoryStatisticsDto>> GetQuestionCategories(string subdomain, CancellationToken cancellationToken);
-        Task SaveAsync(CancellationToken cancellationToken);
     }
 }

@@ -8,14 +8,16 @@ namespace Application.Features.TenantAuth.Commands.VerifyOtp
     {
         private readonly HybridCache _hybridCache;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IRefreshRepository _refreshRepository;
         private readonly ITokenProvider _tokenProvider;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        public VerifyOtpCommandHandler(HybridCache hybridCache, UserManager<ApplicationUser> userManager,
+        public VerifyOtpCommandHandler(HybridCache hybridCache, UserManager<ApplicationUser> userManager, IUnitOfWork unitOfWork,
             IRefreshRepository refreshRepository, ITokenProvider tokenProvider, IHttpContextAccessor httpContextAccessor)
         {
             _hybridCache = hybridCache;
             _userManager = userManager;
+            _unitOfWork = unitOfWork;
             _refreshRepository = refreshRepository;
             _tokenProvider = tokenProvider;
             _httpContextAccessor = httpContextAccessor;
@@ -49,7 +51,7 @@ namespace Application.Features.TenantAuth.Commands.VerifyOtp
             _tokenProvider.GenerateJwtToken(user!);
             var refreshToken = _tokenProvider.GenerateRefreshToken();
             _refreshRepository.AddRefreshToken(user!, refreshToken.token, refreshToken.expiresOn, cancellationToken);
-            await _refreshRepository.SaveAsync(cancellationToken);
+            await _unitOfWork.SaveAsync(cancellationToken);
             return true;
         }
     }

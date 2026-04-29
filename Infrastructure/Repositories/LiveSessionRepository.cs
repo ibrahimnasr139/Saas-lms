@@ -27,10 +27,6 @@ namespace Infrastructure.Repositories
         {
             await _context.LiveSessions.AddAsync(session, cancellationToken);
         }
-        public async Task<int> SaveAsync(CancellationToken cancellationToken)
-        {
-            return await _context.SaveChangesAsync(cancellationToken);
-        }
         public async Task DeleteAsync(int SessionId, CancellationToken cancellationToken)
         {
             await _context.LiveSessions.Where(ls => ls.Id == SessionId).ExecuteDeleteAsync(cancellationToken);

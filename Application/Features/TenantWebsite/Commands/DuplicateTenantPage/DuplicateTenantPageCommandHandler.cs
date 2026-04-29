@@ -9,15 +9,17 @@ namespace Application.Features.TenantWebsite.Commands.DuplicateTenantPage
         private readonly ITenantPageRepository _tenantWebsiteRepository;
         private readonly ITenantRepository _tenantRepository;
         private readonly ISubscriptionRepository _subscriptionRepository;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
         public DuplicateTenantPageCommandHandler(ITenantPageRepository tenantWebsiteRepository, ITenantRepository tenantRepository,
-            IHttpContextAccessor httpContextAccessor, ISubscriptionRepository subscriptionRepository)
+            IHttpContextAccessor httpContextAccessor, ISubscriptionRepository subscriptionRepository, IUnitOfWork unitOfWork)
         {
             _tenantWebsiteRepository = tenantWebsiteRepository;
             _tenantRepository = tenantRepository;
             _httpContextAccessor = httpContextAccessor;
             _subscriptionRepository = subscriptionRepository;
+            _unitOfWork = unitOfWork;
         }
         public async Task<OneOf<TenantPageResponse, Error>> Handle(DuplicateTenantPageCommand request, CancellationToken cancellationToken)
         {
@@ -49,9 +51,9 @@ namespace Application.Features.TenantWebsite.Commands.DuplicateTenantPage
                 }).ToList()
             };
             await _tenantWebsiteRepository.DuplicateTenantPageAsync(duplicatedTenantPage,cancellationToken);
-            await _tenantWebsiteRepository.SaveAsync(cancellationToken);
+            await _unitOfWork.SaveAsync(cancellationToken);
             duplicatedTenantPage.Url = $"{tenantPage.Url}-{duplicatedTenantPage.Id}";
-            await _tenantWebsiteRepository.SaveAsync(cancellationToken);
+            await _unitOfWork.SaveAsync(cancellationToken);
             return new TenantPageResponse { Message = MessagesConstants.TenantWebsiteDuplicated };
         }
     }

@@ -10,15 +10,18 @@ namespace Application.Features.TenantPaymentMethods.Commands.AddPaymentMethod
         private readonly ICurrentUserId _currentUserId;
         private readonly ITenantMemberRepository _tenantMemberRepository;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly ITenantRepository _tenantRepository;
 
         public AddPaymentMethodCommandHandler(IPaymentMethodRepository paymentMethodRepository, ICurrentUserId currentUserId,
-            ITenantMemberRepository tenantMemberRepository, IHttpContextAccessor httpContextAccessor, ITenantRepository tenantRepository)
+            ITenantMemberRepository tenantMemberRepository, IHttpContextAccessor httpContextAccessor,IUnitOfWork unitOfWork,
+            ITenantRepository tenantRepository)
         {
             _paymentMethodRepository = paymentMethodRepository;
             _currentUserId = currentUserId;
             _tenantMemberRepository = tenantMemberRepository;
             _httpContextAccessor = httpContextAccessor;
+            _unitOfWork = unitOfWork;
             _tenantRepository = tenantRepository;
         }
         public async Task<OneOf<PaymentMethodResponse, Error>> Handle(AddPaymentMethodCommand request, CancellationToken cancellationToken)
@@ -42,7 +45,7 @@ namespace Application.Features.TenantPaymentMethods.Commands.AddPaymentMethod
             };
 
             await _paymentMethodRepository.CreatePaymentMethodAsync(paymentMethod, cancellationToken);
-            await _paymentMethodRepository.SaveAsync(cancellationToken);
+            await _unitOfWork.SaveAsync(cancellationToken);
 
             if (paymentMethod.Id == 0)
                 return TenantPaymentMethodErrors.CreateFailed;

@@ -15,7 +15,6 @@ namespace Infrastructure.Repositories
             _dbContext = dbContext;
             _mapper = mapper;
         }
-
         public async Task<OverviewDto?> GetOverviewAsync(int itemId, CancellationToken cancellationToken)
         {
             return await _dbContext.AssignmentSubmissions.Where(s => s.AssignmentId == itemId)
@@ -71,10 +70,6 @@ namespace Infrastructure.Repositories
         public async Task CreateAssignmentSubmissionAsync(AssignmentSubmission assignmentSubmission, CancellationToken cancellationToken)
         {
             await _dbContext.AssignmentSubmissions.AddAsync(assignmentSubmission, cancellationToken);
-        }
-        public async Task<int> SaveAsync(CancellationToken cancellationToken)
-        {
-            return await _dbContext.SaveChangesAsync(cancellationToken);
         }
     }
 }

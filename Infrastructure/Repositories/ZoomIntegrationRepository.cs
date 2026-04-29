@@ -14,10 +14,6 @@ namespace Infrastructure.Repositories
         {
             await _context.ZoomIntegrations.AddAsync(zoomIntegration, cancellationToken);
         }
-        public async Task<int> SaveAsync(CancellationToken cancellationToken)
-        {
-            return await _context.SaveChangesAsync(cancellationToken);
-        }
         public async Task SaveOrUpdateIntegrationAsync(string userId, int tenantId, ZoomTokenResponse zoomToken, ZoomUserResponse zoomUser, CancellationToken cancellationToken)
         {
             var existingIntegration = await _context.ZoomIntegrations

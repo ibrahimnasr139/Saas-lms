@@ -13,12 +13,13 @@ namespace Application.Features.Modules.Commands.UpdateModule
         private readonly ICurrentUserId _currentUserId;
         private readonly ISubscriptionRepository _subscriptionRepository;
         private readonly IModuleRepository _moduleRepository;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly ICourseRepository _courseRepository;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IMapper _mapper;
         public UpdateModuleCommandHandler(ITenantMemberRepository tenantMemberRepository, ICurrentUserId currentUserId,
             ISubscriptionRepository subscriptionRepository, IHttpContextAccessor httpContextAccessor, ICourseRepository courseRepository,
-            IMapper mapper, IModuleRepository moduleRepository)
+            IMapper mapper, IModuleRepository moduleRepository, IUnitOfWork unitOfWork)
         {
             _tenantMemberRepository = tenantMemberRepository;
             _currentUserId = currentUserId;
@@ -27,6 +28,7 @@ namespace Application.Features.Modules.Commands.UpdateModule
             _courseRepository = courseRepository;
             _mapper = mapper;
             _moduleRepository = moduleRepository;
+            _unitOfWork = unitOfWork;
         }
         public async Task<OneOf<SuccessDto, Error>> Handle(UpdateModuleCommand request, CancellationToken cancellationToken)
         {
@@ -62,7 +64,7 @@ namespace Application.Features.Modules.Commands.UpdateModule
             {
                 await _moduleRepository.DecreaseOrder(module.Id, request.CourseId, oldOrder, cancellationToken, module.Order);
             }
-            await _courseRepository.SaveAsync(cancellationToken);
+            await _unitOfWork.SaveAsync(cancellationToken);
 
             return new SuccessDto
             {

@@ -15,9 +15,11 @@ namespace Application.Features.ModuleItems.Commands.UpdateSettings
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IModuleItemRepository _moduleItemRepository;
         private readonly IMapper _mapper;
+        private readonly IUnitOfWork _unitOfWork;
+
         public UpdateSettingsCommandHandler(ITenantMemberRepository tenantMemberRepository, ICurrentUserId currentUserId,
             ISubscriptionRepository subscriptionRepository, IHttpContextAccessor httpContextAccessor, ICourseRepository courseRepository,
-            IMapper mapper, IModuleItemRepository moduleItemRepository)
+            IMapper mapper, IModuleItemRepository moduleItemRepository, IUnitOfWork unitOfWork)
         {
             _tenantMemberRepository = tenantMemberRepository;
             _currentUserId = currentUserId;
@@ -26,6 +28,7 @@ namespace Application.Features.ModuleItems.Commands.UpdateSettings
             _courseRepository = courseRepository;
             _mapper = mapper;
             _moduleItemRepository = moduleItemRepository;
+            _unitOfWork = unitOfWork;
         }
         public async Task<OneOf<SuccessDto, Error>> Handle(UpdateSettingsCommand request, CancellationToken cancellationToken)
         {
@@ -47,7 +50,7 @@ namespace Application.Features.ModuleItems.Commands.UpdateSettings
                 return ModuleItemErrors.ModuleItemNotFound;
             }
             _mapper.Map(request, moduleItem);
-            await _courseRepository.SaveAsync(cancellationToken);
+            await _unitOfWork.SaveAsync(cancellationToken);
             return new SuccessDto
             {
                 Id = moduleItem.Id.ToString(),

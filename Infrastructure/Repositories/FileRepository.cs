@@ -11,15 +11,8 @@
         {
             await _context.Files.AddAsync(file, cancellationToken);
         }
-
-        public async Task<int> SaveAsync(CancellationToken cancellationToken)
-        {
-            return await _context.SaveChangesAsync(cancellationToken);
-        }
-
         public async Task<Domain.Entites.File?> GetFileByIdAsync(string FileId, CancellationToken cancellationToken) =>
              await _context.Files.FirstOrDefaultAsync(f => f.Id == FileId, cancellationToken);
-
         public async Task DeleteFileAsync(Domain.Entites.File File, CancellationToken cancellationToken) =>
             _context.Files.Remove(File);
     }
