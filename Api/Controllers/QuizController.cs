@@ -32,14 +32,18 @@ namespace Api.Controllers
                 error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message }));
         }
 
+
         [HttpGet("content")]
         public async Task<IActionResult> GetQuizContent([FromRoute] GetQuizQuery query, CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(query, cancellationToken);
             return result.Match<IActionResult>(
                 success => Ok(success),
-                error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message }));
+                error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message })
+            );
         }
+
+
         [HttpGet("attempts")]
         public async Task<IActionResult> GetAttempts([FromRoute] GetAttemptsQuery query, CancellationToken cancellationToken)
         {
@@ -48,6 +52,8 @@ namespace Api.Controllers
                 success => Ok(success),
                 error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message }));
         }
+
+
         [HttpGet("overview")]
         public async Task<IActionResult> GetOverview([FromRoute] GetOverviewQuery query, CancellationToken cancellationToken)
         {
@@ -56,6 +62,8 @@ namespace Api.Controllers
                 success => Ok(success),
                 error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message }));
         }
+
+
         [HttpGet("performance")]
         public async Task<IActionResult> GetPerformance([FromRoute] GetPerformanceQuery query, CancellationToken cancellationToken)
         {
@@ -64,6 +72,8 @@ namespace Api.Controllers
                 success => Ok(success),
                 error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message }));
         }
+
+
         [HttpPost("ai-generate-questions")]
         public async Task<IActionResult> CreateAiQuizQuestions(int courseId, int moduleId, int itemId, [FromBody] CreateAiQuizQuestionsCommand command, CancellationToken cancellationToken)
         {

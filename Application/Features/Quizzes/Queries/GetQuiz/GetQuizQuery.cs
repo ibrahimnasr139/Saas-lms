@@ -1,7 +1,4 @@
 ﻿using Application.Features.ModuleItems.Dtos;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Application.Features.Quizzes.Queries.GetQuiz
 {

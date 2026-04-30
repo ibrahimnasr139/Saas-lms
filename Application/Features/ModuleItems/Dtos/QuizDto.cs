@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Application.Features.ModuleItems.Dtos
+﻿namespace Application.Features.ModuleItems.Dtos
 {
     public sealed class QuizDto
     {
@@ -12,8 +8,8 @@ namespace Application.Features.ModuleItems.Dtos
         public bool ShuffleQuestions { get; set; }
         public TimeOnly StartTime { get; set; }
         public TimeOnly EndTime { get; set; }
-        public DateOnly StartDate { get; set; }
-        public DateOnly EndDate { get; set; }
+        public DateTime StartDate { get; set; }
+        public DateTime EndDate { get; set; }
         public IEnumerable<QuizQuestionDto> Questions { get; set; } = null!;
     }
 }
