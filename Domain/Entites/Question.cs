@@ -10,8 +10,8 @@ namespace Domain.Entites
         public string? Explanation { get; set; }
         public Difficulty Difficulty { get; set; }
         public int Reuse { get; set; }
-        public int QuestionCategoryId { get; set; }
-        public QuestionCategory QuestionCategory { get; set; } = null!;
+        public int? QuestionCategoryId { get; set; }
+        public QuestionCategory? QuestionCategory { get; set; }
         public string QuestionTitle { get; set; } = string.Empty;
         public QuestionType Type { get; set; }
         public List<QuestionOption>? Options { get; set; }

@@ -8,7 +8,6 @@ using Application.Features.Questions.Commands.ReorderQuestion;
 using Application.Features.Questions.Commands.UpdateQuizQuestion;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers
@@ -32,15 +31,19 @@ namespace Api.Controllers
                 success => Created(),
                 error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message }));
         }
+
+
         [HttpPost]
         public async Task<IActionResult> CreateQuestion(int courseId, int moduleId, int itemId, [FromBody] CreateQuizQuestionCommand command, CancellationToken cancellationToken)
         {
-            command = command with { CourseId = courseId, ModuleId = moduleId, ItemId = itemId };
-            var result = await _mediator.Send(command, cancellationToken);
+            var result = await _mediator.Send(command with { CourseId = courseId, ModuleId = moduleId, ItemId = itemId }, cancellationToken);
             return result.Match<IActionResult>(
                 success => Created(),
-                error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message }));
+                error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message })
+            );
         }
+
+
         [HttpDelete("{questionId}")]
         public async Task<IActionResult> DeleteQuestion([FromRoute] DeleteQuizQuestionCommand command, CancellationToken cancellationToken)
         {
@@ -49,6 +52,8 @@ namespace Api.Controllers
                 success => Ok(success),
                 error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message }));
         }
+
+
         [HttpPost("{questionId}/duplicate")]
         public async Task<IActionResult> DuplicateQuestion([FromRoute] DuplicateQuizQuestionCommand command, CancellationToken cancellationToken)
         {
@@ -57,6 +62,8 @@ namespace Api.Controllers
                 success => Ok(success),
                 error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message }));
         }
+
+
         [HttpPut("{questionId}")]
         public async Task<IActionResult> UpdateQuestion(int courseId, int moduleId, int itemId, int questionId, [FromBody] UpdateQuizQuestionCommand command, CancellationToken cancellationToken)
         {
@@ -66,6 +73,8 @@ namespace Api.Controllers
                 success => Ok(),
                 error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message }));
         }
+
+
         [HttpPost("reorder")]
         public async Task<IActionResult> ReorderQuestions(int courseId, int moduleId, int itemId, [FromBody] ReorderQuestionCommand command, CancellationToken cancellationToken)
         {

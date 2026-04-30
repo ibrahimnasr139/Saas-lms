@@ -1,7 +1,4 @@
 ﻿using Domain.Enums;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Application.Features.Questions.Commands.CreateQuizQuestion
 {
@@ -9,7 +6,7 @@ namespace Application.Features.Questions.Commands.CreateQuizQuestion
     {
         public string? CorrectAnswer { get; init; }
         public Difficulty Difficulty { get; init; }
-        public int Category { get; init; }
+        public int? Category { get; init; }
         public string Question { get; init; } = string.Empty;
         public QuestionType Type { get; init; }
         public List<QuestionOption>? Options { get; init; }
