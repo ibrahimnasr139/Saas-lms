@@ -12,5 +12,6 @@ namespace Application.Features.ModuleItems.Dtos
         public List<QuestionOption>? Options { get; set; }
         public int Marks { get; set; }
         public int Order { get; set; }
+        public Difficulty Difficulty { get; set; }
     }
 }

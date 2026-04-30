@@ -56,7 +56,8 @@ namespace Application.Features.ModuleItems.Dtos
                 .ForMember(dest => dest.Type, opt => opt.MapFrom(src => src.Question.Type))
                 .ForMember(dest => dest.CorrectAnswer, opt => opt.MapFrom(src => src.Question.CorrectAnswer))
                 .ForMember(dest => dest.Options, opt => opt.MapFrom(src => src.Question.Options))
-                .ForMember(dest => dest.Category, opt => opt.MapFrom(src => src.Question.QuestionCategoryId));
+                .ForMember(dest => dest.Category, opt => opt.MapFrom(src => src.Question.QuestionCategoryId))
+                .ForMember(dest => dest.Difficulty, opt => opt.MapFrom(src => src.Question.Difficulty));
         }
     }
 }
