@@ -10,6 +10,6 @@ namespace Application.Contracts.Repositories
         Task<Guid> GetPlanIdAsync(Guid PlanPricingId, CancellationToken cancellationToken);
         Task<Guid> GetVideoStorageFeatureIdAsync(CancellationToken cancellationToken);
         Task<Guid> GetPlanFeatureIdByFeatureIdAsync(Guid PlanId, Guid FeatureId, CancellationToken cancellationToken);
-        Task<int> GetVideoStorageLimitAsync(CancellationToken cancellationToken);
+        Task<int?> GetVideoStorageLimitAsync(CancellationToken cancellationToken);
     }
 }

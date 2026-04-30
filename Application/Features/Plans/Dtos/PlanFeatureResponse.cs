@@ -2,12 +2,12 @@
 {
     public sealed class PlanFeatureResponse
     {
-        public string Id { get; set; }
-        public string FeatureName { get; set; }
-        public string FeatureDescription { get; set; }
-        public string FeatureKey { get; set; }
-        public int LimitValue { get; set; }
-        public string LimitUnit { get; set; }
+        public string Id { get; set; } = string.Empty;
+        public string FeatureName { get; set; } = string.Empty;
+        public string FeatureDescription { get; set; } = string.Empty;
+        public string FeatureKey { get; set; } = string.Empty;
+        public int? LimitValue { get; set; }
+        public string LimitUnit { get; set; } = string.Empty;
         public string? Note { get; set; }
     }
 }

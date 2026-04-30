@@ -56,7 +56,7 @@ namespace Infrastructure.Repositories
                     .Select(pf => pf.Id)
                     .FirstOrDefaultAsync(cancellationToken);
         }
-        public async Task<int> GetVideoStorageLimitAsync(CancellationToken cancellationToken)
+        public async Task<int?> GetVideoStorageLimitAsync(CancellationToken cancellationToken)
         {
             var featureId = await GetVideoStorageFeatureIdAsync(cancellationToken);
             return await _context.PlanFeatures

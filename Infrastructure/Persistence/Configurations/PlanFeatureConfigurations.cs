@@ -8,9 +8,6 @@ namespace Infrastructure.Persistence.Configurations
         {
             builder.HasKey(pf => pf.Id);
 
-            builder.Property(pf => pf.LimitValue)
-                    .IsRequired();
-
             builder.Property(pf => pf.LimitUnit)
                     .HasMaxLength(50)
                     .IsRequired();
