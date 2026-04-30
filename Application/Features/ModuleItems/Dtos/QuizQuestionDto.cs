@@ -1,7 +1,4 @@
 ﻿using Domain.Enums;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Application.Features.ModuleItems.Dtos
 {
@@ -9,7 +6,7 @@ namespace Application.Features.ModuleItems.Dtos
     {
         public int Id { get; set; }
         public string? CorrectAnswer { get; set; }
-        public string QuestionText { get; set; } = string.Empty;
+        public string Question { get; set; } = string.Empty;
         public QuestionType Type { get; set; }
         public int Category { get; set; }
         public List<QuestionOption>? Options { get; set; }

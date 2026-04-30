@@ -6,8 +6,6 @@
         public int PassingScore { get; set; }
         public bool ShowCorrectAnswers { get; set; }
         public bool ShuffleQuestions { get; set; }
-        public TimeOnly StartTime { get; set; }
-        public TimeOnly EndTime { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public IEnumerable<QuizQuestionDto> Questions { get; set; } = null!;

@@ -6,6 +6,7 @@
         {
             CreateMap<AiResponse, QuizQuestion>()
                 .ForMember(dest => dest.Question, opt => opt.MapFrom(src => src));
+
             CreateMap<AiResponse, Question>()
                 .ForMember(dest => dest.QuestionTitle, opt => opt.MapFrom(src => src.Question));
         }
