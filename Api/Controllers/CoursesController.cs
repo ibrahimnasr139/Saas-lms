@@ -30,12 +30,16 @@ namespace Api.Controllers
             var result = await _mediator.Send(new GetStatisticsQuery(), cancellationToken);
             return Ok(result);
         }
+
+
         [HttpGet]
         public async Task<IActionResult> GetAll([FromQuery] GetAllQuery getAllQuery, CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(getAllQuery, cancellationToken);
             return Ok(result);
         }
+
+
         [HttpGet("{courseId}")]
         public async Task<IActionResult> GetById([FromRoute] int courseId, CancellationToken cancellationToken)
         {
@@ -45,12 +49,16 @@ namespace Api.Controllers
                 error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message })
             );
         }
+
+
         [HttpGet("lookup")]
         public async Task<IActionResult> GetAllForLookup(CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(new GetLookupQuery(), cancellationToken);
             return Ok(result);
         }
+
+
         [HttpGet("{courseId}/statistics")]
         public async Task<IActionResult> GetCourseStatisticsByCourseId([FromRoute] GetCourseStatisticsQuery query, CancellationToken cancellationToken)
         {
@@ -60,6 +68,8 @@ namespace Api.Controllers
                 error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message })
             );
         }
+
+
         [HttpPost]
         public async Task<IActionResult> CreateCourse(CreateCourseCommand createCourseCommand, CancellationToken cancellationToken)
         {
@@ -69,6 +79,8 @@ namespace Api.Controllers
                 error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message })
             );
         }
+
+
         [HttpPut("{courseId}")]
         public async Task<IActionResult> UpdateCourse([FromRoute] int courseId, UpdateCourseCommand updateCourseCommand, CancellationToken cancellationToken)
         {
@@ -79,6 +91,8 @@ namespace Api.Controllers
                 error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message })
             );
         }
+
+
         [HttpDelete("{courseId}")]
         public async Task<IActionResult> DeleteCourse([FromRoute] int courseId, CancellationToken cancellationToken)
         {

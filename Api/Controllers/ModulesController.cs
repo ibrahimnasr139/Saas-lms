@@ -7,9 +7,7 @@ using Application.Features.Modules.Queries.GetAllModules;
 using Application.Features.Modules.Queries.GetModuleById;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using OneOf.Types;
 
 namespace Api.Controllers
 {
@@ -32,6 +30,8 @@ namespace Api.Controllers
                 success => Created(string.Empty, success),
                 error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message }));
         }
+
+
         [HttpPut("{moduleId}")]
         public async Task<IActionResult> UpdateModule([FromRoute] int courseId, [FromRoute] int moduleId, UpdateModuleCommand command, CancellationToken cancellationToken)
         {
@@ -41,6 +41,8 @@ namespace Api.Controllers
                 success => Ok(success),
                 error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message }));
         }
+
+
         [HttpDelete("{moduleId}")]
         public async Task<IActionResult> DeleteModule([FromRoute] int courseId, [FromRoute] int moduleId, CancellationToken cancellationToken)
         {
@@ -49,6 +51,8 @@ namespace Api.Controllers
                 success => Ok(success),
                 error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message }));
         }
+
+
         [HttpGet]
         public async Task<IActionResult> GetAllModules([FromRoute] GetAllModulesQuery query, CancellationToken cancellationToken)
         {
@@ -57,6 +61,8 @@ namespace Api.Controllers
                 success => Ok(success),
                 error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message }));
         }
+
+
         [HttpGet("{moduleId}")]
         public async Task<IActionResult> GetModuleById([FromRoute] GetModuleByIdQuery query, CancellationToken cancellationToken)
         {

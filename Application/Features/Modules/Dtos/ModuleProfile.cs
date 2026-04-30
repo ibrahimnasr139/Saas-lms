@@ -1,8 +1,5 @@
 ﻿using Application.Features.Modules.Commands.CreateModule;
 using Application.Features.Modules.Commands.UpdateModule;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Application.Features.Modules.Dtos
 {
@@ -11,7 +8,9 @@ namespace Application.Features.Modules.Dtos
         public ModuleProfile()
         {
             CreateMap<CreateModuleCommand, Module>();
+
             CreateMap<UpdateModuleCommand, Module>();
+
             CreateMap<Module, AllModulesDto>()
                 .ForMember(dest => dest.TotalItems, opt => opt.MapFrom(src => src.ModuleItems.Count))
                 .ForMember(dest => dest.Lessons, opt => opt.MapFrom(src => src.Lessons.Count))

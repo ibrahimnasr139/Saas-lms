@@ -1,12 +1,10 @@
 ﻿using Domain.Enums;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Application.Features.Modules.Dtos
 {
     public sealed class AllModulesDto
     {
+        public int Id { get; set; }
         public string Title { get; set; } = null!;
         public string Description { get; set; } = null!;
         public CourseStatus Status { get; set; }

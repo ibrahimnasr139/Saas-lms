@@ -1,16 +1,12 @@
-﻿using Application.Contracts.Repositories;
-using Application.Features.Modules.Dtos;
+﻿using Application.Features.Modules.Dtos;
 using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Application.Features.Modules.Queries.GetAllModules
 {
     internal sealed class GetAllModulesQueryHandler : IRequestHandler<GetAllModulesQuery, OneOf<IEnumerable<AllModulesDto>, Error>>
     {
         private readonly ICourseRepository _courseRepository;
-        private readonly IModuleRepository _moduleRepository;   
+        private readonly IModuleRepository _moduleRepository;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly HybridCache _hybridCache;
         public GetAllModulesQueryHandler(ICourseRepository courseRepository, IModuleRepository moduleRepository, IHttpContextAccessor httpContextAccessor, HybridCache hybridCache)
@@ -25,9 +21,8 @@ namespace Application.Features.Modules.Queries.GetAllModules
             var subdomain = _httpContextAccessor?.HttpContext?.Request.Cookies[AuthConstants.SubDomain];
             var course = await _courseRepository.GetCourseByIdAsync(request.CourseId, subdomain!, cancellationToken);
             if (course is null)
-            {
                 return CourseErrors.CourseNotFound;
-            }
+
             var cacheKey = $"{CacheKeysConstants.CourseModuleKey}-{request.CourseId}";
             return await _hybridCache.GetOrCreateAsync(
                 cacheKey,
