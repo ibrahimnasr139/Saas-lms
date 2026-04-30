@@ -1,8 +1,5 @@
 ﻿using Application.Features.Modules.Dtos;
 using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Application.Features.Modules.Queries.GetModuleById
 {
@@ -20,9 +17,7 @@ namespace Application.Features.Modules.Queries.GetModuleById
             var subdomain = _httpContextAccessor?.HttpContext?.Request.Cookies[AuthConstants.SubDomain];
             var module = await _moduleRepository.GetModuleWithItemsAsync(request.ModuleId, request.CourseId, subdomain!, cancellationToken);
             if (module is null)
-            {
                 return ModuleErrors.ModuleNotFound;
-            }
             return module;
         }
     }

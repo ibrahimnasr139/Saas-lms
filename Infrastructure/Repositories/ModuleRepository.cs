@@ -33,7 +33,9 @@ namespace Infrastructure.Repositories
         }
         public async Task<int> GetMaxOrder(int courseId, CancellationToken cancellationToken)
         {
-            var maxOrder = await _context.Modules.Where(m => m.CourseId == courseId).MaxAsync(m => (int?)m.Order, cancellationToken);
+            var maxOrder = await _context.Modules
+                .Where(m => m.CourseId == courseId)
+                .MaxAsync(m => (int?)m.Order, cancellationToken);
             return maxOrder ?? 0;
         }
         public async Task<Module?> GetModuleByIdAsync(int moduleId, int courseId, string subdomain, CancellationToken cancellationToken)

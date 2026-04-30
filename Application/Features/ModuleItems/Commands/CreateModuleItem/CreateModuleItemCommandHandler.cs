@@ -46,6 +46,9 @@ namespace Application.Features.ModuleItems.Commands.CreateModuleItem
                 return ModuleErrors.ModuleNotFound;
 
             var moduleItem = _mapper.Map<ModuleItem>(request);
+            var maxOrder = await _moduleItemRepository.GetMaxOrder(request.CourseId, request.ModuleId, cancellationToken);
+            moduleItem.Order = maxOrder + 1;
+
             await _unitOfWork.BeginTransactionAsync(cancellationToken);
             try
             {

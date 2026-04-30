@@ -161,5 +161,12 @@ namespace Infrastructure.Repositories
                 .Select(mi => mi.ModuleId)
                 .FirstOrDefaultAsync(cancellationToken);
         }
+        public async Task<int> GetMaxOrder(int courseId, int moduleId, CancellationToken cancellationToken)
+        {
+            var maxOrder = await _dbContext.ModuleItems
+                .Where(x => x.CourseId == courseId && x.ModuleId == moduleId)
+                .MaxAsync(x => (int?)x.Order, cancellationToken);
+            return maxOrder ?? 0;
+        }
     }
 }
