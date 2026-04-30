@@ -1,9 +1,5 @@
-﻿using Application.Contracts.Repositories;
-using Domain.Enums;
+﻿using Domain.Enums;
 using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Application.Features.ModuleItems.Commands.CreateModuleItem
 {
@@ -39,19 +35,16 @@ namespace Application.Features.ModuleItems.Commands.CreateModuleItem
             var subdomain = _httpContextAccessor?.HttpContext?.Request.Cookies[AuthConstants.SubDomain];
             var isPermitted = await _tenantMemberRepository.IsPermittedMember(userId, PermissionConstants.MANAGE_MODULE_ITEMS, cancellationToken);
             if (!isPermitted)
-            {
                 return MemberErrors.NotAllowed;
-            }
+
             var isSubscribed = await _subscriptionRepository.HasActiveSubscriptionByTenantDomain(subdomain!, cancellationToken);
             if (!isSubscribed)
-            {
                 return TenantErrors.NotSubscribed;
-            }
+
             var module = await _moduleRepository.GetModuleByIdAsync(request.ModuleId, request.CourseId, subdomain!, cancellationToken);
             if (module is null)
-            {
                 return ModuleErrors.ModuleNotFound;
-            }
+
             var moduleItem = _mapper.Map<ModuleItem>(request);
             await _unitOfWork.BeginTransactionAsync(cancellationToken);
             try
@@ -65,8 +58,7 @@ namespace Application.Features.ModuleItems.Commands.CreateModuleItem
                         {
                             dest.ModuleItemId = moduleItemId;
                         });
-                    }
-                    );
+                    });
                     await _moduleItemRepository.CreateLesson(lesson, cancellationToken);
                 }
                 else if (request.Type == ModuleItemType.Assignment)
@@ -78,8 +70,7 @@ namespace Application.Features.ModuleItems.Commands.CreateModuleItem
                             dest.ModuleItemId = moduleItemId;
                             dest.CreatedById = userId;
                         });
-                    }
-                    );
+                    });
                     await _moduleItemRepository.CreateAssignment(assignment, cancellationToken);
                 }
                 else
@@ -91,8 +82,7 @@ namespace Application.Features.ModuleItems.Commands.CreateModuleItem
                             dest.ModuleItemId = moduleItemId;
                             dest.CreatedById = userId;
                         });
-                    }
-                    );
+                    });
                     await _moduleItemRepository.CreateQuiz(quiz, cancellationToken);
                 }
                 await _hybridCache.RemoveByTagAsync(tags: new[] { $"{CacheKeysConstants.AllCoursesKey}_{request.CourseId}" }, cancellationToken);

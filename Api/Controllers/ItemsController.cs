@@ -27,8 +27,7 @@ namespace Api.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateModuleItem(int courseId, int moduleId, [FromBody] CreateModuleItemCommand command, CancellationToken cancellationToken)
         {
-            command = command with { CourseId = courseId, ModuleId = moduleId };
-            var result = await _mediator.Send(command, cancellationToken);
+            var result = await _mediator.Send(command with { CourseId = courseId, ModuleId = moduleId }, cancellationToken);
             return result.Match<IActionResult>(
                 success => Created(string.Empty, success),
                 error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message }));
@@ -45,6 +44,7 @@ namespace Api.Controllers
                 error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message }));
         }
 
+
         [HttpDelete("{itemId}")]
         public async Task<IActionResult> DeleteModuleItem([FromRoute] DeleteModuleItemCommand command, CancellationToken cancellationToken)
         {
@@ -53,6 +53,8 @@ namespace Api.Controllers
                 success => Ok(success),
                 error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message }));
         }
+
+
         [HttpGet("{itemId}")]
         public async Task<IActionResult> GetModuleItem([FromRoute] GetItemQuery query, CancellationToken cancellationToken)
         {
@@ -62,6 +64,7 @@ namespace Api.Controllers
                 error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message }));
         }
 
+
         [HttpGet("{itemId}/settings")]
         public async Task<IActionResult> GetSettings([FromRoute] GetSettingsQuery query, CancellationToken cancellationToken)
         {
@@ -70,6 +73,8 @@ namespace Api.Controllers
                 success => Ok(success),
                 error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message }));
         }
+
+
         [HttpGet]
         public async Task<IActionResult> GetAllItems([FromRoute] GetAllItemsQuery query, [FromQuery] ModuleItemType? type, CancellationToken cancellationToken)
         {
@@ -79,6 +84,8 @@ namespace Api.Controllers
                 success => Ok(success),
                 error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message }));
         }
+
+
         [HttpPost("reorder")]
         public async Task<IActionResult> ReorderItems(int courseId, int moduleId, [FromBody] List<OrderDto> items, CancellationToken cancellationToken)
         {
