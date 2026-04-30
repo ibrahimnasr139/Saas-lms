@@ -5,6 +5,7 @@ using System.Text.Json;
 using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -13,9 +14,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260430171128_AddVideoTimestampTable")]
+    partial class AddVideoTimestampTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -2637,37 +2640,6 @@ namespace Infrastructure.Persistence.Migrations
                     b.ToTable("TenantUsage");
                 });
 
-            modelBuilder.Entity("Domain.Entites.Transcript", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("FileId")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("FullText")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Language")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("FileId")
-                        .IsUnique();
-
-                    b.ToTable("Transcripts");
-                });
-
             modelBuilder.Entity("Domain.Entites.VideoTimestamp", b =>
                 {
                     b.Property<int>("Id")
@@ -4104,17 +4076,6 @@ namespace Infrastructure.Persistence.Migrations
                     b.Navigation("Tenant");
                 });
 
-            modelBuilder.Entity("Domain.Entites.Transcript", b =>
-                {
-                    b.HasOne("Domain.Entites.File", "File")
-                        .WithOne("Transcript")
-                        .HasForeignKey("Domain.Entites.Transcript", "FileId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("File");
-                });
-
             modelBuilder.Entity("Domain.Entites.VideoTimestamp", b =>
                 {
                     b.HasOne("Domain.Entites.File", "File")
@@ -4311,9 +4272,6 @@ namespace Infrastructure.Persistence.Migrations
             modelBuilder.Entity("Domain.Entites.File", b =>
                 {
                     b.Navigation("AssignmentSubmission");
-
-                    b.Navigation("Transcript")
-                        .IsRequired();
 
                     b.Navigation("videoTimestamps");
                 });
