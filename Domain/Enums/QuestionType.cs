@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Domain.Enums
+﻿namespace Domain.Enums
 {
     public enum QuestionType
     {
         Mcq,
-        TrueFalse,
-        ShortAnswer,
+        true_false,
+        short_answer,
         Mix
     }
 }
