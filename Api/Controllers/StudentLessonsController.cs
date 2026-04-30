@@ -4,6 +4,7 @@ using Application.Features.StudentLessons.Commands.DeleteStudentDiscussion;
 using Application.Features.StudentLessons.Commands.DeleteStudentDiscussionReply;
 using Application.Features.StudentLessons.Commands.UpdateStudentDiscussion;
 using Application.Features.StudentLessons.Commands.UpdateStudentDiscussionReply;
+using Application.Features.StudentLessons.Commands.UpdateStudentLessonProgress;
 using Application.Features.StudentLessons.Queries.GetStudentDiscussions;
 using Application.Features.StudentLessons.Queries.GetStudentLessonItem;
 using Application.Features.StudentLessons.Queries.GetStudentLessonProgress;
@@ -36,7 +37,18 @@ namespace Api.Controllers
         }
 
 
-        [HttpGet()]
+        [HttpPost("progress")]
+        public async Task<IActionResult> UpdateStudentLessonProgress([FromRoute] int courseId, [FromRoute] int itemId, [FromBody] UpdateStudentLessonProgressCommand command, CancellationToken cancellationToken)
+        {
+            var result = await _mediator.Send(command with { CourseId = courseId, ItemId = itemId }, cancellationToken);
+            return result.Match(
+                progress => Ok(progress),
+                error => StatusCode((int)error.HttpStatusCode, error.Message)
+            );
+        }
+
+
+        [HttpGet]
         public async Task<IActionResult> GetStudentLessonItem([FromRoute] int courseId, [FromRoute] int itemId, CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(new GetStudentLessonItemQuery(courseId, itemId), cancellationToken);
@@ -122,6 +134,5 @@ namespace Api.Controllers
                error => StatusCode((int)error.HttpStatusCode, error.Message)
             );
         }
-
     }
 }
