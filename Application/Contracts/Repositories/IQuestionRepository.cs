@@ -17,7 +17,7 @@ namespace Application.Contracts.Repositories
         Task<List<QuestionCategoryDto>> GetQuestionWithCategory(string subdomain, CancellationToken cancellationToken);
         Task<IEnumerable<AllQuestionsDto>> GetAllQuestions(string subdomain, CancellationToken cancellationToken);
         Task<int> GetTotalQuestions(string subdomain, CancellationToken cancellationToken);
-        Task ReorderQuestions(int quizId, Dictionary<int, int> questionIds, CancellationToken cancellationToken);
+        Task ReorderQuestions(int quizId, Dictionary<int, int> quizQuestionIds, CancellationToken cancellationToken);
         Task<int> GetUsedQuestions(string subdomain, CancellationToken cancellationToken);
         Task<int> GetWeekQuestions(string subdomain, CancellationToken cancellationToken);
         Task IncreaseReuse(IEnumerable<int> questionIds, CancellationToken cancellationToken);

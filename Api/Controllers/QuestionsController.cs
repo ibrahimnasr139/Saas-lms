@@ -78,11 +78,11 @@ namespace Api.Controllers
         [HttpPost("reorder")]
         public async Task<IActionResult> ReorderQuestions(int courseId, int moduleId, int itemId, [FromBody] ReorderQuestionCommand command, CancellationToken cancellationToken)
         {
-            command = command with { CourseId = courseId, ModuleId = moduleId, ItemId = itemId };
-            var result = await _mediator.Send(command, cancellationToken);
+            var result = await _mediator.Send(command with { CourseId = courseId, ModuleId = moduleId, ItemId = itemId }, cancellationToken);
             return result.Match<IActionResult>(
                 success => Ok(),
-                error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message }));
+                error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message })
+            );
         }
     }
 }

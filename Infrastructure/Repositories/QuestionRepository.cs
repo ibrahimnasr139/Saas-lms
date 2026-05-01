@@ -108,12 +108,12 @@ namespace Infrastructure.Repositories
             _dbContext.Questions.Remove(question);
             await _dbContext.SaveChangesAsync(cancellationToken);
         }
-        public async Task ReorderQuestions(int quizId, Dictionary<int, int> questionIds, CancellationToken cancellationToken)
+        public async Task ReorderQuestions(int quizId, Dictionary<int, int> quizQuestionIds, CancellationToken cancellationToken)
         {
-            foreach (var (questionId, order) in questionIds)
+            foreach (var (quizQuestionId, order) in quizQuestionIds)
             {
                 await _dbContext.QuizQuestions
-                    .Where(qq => qq.QuizId == quizId && qq.QuestionId == questionId)
+                    .Where(qq => qq.QuizId == quizId && qq.Id == quizQuestionId)
                     .ExecuteUpdateAsync(qq => qq.SetProperty(q => q.Order, order), cancellationToken);
             }
         }

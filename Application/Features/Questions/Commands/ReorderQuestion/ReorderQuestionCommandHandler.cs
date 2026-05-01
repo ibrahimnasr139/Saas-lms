@@ -1,8 +1,4 @@
-﻿using Application.Contracts.Repositories;
-using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Microsoft.AspNetCore.Http;
 
 namespace Application.Features.Questions.Commands.ReorderQuestion
 {
@@ -34,25 +30,21 @@ namespace Application.Features.Questions.Commands.ReorderQuestion
             var subdomain = _httpContextAccessor?.HttpContext?.Request.Cookies[AuthConstants.SubDomain];
             var isPermitted = await _tenantMemberRepository.IsPermittedMember(userId, PermissionConstants.MANAGE_MODULE_ITEMS, cancellationToken);
             if (!isPermitted)
-            {
                 return MemberErrors.NotAllowed;
-            }
+
             var isSubscribed = await _subscriptionRepository.HasActiveSubscriptionByTenantDomain(subdomain!, cancellationToken);
             if (!isSubscribed)
-            {
                 return TenantErrors.NotSubscribed;
-            }
+
             var quiz = await _moduleItemRepository.GetQuizAsync(request.ItemId, request.ModuleId, request.CourseId, subdomain!, cancellationToken);
             if (quiz is null)
-            {
                 return ModuleItemErrors.ModuleItemNotFound;
-            }
+
             var orderedQuestions = new Dictionary<int, int>();
             int order = 1;
             foreach (var questionId in request.QuestionIds)
-            {
                 orderedQuestions.Add(questionId, order++);
-            }
+
             await _questionRepository.ReorderQuestions(request.ItemId, orderedQuestions, cancellationToken);
             return true;
         }
