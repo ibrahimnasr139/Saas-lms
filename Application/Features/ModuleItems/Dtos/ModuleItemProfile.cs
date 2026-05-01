@@ -49,7 +49,8 @@ namespace Application.Features.ModuleItems.Dtos
             CreateMap<UpdateQuizCommand, Quiz>()
                 .ForMember(dest => dest.Questions, opt => opt.Ignore());
 
-            CreateMap<Quiz, QuizDto>();
+            CreateMap<Quiz, QuizDto>()
+                .ForMember(dest => dest.Questions, opt => opt.MapFrom(src => src.Questions.OrderBy(x => x.Order)));
 
             CreateMap<QuizQuestion, QuizQuestionDto>()
                 .ForMember(dest => dest.Question, opt => opt.MapFrom(src => src.Question.QuestionTitle))
