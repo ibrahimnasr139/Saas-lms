@@ -39,11 +39,11 @@ namespace Application.Features.Questions.Commands.DuplicateQuizQuestion
             if (!isSubscribed)
                 return TenantErrors.NotSubscribed;
 
-            var quizQuestion = await _quizRepository.GetQuizQuestion(request.ItemId, request.QuizQuestionId, subdomain!, cancellationToken);
+            var quizQuestion = await _quizRepository.GetQuizQuestion(request.ItemId, request.QuestionId, subdomain!, cancellationToken);
             if (quizQuestion is null)
                 return QuestionErrors.QuestionNotFound;
 
-            var question = await _questionRepository.GetQuestion(request.QuizQuestionId, subdomain!, cancellationToken);
+            var question = await _questionRepository.GetQuestion(request.QuestionId, subdomain!, cancellationToken);
             Question duplicatedQuestion = _mapper.Map<Question>(question);
             await _unitOfWork.BeginTransactionAsync(cancellationToken);
             try

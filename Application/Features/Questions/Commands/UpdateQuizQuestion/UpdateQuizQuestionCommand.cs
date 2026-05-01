@@ -2,7 +2,7 @@
 
 namespace Application.Features.Questions.Commands.UpdateQuizQuestion
 {
-    public sealed record UpdateQuizQuestionCommand(int CourseId, int ModuleId, int ItemId, int QuizQuestionId) : IRequest<OneOf<bool, Error>>
+    public sealed record UpdateQuizQuestionCommand(int CourseId, int ModuleId, int ItemId, int QuestionId) : IRequest<OneOf<bool, Error>>
     {
         public string? CorrectAnswer { get; init; }
         public Difficulty Difficulty { get; init; }

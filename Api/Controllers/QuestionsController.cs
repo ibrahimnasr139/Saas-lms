@@ -68,7 +68,7 @@ namespace Api.Controllers
         [HttpPut("{questionId}")]
         public async Task<IActionResult> UpdateQuestion(int courseId, int moduleId, int itemId, int questionId, [FromBody] UpdateQuizQuestionCommand command, CancellationToken cancellationToken)
         {
-            var result = await _mediator.Send(command with { CourseId = courseId, ModuleId = moduleId, ItemId = itemId, QuizQuestionId = questionId }, cancellationToken);
+            var result = await _mediator.Send(command with { CourseId = courseId, ModuleId = moduleId, ItemId = itemId, QuestionId = questionId }, cancellationToken);
             return result.Match<IActionResult>(
                 success => Ok(),
                 error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message }));

@@ -41,7 +41,7 @@ namespace Application.Features.Questions.Commands.UpdateQuizQuestion
             if (!isSubscribed)
                 return TenantErrors.NotSubscribed;
 
-            var quizQuestion = await _quizRepository.GetQuizQuestion(request.ItemId, request.QuizQuestionId, subdomain!, cancellationToken);
+            var quizQuestion = await _quizRepository.GetQuizQuestion(request.ItemId, request.QuestionId, subdomain!, cancellationToken);
             if (quizQuestion is null)
                 return QuestionErrors.QuestionNotFound;
 
