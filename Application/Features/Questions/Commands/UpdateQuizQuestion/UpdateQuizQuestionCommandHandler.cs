@@ -7,26 +7,22 @@ namespace Application.Features.Questions.Commands.UpdateQuizQuestion
         private readonly ITenantMemberRepository _tenantMemberRepository;
         private readonly ICurrentUserId _currentUserId;
         private readonly ISubscriptionRepository _subscriptionRepository;
-        private readonly ICourseRepository _courseRepository;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IQuizRepository _quizRepository;
-        private readonly IMapper _mapper;
         private readonly IQuestionRepository _questionRepository;
         private readonly IUnitOfWork _unitOfWork;
 
         public UpdateQuizQuestionCommandHandler(ITenantMemberRepository tenantMemberRepository, ICurrentUserId currentUserId,
-            ISubscriptionRepository subscriptionRepository, IHttpContextAccessor httpContextAccessor, ICourseRepository courseRepository,
-            IQuizRepository quizRepository, IMapper mapper, IQuestionRepository questionRepository, IUnitOfWork unitOfWork)
+            ISubscriptionRepository subscriptionRepository, IHttpContextAccessor httpContextAccessor, IUnitOfWork unitOfWork,
+            IQuizRepository quizRepository, IQuestionRepository questionRepository)
         {
             _tenantMemberRepository = tenantMemberRepository;
             _currentUserId = currentUserId;
             _subscriptionRepository = subscriptionRepository;
             _httpContextAccessor = httpContextAccessor;
-            _courseRepository = courseRepository;
             _quizRepository = quizRepository;
             _questionRepository = questionRepository;
             _unitOfWork = unitOfWork;
-            _mapper = mapper;
         }
         public async Task<OneOf<bool, Error>> Handle(UpdateQuizQuestionCommand request, CancellationToken cancellationToken)
         {
@@ -49,7 +45,16 @@ namespace Application.Features.Questions.Commands.UpdateQuizQuestion
             if (!isFound)
                 return QuestionErrors.CategoryNotFound;
 
-            _mapper.Map(request, quizQuestion);
+            quizQuestion.Question.CorrectAnswer = request.CorrectAnswer;
+            quizQuestion.Question.Difficulty = request.Difficulty;
+            quizQuestion.Question.QuestionCategoryId = request.Category;
+            quizQuestion.Question.QuestionTitle = request.Question;
+            quizQuestion.Question.Type = request.Type;
+            quizQuestion.Question.Options = request.Options;
+            quizQuestion.Marks = request.Marks;
+            quizQuestion.Order = request.Order;
+            quizQuestion.RequiresManualGrading = request.RequiresManualGrading;
+
             await _unitOfWork.SaveAsync(cancellationToken);
             return true;
         }
