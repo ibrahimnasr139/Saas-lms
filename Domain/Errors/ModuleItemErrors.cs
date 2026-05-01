@@ -6,6 +6,5 @@ namespace Domain.Errors
     {
         public static Error ModuleItemNotFound =>
             new Error("ModuleItem.NotFound", "هذا العنصر غير موجود", HttpStatusCode.NotFound);
-
     }
 }

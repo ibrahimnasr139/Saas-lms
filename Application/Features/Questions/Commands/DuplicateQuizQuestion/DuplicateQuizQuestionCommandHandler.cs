@@ -1,5 +1,4 @@
-﻿using Application.Contracts.Repositories;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 
 namespace Application.Features.Questions.Commands.DuplicateQuizQuestion
 {
@@ -34,20 +33,17 @@ namespace Application.Features.Questions.Commands.DuplicateQuizQuestion
             var subdomain = _httpContextAccessor?.HttpContext?.Request.Cookies[AuthConstants.SubDomain];
             var isPermitted = await _tenantMemberRepository.IsPermittedMember(userId, PermissionConstants.MANAGE_MODULE_ITEMS, cancellationToken);
             if (!isPermitted)
-            {
                 return MemberErrors.NotAllowed;
-            }
+
             var isSubscribed = await _subscriptionRepository.HasActiveSubscriptionByTenantDomain(subdomain!, cancellationToken);
             if (!isSubscribed)
-            {
                 return TenantErrors.NotSubscribed;
-            }
-            var quizQuestion = await _quizRepository.GetQuizQuestion(request.ItemId, request.QuestionId, subdomain!, cancellationToken);
+
+            var quizQuestion = await _quizRepository.GetQuizQuestion(request.ItemId, request.QuizQuestionId, subdomain!, cancellationToken);
             if (quizQuestion is null)
-            {
                 return QuestionErrors.QuestionNotFound;
-            }
-            var question = await _questionRepository.GetQuestion(request.QuestionId, subdomain!, cancellationToken);
+
+            var question = await _questionRepository.GetQuestion(request.QuizQuestionId, subdomain!, cancellationToken);
             Question duplicatedQuestion = _mapper.Map<Question>(question);
             await _unitOfWork.BeginTransactionAsync(cancellationToken);
             try
@@ -57,10 +53,7 @@ namespace Application.Features.Questions.Commands.DuplicateQuizQuestion
                 duplicatedQuizQuestion.QuestionId = id;
                 await _questionRepository.AddQuestionsToQuiz(new List<QuizQuestion> { duplicatedQuizQuestion }, cancellationToken);
                 await _unitOfWork.CommitTransactionAsync(cancellationToken);
-                return new SuccessDto()
-                {
-                    Message = $"{nameof(Question)} {SuccessConstants.ItemDuplicated}"
-                };
+                return new SuccessDto { Message = $"{nameof(Question)} {SuccessConstants.ItemDuplicated}" };
             }
             catch
             {

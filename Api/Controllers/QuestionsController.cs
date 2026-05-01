@@ -25,11 +25,11 @@ namespace Api.Controllers
         [HttpPost("import")]
         public async Task<IActionResult> ImportQuestions(int courseId, int moduleId, int itemId, [FromBody] ImportQuizQuestionCommand command, CancellationToken cancellationToken)
         {
-            command = command with { CourseId = courseId, ModuleId = moduleId, ItemId = itemId };
-            var result = await _mediator.Send(command, cancellationToken);
+            var result = await _mediator.Send(command with { CourseId = courseId, ModuleId = moduleId, ItemId = itemId }, cancellationToken);
             return result.Match<IActionResult>(
                 success => Created(),
-                error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message }));
+                error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message })
+            );
         }
 
 
@@ -50,7 +50,8 @@ namespace Api.Controllers
             var result = await _mediator.Send(command, cancellationToken);
             return result.Match<IActionResult>(
                 success => Ok(success),
-                error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message }));
+                error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message })
+            );
         }
 
 
@@ -67,8 +68,7 @@ namespace Api.Controllers
         [HttpPut("{questionId}")]
         public async Task<IActionResult> UpdateQuestion(int courseId, int moduleId, int itemId, int questionId, [FromBody] UpdateQuizQuestionCommand command, CancellationToken cancellationToken)
         {
-            command = command with { CourseId = courseId, ModuleId = moduleId, ItemId = itemId, QuestionId = questionId };
-            var result = await _mediator.Send(command, cancellationToken);
+            var result = await _mediator.Send(command with { CourseId = courseId, ModuleId = moduleId, ItemId = itemId, QuizQuestionId = questionId }, cancellationToken);
             return result.Match<IActionResult>(
                 success => Ok(),
                 error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message }));

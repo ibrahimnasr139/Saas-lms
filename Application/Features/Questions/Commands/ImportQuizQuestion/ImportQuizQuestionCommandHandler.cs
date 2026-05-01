@@ -1,8 +1,4 @@
-﻿using Application.Contracts.Repositories;
-using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Microsoft.AspNetCore.Http;
 
 namespace Application.Features.Questions.Commands.ImportQuizQuestion
 {
@@ -33,21 +29,18 @@ namespace Application.Features.Questions.Commands.ImportQuizQuestion
             var subdomain = _httpContextAccessor?.HttpContext?.Request.Cookies[AuthConstants.SubDomain];
             var isPermitted = await _tenantMemberRepository.IsPermittedMember(userId, PermissionConstants.MANAGE_MODULE_ITEMS, cancellationToken);
             if (!isPermitted)
-            {
                 return MemberErrors.NotAllowed;
-            }
+
             var isSubscribed = await _subscriptionRepository.HasActiveSubscriptionByTenantDomain(subdomain!, cancellationToken);
             if (!isSubscribed)
-            {
                 return TenantErrors.NotSubscribed;
-            }
+
             var quiz = await _moduleItemRepository.GetQuizAsync(request.ItemId, request.ModuleId, request.CourseId, subdomain!, cancellationToken);
             if (quiz is null)
-            {
                 return ModuleItemErrors.ModuleItemNotFound;
-            }
+
             var quizQuestions = new List<QuizQuestion>();
-            foreach(var id in request.QuestionIds)
+            foreach (var id in request.QuestionIds)
             {
                 quizQuestions.Add(new QuizQuestion
                 {
@@ -62,7 +55,6 @@ namespace Application.Features.Questions.Commands.ImportQuizQuestion
                 await _questionRepository.IncreaseReuse(request.QuestionIds, cancellationToken);
                 await _unitOfWork.CommitTransactionAsync(cancellationToken);
                 return true;
-
             }
             catch
             {

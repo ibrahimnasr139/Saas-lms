@@ -62,11 +62,11 @@ namespace Infrastructure.Repositories
                 }).FirstOrDefaultAsync(cancellationToken);
 
         }
-        public async Task<QuizQuestion?> GetQuizQuestion(int quizId, int questionId, string subdomain, CancellationToken cancellationToken)
+        public async Task<QuizQuestion?> GetQuizQuestion(int quizId, int quizQuestionId, string subdomain, CancellationToken cancellationToken)
         {
             return await _dbContext.QuizQuestions
                 .Include(x => x.Question)
-                .FirstOrDefaultAsync(q => q.QuizId == quizId && q.QuestionId == questionId && q.Question.Tenant.SubDomain == subdomain, cancellationToken);
+                .FirstOrDefaultAsync(q => q.QuizId == quizId && q.Id == quizQuestionId && q.Question.Tenant.SubDomain == subdomain, cancellationToken);
         }
         public async Task RemoveQuizQuestion(QuizQuestion quizQuestion, CancellationToken cancellationToken)
         {
