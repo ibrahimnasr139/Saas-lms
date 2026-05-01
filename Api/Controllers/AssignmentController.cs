@@ -30,6 +30,8 @@ namespace Api.Controllers
                 success => Ok(success),
                 error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message }));
         }
+
+
         [HttpGet("content")]
         public async Task<IActionResult> GetAssignmentContent([FromRoute] GetAssignmentQuery query, CancellationToken cancellationToken)
         {
@@ -38,6 +40,8 @@ namespace Api.Controllers
                 success => Ok(success),
                 error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message }));
         }
+
+
         [HttpGet("overview")]
         public async Task<IActionResult> GetAssignmentOverview([FromRoute] GetOverviewQuery query, CancellationToken cancellationToken)
         {
@@ -46,6 +50,8 @@ namespace Api.Controllers
                 success => Ok(success),
                 error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message }));
         }
+
+
         [HttpGet("performance")]
         public async Task<IActionResult> GetAssignmentPerformance([FromRoute] GetPerformanceQuery query, CancellationToken cancellationToken)
         {
