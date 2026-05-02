@@ -127,11 +127,11 @@ namespace Infrastructure.Repositories
                 Blocks = tenantPage.PageBlocks.Select(pb => _mapper.Map<TenantBlockTypeDto>(pb)).ToList()
             };
         }
-        public Task<List<TenantCourseDto>> GetTenantWebsiteCoursesAsync(int tenantId, List<int> courseIds, CancellationToken cancellationToken)
+        public Task<List<TenantCourseDto>> GetTenantWebsiteCoursesAsync(string subDomain, List<int> courseIds, CancellationToken cancellationToken)
         {
             var courses = _context.Courses
                 .AsNoTracking()
-                .Where(c => c.TenantId == tenantId);
+                .Where(c => c.Tenant.SubDomain == subDomain);
 
             if (courseIds.Any())
                 courses = courses.Where(c => courseIds.Contains(c.Id));

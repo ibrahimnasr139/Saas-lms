@@ -7,7 +7,6 @@ using Application.Features.TenantWebsite.Commands.UpdateTenantPage;
 using Application.Features.TenantWebsite.Queries.GetTenantPage;
 using Application.Features.TenantWebsite.Queries.GetTenantPageBlocks;
 using Application.Features.TenantWebsite.Queries.GetTenantPages;
-using Application.Features.TenantWebsite.Queries.GetTenantWebsiteCourses;
 using Application.Features.TenantWebsite.Queries.ValidateUrl;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -103,14 +102,6 @@ namespace Api.Controllers
                 success => Ok(success),
                 error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message })
             );
-        }
-
-
-        [HttpGet("courses")]
-        [AllowAnonymous]
-        public async Task<IActionResult> GetTenantCourses([FromQuery] List<int> courseIds, CancellationToken cancellationToken)
-        {
-            return Ok(await _mediator.Send(new GetTenantCoursesQuery(courseIds), cancellationToken));
         }
     }
 }
