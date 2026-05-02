@@ -26,9 +26,6 @@ namespace Application.Features.Public.Queries.GetCourseDetails
                 _ => ValueTask.FromResult<UserSession?>(null),
                 cancellationToken: cancellationToken
             );
-            if (session is null)
-                return UserErrors.Unauthorized;
-
             string subDomain = string.Empty;
             var httpRequest = _httpContextAccessor.HttpContext!.Request;
             var origin = httpRequest.Headers["Origin"].ToString();
@@ -37,7 +34,7 @@ namespace Application.Features.Public.Queries.GetCourseDetails
             else
                 subDomain = httpRequest.Host.Host.Split(".")[0];
 
-            var websiteCourseDetails = await _courseRepository.GetWebsiteCourseDetailsAsync(request.CourseId, subDomain, session.UserId, cancellationToken);
+            var websiteCourseDetails = await _courseRepository.GetWebsiteCourseDetailsAsync(request.CourseId, subDomain, session?.UserId, cancellationToken);
             if (websiteCourseDetails is null)
                 return CourseErrors.CourseNotFound;
 
