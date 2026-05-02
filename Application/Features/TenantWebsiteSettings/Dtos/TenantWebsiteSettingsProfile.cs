@@ -7,9 +7,9 @@
             // Read
             CreateMap<Tenant, TenantWebsiteSettingsDto>()
                 .ForMember(dest => dest.General, opt => opt.MapFrom(src => src))
-                .ForMember(dest => dest.Appearance, opt => opt.MapFrom(src => src.WebsiteAppearnceSetting))
-                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.EmailSetting))
-                .ForMember(dest => dest.Notifications, opt => opt.MapFrom(src => src.NotificationSetting));
+                .ForMember(dest => dest.Appearance, opt => opt.MapFrom(src => src.WebsiteAppearnceSetting ?? new WebsiteAppearanceSetting()))
+                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.EmailSetting ?? new EmailSetting()))
+                .ForMember(dest => dest.Notifications, opt => opt.MapFrom(src => src.NotificationSetting ?? new NotificationSetting()));
 
             CreateMap<Tenant, GeneralDto>()
                 .ForMember(dest => dest.PlatformName, opt => opt.MapFrom(src => src.PlatformName))

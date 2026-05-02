@@ -5,7 +5,7 @@ namespace Application.Contracts.Repositories
 {
     public interface ITenantWebsiteSettingsRepository
     {
-        Task<TenantWebsiteSettingsDto> GetSettingsAsync(int tenantId, CancellationToken cancellationToken);
+        Task<TenantWebsiteSettingsDto> GetSettingsAsync(string subDomain, CancellationToken cancellationToken);
         Task<bool> UpdateSettingsAsync(int tenantId, UpdateTenantWebsiteSettingsCommand update, CancellationToken cancellationToken);
     }
 }

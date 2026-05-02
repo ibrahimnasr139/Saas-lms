@@ -1,4 +1,5 @@
-﻿using Application.Constants;
+﻿using Application.Common;
+using Application.Constants;
 using Application.Features.Announcements.Commands.CreateAnnouncement;
 using Application.Features.Announcements.Commands.DeleteAnnouncement;
 using Application.Features.Announcements.Queries.GetAnnouncements;
@@ -37,11 +38,10 @@ namespace Api.Controllers
         [HttpDelete("{announcementId}")]
         public async Task<IActionResult> DeleteAnnouncement([FromRoute] DeleteAnnouncementCommand command, CancellationToken cancellationToken)
         {
-            //return Ok(await _mediator.Send(command, cancellationToken));
             var result = await _mediator.Send(command, cancellationToken);
             return result.Match<IActionResult>(
                 announcementResponse => Ok(announcementResponse),
-                error => StatusCode((int)error.HttpStatusCode, error.Message)
+                error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message })
             );
         }
     }

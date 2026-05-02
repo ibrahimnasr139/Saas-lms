@@ -14,12 +14,10 @@ namespace Api.Controllers
     public class TenantWebsiteSettingsController : ControllerBase
     {
         private readonly IMediator _mediator;
-        private readonly ILogger<TenantWebsiteSettingsController> _logger;
 
-        public TenantWebsiteSettingsController(IMediator mediator, ILogger<TenantWebsiteSettingsController> logger)
+        public TenantWebsiteSettingsController(IMediator mediator)
         {
             _mediator = mediator;
-            _logger = logger;
         }
 
         [HttpGet]

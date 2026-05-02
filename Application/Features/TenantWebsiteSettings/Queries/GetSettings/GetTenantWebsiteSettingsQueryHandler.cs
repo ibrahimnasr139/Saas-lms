@@ -1,5 +1,4 @@
-﻿using Application.Contracts.Repositories;
-using Application.Features.TenantWebsiteSettings.Dtos;
+﻿using Application.Features.TenantWebsiteSettings.Dtos;
 using Microsoft.AspNetCore.Http;
 
 namespace Application.Features.TenantWebsiteSettings.Queries.GetSettings
@@ -7,15 +6,13 @@ namespace Application.Features.TenantWebsiteSettings.Queries.GetSettings
     internal sealed class GetTenantWebsiteSettingsQueryHandler : IRequestHandler<GetTenantWebsiteSettingsQuery, OneOf<TenantWebsiteSettingsDto, Error>>
     {
         private readonly ITenantWebsiteSettingsRepository _tenantWebsiteSettingsRepository;
-        private readonly ITenantRepository _tenantRepository;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ICurrentUserId _currentUserId;
         private readonly ITenantMemberRepository _tenantMemberRepository;
-        public GetTenantWebsiteSettingsQueryHandler(ITenantWebsiteSettingsRepository tenantWebsiteSettingsRepository, ITenantRepository tenantRepository,
+        public GetTenantWebsiteSettingsQueryHandler(ITenantWebsiteSettingsRepository tenantWebsiteSettingsRepository,
             IHttpContextAccessor httpContextAccessor, ICurrentUserId currentUserId, ITenantMemberRepository tenantMemberRepository)
         {
             _tenantWebsiteSettingsRepository = tenantWebsiteSettingsRepository;
-            _tenantRepository = tenantRepository;
             _httpContextAccessor = httpContextAccessor;
             _currentUserId = currentUserId;
             _tenantMemberRepository = tenantMemberRepository;
@@ -24,13 +21,10 @@ namespace Application.Features.TenantWebsiteSettings.Queries.GetSettings
         {
             var userId = _currentUserId.GetUserId();
             var subDomain = _httpContextAccessor.HttpContext?.Request.Cookies[AuthConstants.SubDomain];
-            var tenantId = await _tenantRepository.GetTenantIdAsync(subDomain!, cancellationToken);
-
             var isPermitted = await _tenantMemberRepository.IsPermittedMember(userId, PermissionConstants.MANAGE_WEBSITE_SETTINGS, cancellationToken);
             if (!isPermitted)
                 return MemberErrors.NotAllowed;
-
-            return await _tenantWebsiteSettingsRepository.GetSettingsAsync(tenantId, cancellationToken);
+            return await _tenantWebsiteSettingsRepository.GetSettingsAsync(subDomain!, cancellationToken);
         }
     }
 }

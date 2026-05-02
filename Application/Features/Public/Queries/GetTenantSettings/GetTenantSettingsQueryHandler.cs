@@ -7,14 +7,12 @@ namespace Application.Features.Public.Queries.GetTenantSettings
     internal sealed class GetTenantSettingsQueryHandler : IRequestHandler<GetTenantSettingsQuery, TenantWebsiteSettingsDto>
     {
         private readonly ITenantWebsiteSettingsRepository _tenantWebsiteSettingsRepository;
-        private readonly ITenantRepository _tenantRepository;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public GetTenantSettingsQueryHandler(ITenantWebsiteSettingsRepository tenantWebsiteSettingsRepository, ITenantRepository tenantRepository,
+        public GetTenantSettingsQueryHandler(ITenantWebsiteSettingsRepository tenantWebsiteSettingsRepository,
             IHttpContextAccessor httpContextAccessor)
         {
             _tenantWebsiteSettingsRepository = tenantWebsiteSettingsRepository;
-            _tenantRepository = tenantRepository;
             _httpContextAccessor = httpContextAccessor;
         }
         public async Task<TenantWebsiteSettingsDto> Handle(GetTenantSettingsQuery request, CancellationToken cancellationToken)
@@ -27,8 +25,7 @@ namespace Application.Features.Public.Queries.GetTenantSettings
             else
                 subDomain = httpRequest.Host.Host.Split(".")[0];
 
-            var tenantId = await _tenantRepository.GetTenantIdAsync(subDomain, cancellationToken);
-            return await _tenantWebsiteSettingsRepository.GetSettingsAsync(tenantId, cancellationToken);
+            return await _tenantWebsiteSettingsRepository.GetSettingsAsync(subDomain, cancellationToken);
         }
     }
 }

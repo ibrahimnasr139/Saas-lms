@@ -15,12 +15,11 @@ namespace Infrastructure.Repositories
             _context = context;
             _mapper = mapper;
         }
-
-        public async Task<TenantWebsiteSettingsDto> GetSettingsAsync(int tenantId, CancellationToken cancellationToken)
+        public async Task<TenantWebsiteSettingsDto> GetSettingsAsync(string subDomain, CancellationToken cancellationToken)
         {
             var result =  await _context.Tenants
                 .AsNoTracking()
-                .Where(t => t.Id == tenantId)
+                .Where(t => t.SubDomain == subDomain)
                 .ProjectTo<TenantWebsiteSettingsDto>(_mapper.ConfigurationProvider)
                 .FirstOrDefaultAsync(cancellationToken);
             return result!;
