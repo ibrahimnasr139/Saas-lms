@@ -7,6 +7,6 @@
         public int Used { get; set; }
         public int? Limit { get; set; }
         public string Unit { get; set; } = string.Empty;
-        public bool Enabled => Limit == 1;
+        public bool? Enabled { get; set; }
     }
 }

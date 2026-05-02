@@ -101,14 +101,14 @@ namespace Infrastructure.Repositories
                 .Select(t => t.Id)
                 .FirstOrDefaultAsync(cancellationToken);
         }
-        public async Task<TenantUsageDto> GetTenantUsageAsync(int tenantId, CancellationToken cancellationToken)
+        public async Task<TenantUsageDto> GetTenantUsageAsync(string subDomain, CancellationToken cancellationToken)
         {
             var result = await (from s in _dbContext.Subscriptions.AsNoTracking()
                                 join tu in _dbContext.TenantUsage on s.Id equals tu.SubscriptionId
                                 join pf in _dbContext.PlanFeatures on tu.PlanFeatureId equals pf.Id
                                 join p in _dbContext.Plans on pf.PlanId equals p.Id
                                 join f in _dbContext.Features on pf.FeatureId equals f.Id
-                                where s.TenantId == tenantId
+                                where s.Tenant.SubDomain == subDomain
                                 group new { tu, pf, f } by new
                                 {
                                     s.Id,
@@ -138,7 +138,8 @@ namespace Infrastructure.Repositories
                                         Name = x.f.Name,
                                         Used = x.tu.Used,
                                         Limit = x.pf.LimitValue,
-                                        Unit = x.pf.LimitUnit
+                                        Unit = x.pf.LimitUnit,
+                                        Enabled = x.pf.IsEnabled
                                     }).ToList()
                                 }
                     ).FirstOrDefaultAsync(cancellationToken);

@@ -37,8 +37,7 @@ namespace Api.Controllers
         [HttpPatch("{itemId}/settings")]
         public async Task<IActionResult> UpdateSettings(int courseId, int moduleId, int itemId, [FromBody] UpdateSettingsCommand command, CancellationToken cancellationToken)
         {
-            command = command with { CourseId = courseId, ModuleId = moduleId, ItemId = itemId };
-            var result = await _mediator.Send(command, cancellationToken);
+            var result = await _mediator.Send(command with { CourseId = courseId, ModuleId = moduleId, ItemId = itemId }, cancellationToken);
             return result.Match<IActionResult>(
                 success => Ok(success),
                 error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message }));

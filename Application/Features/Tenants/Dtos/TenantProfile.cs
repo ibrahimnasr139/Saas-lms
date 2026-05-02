@@ -12,8 +12,8 @@ namespace Application.Features.Tenants.Dtos
             CreateMap<CreateOnboardingCommand, Tenant>();
             CreateMap<CreateOnboardingCommand, ApplicationUser>()
                 .ForMember(dest => dest.LastActiveTenantSubDomain, opt => opt.MapFrom(src => src.SubDomain));
-            CreateMap<CreateOnboardingCommand, TenantMember>();
 
+            CreateMap<CreateOnboardingCommand, TenantMember>();
 
             CreateMap<Tenant, LastTenantDto>()
                 .ForMember(dest => dest.Subjects, opt => opt.MapFrom(src => src.Subjects))
