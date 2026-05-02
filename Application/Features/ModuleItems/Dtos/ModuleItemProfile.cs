@@ -44,7 +44,8 @@ namespace Application.Features.ModuleItems.Dtos
 
             CreateMap<ModuleItem, AllItemsDto>();
 
-            CreateMap<UpdateSettingsCommand, ModuleItem>();
+            CreateMap<UpdateSettingsCommand, ModuleItem>()
+                .ForMember(dest => dest.Conditions, opt => opt.Ignore());
 
             CreateMap<UpdateQuizCommand, Quiz>()
                 .ForMember(dest => dest.Questions, opt => opt.Ignore());

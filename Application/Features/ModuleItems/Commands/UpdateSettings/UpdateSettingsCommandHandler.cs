@@ -40,7 +40,14 @@ namespace Application.Features.ModuleItems.Commands.UpdateSettings
             if (moduleItem is null)
                 return ModuleItemErrors.ModuleItemNotFound;
 
+            moduleItem.Conditions.Clear();
             _mapper.Map(request, moduleItem);
+            var mappedConditions = _mapper.Map<IEnumerable<ModuleItemCondition>>(request.Conditions);
+            foreach (var condition in mappedConditions)
+            {
+                condition.ModuleItemId = moduleItem.Id;
+                moduleItem.Conditions.Add(condition);
+            }
             await _unitOfWork.SaveAsync(cancellationToken);
             return new SuccessDto
             {
