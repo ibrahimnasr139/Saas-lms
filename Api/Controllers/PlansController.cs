@@ -15,11 +15,10 @@ namespace Api.Controllers
             _mediator = mediator;
         }
 
-        [HttpGet("")]
-        public async Task<IActionResult> Get()
+        [HttpGet]
+        public async Task<IActionResult> GetAllPlans(CancellationToken cancellationToken)
         {
-            var result = await _mediator.Send(new GetAllPlansQuery());
-            return Ok(result);
+            return Ok(await _mediator.Send(new GetAllPlansQuery(), cancellationToken));
         }
     }
 }

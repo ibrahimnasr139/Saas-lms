@@ -1,4 +1,5 @@
-﻿using Application.Constants;
+﻿using Application.Common;
+using Application.Constants;
 using Application.Features.Discussions.Commands.CreateDiscussionThreadRead;
 using Application.Features.Discussions.Commands.DeleteDiscussionReply;
 using Application.Features.Discussions.Commands.DeleteDiscussionThread;
@@ -24,7 +25,7 @@ namespace Api.Controllers
             _mediator = mediator;
         }
 
-        [HttpGet()]
+        [HttpGet]
         public async Task<IActionResult> GetDiscussions([FromQuery] GetDiscussionsQuery Query, CancellationToken cancellationToken)
         {
             return Ok(await _mediator.Send(Query, cancellationToken));
@@ -37,7 +38,7 @@ namespace Api.Controllers
             var result = await _mediator.Send(query, cancellationToken);
             return result.Match<IActionResult>(
                discussions => Ok(discussions),
-               error => StatusCode((int)error.HttpStatusCode, error.Message)
+                error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message })
             );
         }
 
@@ -55,7 +56,7 @@ namespace Api.Controllers
             var result = await _mediator.Send(command, cancellationToken);
             return result.Match<IActionResult>(
                success => Ok(new { Message = "Success" }),
-               error => StatusCode((int)error.HttpStatusCode, error.Message)
+                error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message })
             );
         }
 
@@ -66,7 +67,7 @@ namespace Api.Controllers
             var result = await _mediator.Send(command, cancellationToken);
             return result.Match<IActionResult>(
                success => Ok(success),
-               error => StatusCode((int)error.HttpStatusCode, error.Message)
+                error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message })
             );
         }
 
@@ -77,7 +78,7 @@ namespace Api.Controllers
             var result = await _mediator.Send(command, cancellationToken);
             return result.Match<IActionResult>(
                success => Ok(success),
-               error => StatusCode((int)error.HttpStatusCode, error.Message)
+                error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message })
             );
         }
 
@@ -88,7 +89,7 @@ namespace Api.Controllers
             var result = await _mediator.Send(command with { ThreadId = threadId, ReplyId = replyId }, cancellationToken);
             return result.Match<IActionResult>(
                success => Ok(success),
-               error => StatusCode((int)error.HttpStatusCode, error.Message)
+                error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message })
             );
         }
     }

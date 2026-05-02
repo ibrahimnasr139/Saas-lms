@@ -1,4 +1,5 @@
-﻿using Application.Features.Students.Commands.AcceptInvite;
+﻿using Application.Common;
+using Application.Features.Students.Commands.AcceptInvite;
 using Application.Features.Students.Commands.DeclineInvite;
 using Application.Features.Students.Commands.ValidateStudentInvite;
 using Application.Features.Students.Queries.GetAvailableSubjects;
@@ -25,7 +26,7 @@ namespace Api.Controllers
             var result = await _mediator.Send(command, cancellationToken);
             return result.Match<IActionResult>(
                 response => Ok(response),
-                error => StatusCode((int)error.HttpStatusCode, error.Message)
+                error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message })
             );
         }
 
@@ -36,7 +37,7 @@ namespace Api.Controllers
             var result = await _mediator.Send(command, cancellationToken);
             return result.Match<IActionResult>(
                 response => Ok(response),
-                error => StatusCode((int)error.HttpStatusCode, error.Message)
+                error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message })
             );
         }
 
@@ -47,7 +48,7 @@ namespace Api.Controllers
             var result = await _mediator.Send(command, cancellationToken);
             return result.Match<IActionResult>(
                 response => Ok(response),
-                error => StatusCode((int)error.HttpStatusCode, error.Message)
+                error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message })
             );
         }
 

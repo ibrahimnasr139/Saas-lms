@@ -1,4 +1,5 @@
-﻿using Application.Features.StudentLessons.Commands.CreateStudentDiscussion;
+﻿using Application.Common;
+using Application.Features.StudentLessons.Commands.CreateStudentDiscussion;
 using Application.Features.StudentLessons.Commands.CreateStudentDiscussionReply;
 using Application.Features.StudentLessons.Commands.DeleteStudentDiscussion;
 using Application.Features.StudentLessons.Commands.DeleteStudentDiscussionReply;
@@ -32,7 +33,7 @@ namespace Api.Controllers
             var result = await _mediator.Send(new GetStudentLessonProgressQuery(courseId, itemId), cancellationToken);
             return result.Match(
                 progress => Ok(progress),
-                error => StatusCode((int)error.HttpStatusCode, error.Message)
+                error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message })
             );
         }
 
@@ -43,7 +44,7 @@ namespace Api.Controllers
             var result = await _mediator.Send(command with { CourseId = courseId, ItemId = itemId }, cancellationToken);
             return result.Match(
                 progress => Ok(progress),
-                error => StatusCode((int)error.HttpStatusCode, error.Message)
+                error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message })
             );
         }
 
@@ -54,7 +55,7 @@ namespace Api.Controllers
             var result = await _mediator.Send(new GetStudentLessonItemQuery(courseId, itemId), cancellationToken);
             return result.Match(
                 lessonItem => Ok(lessonItem),
-                error => StatusCode((int)error.HttpStatusCode, error.Message)
+                error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message })
             );
         }
 
@@ -65,7 +66,7 @@ namespace Api.Controllers
             var result = await _mediator.Send(new GetStudentDiscussionsQuery(courseId, itemId), cancellationToken);
             return result.Match(
                 discussions => Ok(discussions),
-                error => StatusCode((int)error.HttpStatusCode, error.Message)
+                error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message })
             );
         }
 
@@ -76,7 +77,7 @@ namespace Api.Controllers
             var result = await _mediator.Send(command with { CourseId = courseId, ItemId = itemId }, cancellationToken);
             return result.Match(
                discussion => Ok(discussion),
-               error => StatusCode((int)error.HttpStatusCode, error.Message)
+                error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message })
            );
         }
 
@@ -87,7 +88,7 @@ namespace Api.Controllers
             var result = await _mediator.Send(command with { CourseId = courseId, ItemId = itemId, DiscussionId = discussionId }, cancellationToken);
             return result.Match(
                discussion => Ok(discussion),
-               error => StatusCode((int)error.HttpStatusCode, error.Message)
+                error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message })
             );
         }
 
@@ -98,7 +99,7 @@ namespace Api.Controllers
             var result = await _mediator.Send(new DeleteStudentDiscussionCommand(courseId, itemId, discussionId), cancellationToken);
             return result.Match(
                discussion => Ok(discussion),
-               error => StatusCode((int)error.HttpStatusCode, error.Message)
+                error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message })
             );
         }
 
@@ -109,7 +110,7 @@ namespace Api.Controllers
             var result = await _mediator.Send(command with { CourseId = courseId, ItemId = itemId, DiscussionId = discussionId }, cancellationToken);
             return result.Match(
                discussionReply => Ok(discussionReply),
-               error => StatusCode((int)error.HttpStatusCode, error.Message)
+                error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message })
            );
         }
 
@@ -120,7 +121,7 @@ namespace Api.Controllers
             var result = await _mediator.Send(command with { CourseId = courseId, ItemId = itemId, DiscussionId = discussionId, ReplyId = replyId }, cancellationToken);
             return result.Match(
                discussionReply => Ok(discussionReply),
-               error => StatusCode((int)error.HttpStatusCode, error.Message)
+                error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message })
             );
         }
 
@@ -131,7 +132,7 @@ namespace Api.Controllers
             var result = await _mediator.Send(new DeleteStudentDiscussionReplyCommand(courseId, itemId, discussionId, replyId), cancellationToken);
             return result.Match(
                discussionReply => Ok(discussionReply),
-               error => StatusCode((int)error.HttpStatusCode, error.Message)
+                error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message })
             );
         }
     }

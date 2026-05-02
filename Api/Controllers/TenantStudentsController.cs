@@ -1,4 +1,5 @@
-﻿using Application.Constants;
+﻿using Application.Common;
+using Application.Constants;
 using Application.Features.Students.Commands.SendReminder;
 using Application.Features.TenantStudents.Commands.DeleteStudent;
 using Application.Features.TenantStudents.Commands.InviteStudent;
@@ -28,13 +29,15 @@ namespace Api.Controllers
             await _mediator.Send(command);
             return NoContent();
         }
+        
+        
         [HttpGet]
         public async Task<IActionResult> GetStudents([FromQuery] GetStudentsQuery query, CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(query, cancellationToken);
             return result.Match<IActionResult>(
                 student => Ok(student),
-                error => StatusCode((int)error.HttpStatusCode, error.Message)
+                error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message })
             );
         }
 
@@ -45,7 +48,7 @@ namespace Api.Controllers
             var result = await _mediator.Send(query, cancellationToken);
             return result.Match<IActionResult>(
                 student => Ok(student),
-                error => StatusCode((int)error.HttpStatusCode, error.Message)
+                error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message })
             );
         }
 
@@ -57,13 +60,13 @@ namespace Api.Controllers
         }
 
 
-        [HttpDelete()]
+        [HttpDelete]
         public async Task<IActionResult> DeleteStudent([FromQuery] DeleteStudentCommand command, CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(command, cancellationToken);
             return result.Match<IActionResult>(
                 response => Ok(response),
-                error => StatusCode((int)error.HttpStatusCode, error.Message)
+                error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message })
             );
         }
 
@@ -74,7 +77,7 @@ namespace Api.Controllers
             var result = await _mediator.Send(command, cancellationToken);
             return result.Match<IActionResult>(
                 response => Ok(response),
-                error => StatusCode((int)error.HttpStatusCode, error.Message)
+                error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message })
             );
         }
     }

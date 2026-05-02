@@ -1,4 +1,5 @@
-﻿using Application.Features.StudentAssignments.Commands.SubmitAssignment;
+﻿using Application.Common;
+using Application.Features.StudentAssignments.Commands.SubmitAssignment;
 using Application.Features.StudentAssignments.Queries.GetStudentAssignment;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -18,13 +19,13 @@ namespace Api.Controllers
             _mediator = mediator;
         }
 
-        [HttpGet()]
+        [HttpGet]
         public async Task<IActionResult> GetStudentAssignment([FromRoute] int courseId, [FromRoute] int itemId, CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(new GetStudentAssignmentQuery(courseId, itemId), cancellationToken);
             return result.Match(
                 assignment => Ok(assignment),
-                error => StatusCode((int)error.HttpStatusCode, error.Message)
+                error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message })
             );
         }
 
@@ -35,7 +36,7 @@ namespace Api.Controllers
             var result = await _mediator.Send(command with { CourseId = courseId, ItemId = itemId }, cancellationToken);
             return result.Match(
                 assignment => Ok(assignment),
-                error => StatusCode((int)error.HttpStatusCode, error.Message)
+                error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message })
             );
         }
     }

@@ -70,15 +70,15 @@ namespace Api.Controllers
             var result = await _mediator.Send(query, cancellationToken);
             return result.Match<IActionResult>(
                 success => Ok(success),
-                error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message }));
+                error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message })
+            );
         }
 
 
         [HttpGet]
         public async Task<IActionResult> GetAllItems([FromRoute] GetAllItemsQuery query, [FromQuery] ModuleItemType? type, CancellationToken cancellationToken)
         {
-            query = query with { Type = type };
-            var result = await _mediator.Send(query, cancellationToken);
+            var result = await _mediator.Send(query with { Type = type }, cancellationToken);
             return result.Match<IActionResult>(
                 success => Ok(success),
                 error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message }));

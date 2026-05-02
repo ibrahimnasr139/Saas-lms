@@ -5,7 +5,6 @@ using Application.Features.Attempts.Commands.PublishAttempt;
 using Application.Features.Attempts.Queries.GetAttempt;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers
@@ -30,6 +29,7 @@ namespace Api.Controllers
                 success => Created(),
                 error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message }));
         }
+        
         [HttpPost("{attemptId}/publish")]
         public async Task<IActionResult> PublishAttempt([FromRoute] PublishAttemptCommand command, CancellationToken cancellationToken)
         {
@@ -38,6 +38,7 @@ namespace Api.Controllers
                 success => Ok(success),
                 error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message }));
         }
+        
         [HttpGet("{attemptId}")]
         public async Task<IActionResult> GetAttempt([FromRoute] GetAttemptQuery query, CancellationToken cancellationToken)
         {

@@ -28,19 +28,17 @@ namespace Api.Controllers
             _mediator = mediator;
         }
 
-        [HttpGet("")]
+        [HttpGet]
         public async Task<IActionResult> GetTenantMembers(CancellationToken cancellationToken)
         {
-            var result = await _mediator.Send(new GetTenantMembersQuery(), cancellationToken);
-            return Ok(result);
+            return Ok(await _mediator.Send(new GetTenantMembersQuery(), cancellationToken));
         }
 
 
         [HttpGet("current")]
         public async Task<IActionResult> GetCurrent(CancellationToken cancellationToken)
         {
-            var result = await _mediator.Send(new GetCurrentTenantMemberQuery(), cancellationToken);
-            return Ok(result);
+            return Ok(await _mediator.Send(new GetCurrentTenantMemberQuery(), cancellationToken));
         }
 
 
@@ -58,8 +56,7 @@ namespace Api.Controllers
         [HttpGet("invite/validate")]
         public async Task<IActionResult> Create([FromQuery] string token, CancellationToken cancellationToken)
         {
-            var result = await _mediator.Send(new ValidateTenanInviteCommand(token), cancellationToken);
-            return Ok(result);
+            return Ok(await _mediator.Send(new ValidateTenanInviteCommand(token), cancellationToken));
         }
 
 
@@ -77,8 +74,7 @@ namespace Api.Controllers
         [HttpPost("invite/decline")]
         public async Task<IActionResult> DeclineInvite([FromQuery] string token, CancellationToken cancellationToken)
         {
-            var result = await _mediator.Send(new DeclineTenanInviteCommand(token), cancellationToken);
-            return Ok(result);
+            return Ok(await _mediator.Send(new DeclineTenanInviteCommand(token), cancellationToken));
         }
 
 

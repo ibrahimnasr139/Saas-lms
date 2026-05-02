@@ -32,6 +32,8 @@ namespace Api.Controllers
                 success => Created(),
                 error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message }));
         }
+       
+        
         [HttpDelete("questions/{questionId}")]
         public async Task<IActionResult> DeleteQuestion([FromRoute] DeleteQuestionCommand command, CancellationToken cancellationToken)
         {
@@ -40,6 +42,8 @@ namespace Api.Controllers
                 success => NoContent(),
                 error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message }));
         }
+        
+        
         [HttpPost("questions")]
         public async Task<IActionResult> CreateQuestion([FromBody] CreateQuestionCommand command, CancellationToken cancellationToken)
         {
@@ -48,33 +52,38 @@ namespace Api.Controllers
                success => Created(string.Empty, success),
                error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message }));
         }
+        
+        
         [HttpPut("questions/{questionId}")]
         public async Task<IActionResult> UpdateQuestion([FromRoute] int questionId, [FromBody] UpdateQuestionCommand command, CancellationToken cancellationToken)
         {
-            command = command with { QuestionId = questionId };
-            var result = await _mediator.Send(command, cancellationToken);
+            var result = await _mediator.Send(command with { QuestionId = questionId }, cancellationToken);
             return result.Match(
                success => Ok(success),
                error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message }));
         }
+        
+        
         [HttpGet("categories")]
         public async Task<IActionResult> GetCategories(CancellationToken cancellationToken)
         {
-            var result = await _mediator.Send(new GetCategoriesQuery(), cancellationToken);
-            return Ok(result);
+            return Ok(await _mediator.Send(new GetCategoriesQuery(), cancellationToken));
         }
+        
+        
         [HttpGet("questions")]
         public async Task<IActionResult> GetQuestions(CancellationToken cancellationToken)
         {
-            var result = await _mediator.Send(new GetAllQuestionsQuery(), cancellationToken);
-            return Ok(result);
+            return Ok(await _mediator.Send(new GetAllQuestionsQuery(), cancellationToken));
         }
+        
+        
         [HttpGet("statistics")]
         public async Task<IActionResult> GetStatistics(CancellationToken cancellationToken)
         {
-            var result = await _mediator.Send(new GetStatisticsQuery(), cancellationToken);
-            return Ok(result);
+            return Ok(await _mediator.Send(new GetStatisticsQuery(), cancellationToken));
         }
+
 
         [HttpGet("questions/{questionId}")]
         public async Task<IActionResult> GetQuestion([FromRoute] GetQuestionQuery query, CancellationToken cancellationToken)

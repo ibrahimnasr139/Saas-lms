@@ -17,19 +17,17 @@ namespace Api.Controllers
         {
             _mediator = mediator;
         }
-        [HttpGet()]
+        [HttpGet]
         public async Task<IActionResult> GetProfile(CancellationToken cancellationToken)
         {
-            var result = await _mediator.Send(new GetProfileQuery(), cancellationToken);
-            return Ok(result);
+            return Ok(await _mediator.Send(new GetProfileQuery(), cancellationToken));
         }
 
 
         [HttpGet("tenants")]
         public async Task<IActionResult> GetTenants(CancellationToken cancellationToken)
         {
-            var result = await _mediator.Send(new GetTenantsQuery(), cancellationToken);
-            return Ok(result);
+            return Ok(await _mediator.Send(new GetTenantsQuery(), cancellationToken));
         }
     }
 }

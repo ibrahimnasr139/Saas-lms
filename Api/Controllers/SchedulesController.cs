@@ -1,4 +1,5 @@
-﻿using Application.Constants;
+﻿using Application.Common;
+using Application.Constants;
 using Application.Features.Schedules.Commands.CreateSchedule;
 using Application.Features.Schedules.Commands.DeleteSchedule;
 using Application.Features.Schedules.Commands.UpdateSchedule;
@@ -21,20 +22,20 @@ namespace Api.Controllers
             _mediator = mediator;
         }
 
-        [HttpGet()]
+        [HttpGet]
         public async Task<IActionResult> GetSchedules([FromQuery] GetSchedulesQuery query, CancellationToken cancellationToken)
         {
             return Ok(await _mediator.Send(query, cancellationToken));
         }
 
 
-        [HttpPost()]
+        [HttpPost]
         public async Task<IActionResult> CreateSchedule([FromBody] CreateScheduleCommand command, CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(command, cancellationToken);
             return result.Match<IActionResult>(
                 scheduleResponse => Ok(scheduleResponse),
-                error => StatusCode((int)error.HttpStatusCode, error.Message)
+                error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message })
             );
         }
 
@@ -45,7 +46,7 @@ namespace Api.Controllers
             var result = await _mediator.Send(command with { ScheduleId = scheduleId }, cancellationToken);
             return result.Match<IActionResult>(
                 scheduleResponse => Ok(scheduleResponse),
-                error => StatusCode((int)error.HttpStatusCode, error.Message)
+                error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message })
             );
         }
 
@@ -56,7 +57,7 @@ namespace Api.Controllers
             var result = await _mediator.Send(command, cancellationToken);
             return result.Match<IActionResult>(
                 scheduleResponse => Ok(scheduleResponse),
-                error => StatusCode((int)error.HttpStatusCode, error.Message)
+                error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message })
             );
         }
     }

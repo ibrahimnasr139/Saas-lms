@@ -1,4 +1,5 @@
-﻿using Application.Features.StudentUsers.Commands.Onboarding;
+﻿using Application.Common;
+using Application.Features.StudentUsers.Commands.Onboarding;
 using Application.Features.StudentUsers.Queries.GetCurrentStudent;
 using Application.Features.StudentUsers.Queries.GetProfile;
 using Application.Features.StudentUsers.Queries.GetStudentStreak;
@@ -26,7 +27,7 @@ namespace Api.Controllers
             var result = await _mediator.Send(new GetProfileQuery(), cancellationToken);
             return result.Match<IActionResult>(
                 profile => Ok(profile),
-                error => StatusCode((int)error.HttpStatusCode, error.Message)
+                error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message })
             );
         }
 
@@ -37,7 +38,7 @@ namespace Api.Controllers
             var result = await _mediator.Send(command, cancellationToken);
             return result.Match<IActionResult>(
                 response => Ok(response),
-                error => StatusCode((int)error.HttpStatusCode, error.Message)
+                error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message })
             );
         }
 
@@ -48,7 +49,7 @@ namespace Api.Controllers
             var result = await _mediator.Send(new GetStudentStreakQuery(), cancellationToken);
             return result.Match<IActionResult>(
                 success => Ok(success),
-                error => StatusCode((int)error.HttpStatusCode, error.Message)
+                error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message })
             );
         }
 
@@ -59,7 +60,7 @@ namespace Api.Controllers
             var result = await _mediator.Send(new GetCurrentStudentQuery(), cancellationToken);
             return result.Match<IActionResult>(
                 student => Ok(student),
-                error => StatusCode((int)error.HttpStatusCode, error.Message)
+                error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message })
             );
         }
     }

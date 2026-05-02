@@ -27,16 +27,14 @@ namespace Api.Controllers
         [HttpGet("statistics")]
         public async Task<IActionResult> GetStatistics(CancellationToken cancellationToken)
         {
-            var result = await _mediator.Send(new GetStatisticsQuery(), cancellationToken);
-            return Ok(result);
+            return Ok(await _mediator.Send(new GetStatisticsQuery(), cancellationToken));
         }
 
 
         [HttpGet]
         public async Task<IActionResult> GetAll([FromQuery] GetAllQuery getAllQuery, CancellationToken cancellationToken)
         {
-            var result = await _mediator.Send(getAllQuery, cancellationToken);
-            return Ok(result);
+            return Ok(await _mediator.Send(getAllQuery, cancellationToken));
         }
 
 
@@ -54,8 +52,7 @@ namespace Api.Controllers
         [HttpGet("lookup")]
         public async Task<IActionResult> GetAllForLookup(CancellationToken cancellationToken)
         {
-            var result = await _mediator.Send(new GetLookupQuery(), cancellationToken);
-            return Ok(result);
+            return Ok(await _mediator.Send(new GetLookupQuery(), cancellationToken));
         }
 
 
@@ -84,8 +81,7 @@ namespace Api.Controllers
         [HttpPut("{courseId}")]
         public async Task<IActionResult> UpdateCourse([FromRoute] int courseId, UpdateCourseCommand updateCourseCommand, CancellationToken cancellationToken)
         {
-            updateCourseCommand = updateCourseCommand with { CourseId = courseId };
-            var result = await _mediator.Send(updateCourseCommand, cancellationToken);
+            var result = await _mediator.Send(updateCourseCommand with { CourseId = courseId }, cancellationToken);
             return result.Match(
                 success => Ok(success),
                 error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message })

@@ -23,7 +23,7 @@ namespace Api.Controllers
             _mediator = mediator;
         }
 
-        [HttpGet()]
+        [HttpGet]
         public async Task<IActionResult> GetOrders(CancellationToken cancellationToken)
         {
             return Ok(await _mediator.Send(new GetTenantOrdersQuery(), cancellationToken));
@@ -41,7 +41,6 @@ namespace Api.Controllers
         public async Task<IActionResult> ApproveOrder([FromRoute] int orderId, CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(new ApproveOrderCommand(orderId), cancellationToken);
-
             return result.Match<IActionResult>(
                 success => Ok(success),
                 error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message })
@@ -53,7 +52,6 @@ namespace Api.Controllers
         public async Task<IActionResult> DeclineOrder([FromRoute] int orderId, [FromBody] DeclineOrderCommand? command, CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(new DeclineOrderCommand(orderId, command?.Reason), cancellationToken);
-
             return result.Match<IActionResult>(
                 success => Ok(success),
                 error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message })
@@ -65,7 +63,6 @@ namespace Api.Controllers
         public async Task<IActionResult> BulkAction([FromBody] BulkOrderActionCommand command, CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(new BulkOrderActionCommand(command.OrderIds, command.Action, command.Reason), cancellationToken);
-
             return result.Match<IActionResult>(
                 success => Ok(success),
                 error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message })

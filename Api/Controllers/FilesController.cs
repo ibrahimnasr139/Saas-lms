@@ -46,7 +46,6 @@ namespace Api.Controllers
         public async Task<IActionResult> CreateUpload([FromBody] CreateUploadCommand createUploadCommand, CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(createUploadCommand, cancellationToken);
-
             return result.Match<IActionResult>(
                 success => Ok(success),
                 error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message })

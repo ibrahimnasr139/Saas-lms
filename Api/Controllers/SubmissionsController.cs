@@ -4,7 +4,6 @@ using Application.Features.Assignments.Queries.GetSubmissions;
 using Application.Features.Submissions.Commands.CreateSubmissionGrade;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers
@@ -19,8 +18,8 @@ namespace Api.Controllers
         {
             _mediator = mediator;
         }
-        
-        [HttpGet]   
+
+        [HttpGet]
         public async Task<IActionResult> GetSubmissions([FromRoute] GetSubmissionsQuery query, CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(query, cancellationToken);
@@ -28,6 +27,8 @@ namespace Api.Controllers
                 success => Ok(success),
                 error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message }));
         }
+        
+        
         [HttpPost("{submissionId}/grade")]
         public async Task<IActionResult> GradeSubmission(int courseId, int moduleId, int itemId, int submissionId, [FromBody] CreateSubmissionGradeCommand command)
         {

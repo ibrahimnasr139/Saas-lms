@@ -24,8 +24,7 @@ namespace Api.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateModule([FromRoute] int courseId, CreateModuleCommand command, CancellationToken cancellationToken)
         {
-            command = command with { CourseId = courseId };
-            var result = await _mediator.Send(command, cancellationToken);
+            var result = await _mediator.Send(command with { CourseId = courseId }, cancellationToken);
             return result.Match(
                 success => Created(string.Empty, success),
                 error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message }));
@@ -35,8 +34,7 @@ namespace Api.Controllers
         [HttpPut("{moduleId}")]
         public async Task<IActionResult> UpdateModule([FromRoute] int courseId, [FromRoute] int moduleId, UpdateModuleCommand command, CancellationToken cancellationToken)
         {
-            command = command with { CourseId = courseId, ModuleId = moduleId };
-            var result = await _mediator.Send(command, cancellationToken);
+            var result = await _mediator.Send(command with { CourseId = courseId, ModuleId = moduleId }, cancellationToken);
             return result.Match(
                 success => Ok(success),
                 error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message }));
@@ -69,7 +67,8 @@ namespace Api.Controllers
             var result = await _mediator.Send(query, cancellationToken);
             return result.Match(
                 success => Ok(success),
-                error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message }));
+                error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message })
+            );
         }
     }
 }

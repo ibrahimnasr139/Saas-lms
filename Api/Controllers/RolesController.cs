@@ -22,11 +22,10 @@ namespace Api.Controllers
             _mediator = mediator;
         }
 
-        [HttpGet("")]
+        [HttpGet]
         public async Task<IActionResult> GetRoles(CancellationToken cancellationToken)
         {
-            var result = await _mediator.Send(new GetTenantRoleQuery(), cancellationToken);
-            return Ok(result);
+            return Ok(await _mediator.Send(new GetTenantRoleQuery(), cancellationToken));
         }
 
 
@@ -53,7 +52,7 @@ namespace Api.Controllers
         }
 
 
-        [HttpPost("")]
+        [HttpPost]
         public async Task<IActionResult> CreateRole([FromBody] CreateRoleCommand request, CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(new CreateRoleCommand(request.Name, request.Description, request.EnabledPermissions), cancellationToken);

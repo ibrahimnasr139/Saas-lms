@@ -31,6 +31,8 @@ namespace Api.Controllers
                 error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message })
             );
         }
+        
+        
         [HttpPost("resend-otp")]
         public async Task<IActionResult> ResendOtp(ResendOtpCommand resendOtpCommand, CancellationToken cancellationToken)
         {
@@ -40,6 +42,8 @@ namespace Api.Controllers
                 error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message })
             );
         }
+        
+        
         [HttpPost("verify-otp")]
         public async Task<IActionResult> VerifyOtp(VerifyOtpCommand verifyOtpCommand, CancellationToken cancellationToken)
         {
@@ -49,6 +53,8 @@ namespace Api.Controllers
                 error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message })
             );
         }
+        
+        
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginCommand loginCommand, CancellationToken cancellationToken)
         {
@@ -58,6 +64,8 @@ namespace Api.Controllers
                 error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message })
             );
         }
+        
+        
         [HttpPost("forgot-password")]
         public async Task<IActionResult> ForgotPassword([FromBody] ForgetPasswordCommand forgetPasswordCommand, CancellationToken cancellationToken)
         {
@@ -67,6 +75,8 @@ namespace Api.Controllers
                 error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message })
             );
         }
+        
+        
         [HttpPost("reset-password")]
         public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordCommand resetPasswordCommand, CancellationToken cancellationToken)
         {
@@ -76,6 +86,8 @@ namespace Api.Controllers
                 error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message })
             );
         }
+        
+        
         [HttpPost("refresh")]
         public async Task<IActionResult> Refresh(CancellationToken cancellationToken)
         {
@@ -87,6 +99,8 @@ namespace Api.Controllers
                 error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message })
             );
         }
+        
+        
         [HttpPost("logout")]
         public async Task<IActionResult> Logout(CancellationToken cancellationToken)
         {

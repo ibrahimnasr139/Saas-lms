@@ -1,4 +1,5 @@
-﻿using Application.Features.Friends.Commands.AcceptRequest;
+﻿using Application.Common;
+using Application.Features.Friends.Commands.AcceptRequest;
 using Application.Features.Friends.Commands.RejectRequest;
 using Application.Features.Friends.Commands.SendRequest;
 using Application.Features.Friends.Queries.GetFriends;
@@ -26,7 +27,7 @@ namespace Api.Controllers
             var result = await _mediator.Send(new GetStudentFriendsQuery(), cancellationToken);
             return result.Match<IActionResult>(
                 success => Ok(success),
-                error => StatusCode((int)error.HttpStatusCode, error.Message)
+                error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message })
             );
         }
 
@@ -37,7 +38,7 @@ namespace Api.Controllers
             var result = await _mediator.Send(new GetRequestsQuery(), cancellationToken);
             return result.Match<IActionResult>(
                 success => Ok(success),
-                error => StatusCode((int)error.HttpStatusCode, error.Message)
+                error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message })
             );
         }
 
@@ -48,7 +49,7 @@ namespace Api.Controllers
             var result = await _mediator.Send(command, cancellationToken);
             return result.Match<IActionResult>(
                 success => Ok(success),
-                error => StatusCode((int)error.HttpStatusCode, error.Message)
+                error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message })
             );
         }
 
@@ -59,7 +60,7 @@ namespace Api.Controllers
             var result = await _mediator.Send(new AcceptRequestCommand(requestId), cancellationToken);
             return result.Match<IActionResult>(
                 success => Ok(success),
-                error => StatusCode((int)error.HttpStatusCode, error.Message)
+                error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message })
             );
         }
 
@@ -70,7 +71,7 @@ namespace Api.Controllers
             var result = await _mediator.Send(new RejectRequestCommand(requestId), cancellationToken);
             return result.Match<IActionResult>(
                 success => Ok(success),
-                error => StatusCode((int)error.HttpStatusCode, error.Message)
+                error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message })
             );
         }
     }

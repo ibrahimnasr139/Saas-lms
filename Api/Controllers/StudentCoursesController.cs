@@ -1,4 +1,5 @@
-﻿using Application.Features.StudentCourse.Queries.GetStudentCourse;
+﻿using Application.Common;
+using Application.Features.StudentCourse.Queries.GetStudentCourse;
 using Application.Features.StudentCourse.Queries.GetStudentCourseLiveSession;
 using Application.Features.StudentCourse.Queries.GetStudentCourseLiveSessions;
 using Application.Features.StudentCourse.Queries.GetStudentCourseModules;
@@ -20,13 +21,13 @@ namespace Api.Controllers
             _mediator = mediator;
         }
 
-        [HttpGet()]
+        [HttpGet]
         public async Task<IActionResult> GetStudentCourses(CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(new GetStudentCoursesQuery(), cancellationToken);
             return result.Match(
                 courses => Ok(courses),
-                error => StatusCode((int)error.HttpStatusCode, error.Message)
+                error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message })
             );
         }
 
@@ -37,7 +38,7 @@ namespace Api.Controllers
             var result = await _mediator.Send(new GetStudentCourseQuery(courseId), cancellationToken);
             return result.Match(
                 course => Ok(course),
-                error => StatusCode((int)error.HttpStatusCode, error.Message)
+                error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message })
             );
         }
 
@@ -48,7 +49,7 @@ namespace Api.Controllers
             var result = await _mediator.Send(new GetStudentCourseModulesQuery(courseId), cancellationToken);
             return result.Match(
                 modules => Ok(modules),
-                error => StatusCode((int)error.HttpStatusCode, error.Message)
+                error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message })
             );
         }
 
@@ -59,7 +60,7 @@ namespace Api.Controllers
             var result = await _mediator.Send(new GetStudentCourseLiveSessionsQuery(courseId), cancellationToken);
             return result.Match(
                 liveSessions => Ok(liveSessions),
-                error => StatusCode((int)error.HttpStatusCode, error.Message)
+                error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message })
             );
         }
 
@@ -70,7 +71,7 @@ namespace Api.Controllers
             var result = await _mediator.Send(new GetStudentCourseLiveSessionQuery(courseId, sessionId), cancellationToken);
             return result.Match(
                 liveSession => Ok(liveSession),
-                error => StatusCode((int)error.HttpStatusCode, error.Message)
+                error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message })
             );
         }
     }

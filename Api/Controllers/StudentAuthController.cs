@@ -1,4 +1,5 @@
-﻿using Application.Features.StudentAuth.Commands.Login;
+﻿using Application.Common;
+using Application.Features.StudentAuth.Commands.Login;
 using Application.Features.StudentAuth.Commands.Logout;
 using Application.Features.StudentAuth.Commands.ResendOtp;
 using Application.Features.StudentAuth.Commands.Signup;
@@ -25,7 +26,7 @@ namespace Api.Controllers
             var result = await _mediator.Send(command, cancellationToken);
             return result.Match<IActionResult>(
                 success => Ok(new { Message = "Success" }),
-                error => StatusCode((int)error.HttpStatusCode, error.Message)
+                error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message })
             );
         }
 
@@ -36,7 +37,7 @@ namespace Api.Controllers
             var result = await _mediator.Send(command, cancellationToken);
             return result.Match<IActionResult>(
                 success => Ok(new { Message = " success" }),
-                error => StatusCode((int)error.HttpStatusCode, error.Message)
+                error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message })
             );
         }
 
@@ -47,7 +48,7 @@ namespace Api.Controllers
             var result = await _mediator.Send(command, cancellationToken);
             return result.Match<IActionResult>(
                 success => Ok(new { Message = "success" }),
-                error => StatusCode((int)error.HttpStatusCode, error.Message)
+                error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message })
             );
         }
 
@@ -58,7 +59,7 @@ namespace Api.Controllers
             var result = await _mediator.Send(new ResendOtpCommand(), cancellationToken);
             return result.Match<IActionResult>(
                 success => Ok(new { Message = "success" }),
-                error => StatusCode((int)error.HttpStatusCode, error.Message)
+                error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message })
             );
         }
 
@@ -69,7 +70,7 @@ namespace Api.Controllers
             var result = await _mediator.Send(new LogoutCommand(), cancellationToken);
             return result.Match<IActionResult>(
                 success => Ok(new { Message = "success" }),
-                error => StatusCode((int)error.HttpStatusCode, error.Message)
+                error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message })
             );
         }
     }

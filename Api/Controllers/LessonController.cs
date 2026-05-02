@@ -28,6 +28,8 @@ namespace Api.Controllers
                 success => Ok(success),
                 error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message }));
         }
+        
+        
         [HttpGet("performance")]
         public async Task<IActionResult> GetPerformance([FromRoute] GetLessonPerformanceQuery query, CancellationToken cancellationToken)
         {
@@ -36,6 +38,8 @@ namespace Api.Controllers
                 success => Ok(success),
                 error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message }));
         }
+        
+        
         [HttpGet("overview")]
         public async Task<IActionResult> GetOverview([FromRoute] GetLessonOverviewQuery query, CancellationToken cancellationToken)
         {
@@ -44,6 +48,8 @@ namespace Api.Controllers
                 success => Ok(success),
                 error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message }));
         }
+        
+        
         [HttpPatch]
         public async Task<IActionResult> UpdateLesson(int courseId, int moduleId, int itemId, [FromBody] UpdateLessonCommand command, CancellationToken cancellationToken)
         {
