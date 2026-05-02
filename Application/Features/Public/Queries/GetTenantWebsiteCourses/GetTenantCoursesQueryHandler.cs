@@ -14,7 +14,13 @@ namespace Application.Features.Public.Queries.GetTenantWebsiteCourses
         }
         public async Task<List<TenantCourseDto>> Handle(GetTenantCoursesQuery request, CancellationToken cancellationToken)
         {
-            var subDomain = _httpContextAccessor.HttpContext?.Request.Cookies[AuthConstants.SubDomain];
+            string subDomain = string.Empty;
+            var httpRequest = _httpContextAccessor.HttpContext!.Request;
+            var origin = httpRequest.Headers["Origin"].ToString();
+            if (!string.IsNullOrEmpty(origin) && Uri.TryCreate(origin, UriKind.Absolute, out var uri))
+                subDomain = uri.Host.Split('.')[0];
+            else
+                subDomain = httpRequest.Host.Host.Split(".")[0];
             return await _tenantWebsiteRepository.GetTenantWebsiteCoursesAsync(subDomain!, request.CourseIds, cancellationToken);
         }
     }
