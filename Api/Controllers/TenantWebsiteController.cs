@@ -107,6 +107,7 @@ namespace Api.Controllers
 
 
         [HttpGet("courses")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetTenantCourses([FromQuery] List<int> courseIds, CancellationToken cancellationToken)
         {
             return Ok(await _mediator.Send(new GetTenantCoursesQuery(courseIds), cancellationToken));
