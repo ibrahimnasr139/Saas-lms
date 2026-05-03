@@ -166,7 +166,7 @@ namespace Infrastructure.Repositories
                 .FirstOrDefaultAsync(cancellationToken);
 
             var requiredXp = _context.Levels
-               .Where(l => l.LevelNumber == result!.Gamification.Level)
+               .Where(l => l.LevelNumber == result!.Gamification.Level + 1)
                .Select(l => l.RequiredXp)
                .FirstOrDefault();
 
