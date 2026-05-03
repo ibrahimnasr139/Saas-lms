@@ -193,7 +193,7 @@ namespace Infrastructure.Repositories
                 course.IsEnrolled = await _dbContext.Enrollments
                     .AnyAsync(e => e.CourseId == courseId && e.Student.UserId == studentUserId, cancellationToken);
                 course.HasPendingOrder = await _dbContext.Orders
-                    .AnyAsync(o => o.CourseId == courseId && o.Student.UserId == studentUserId && o.Status == OrderStatus.Pending, cancellationToken);
+                    .AnyAsync(o => o.CourseId == courseId && o.Student.UserId == studentUserId && o.Status == OrderStatus.pending, cancellationToken);
             }
             return course;
         }

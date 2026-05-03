@@ -15,7 +15,11 @@
                 .ForMember(dest => dest.BillingCycle, opt => opt.MapFrom(src => src.BillingCycle.HasValue ? src.BillingCycle.Value.ToString() : null))
                 .ForMember(dest => dest.Semester, opt => opt.MapFrom(src => src.Semester));
 
-            CreateMap<Order, TenantOrderDto>();
+            CreateMap<Order, TenantOrderDto>()
+                .ForMember(dest => dest.PaymentMethod, opt => opt.MapFrom(src => src.PaymentType))
+                .ForMember(dest => dest.Timeline, opt => opt.MapFrom(src => src.OrderTimeLines));
+
+            CreateMap<OrderTimeLine, TimelineDto>();
         }
     }
 }

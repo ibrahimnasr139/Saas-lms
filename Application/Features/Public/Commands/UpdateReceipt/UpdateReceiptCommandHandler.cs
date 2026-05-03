@@ -47,9 +47,9 @@ namespace Application.Features.Public.Commands.UpdateReceipt
                 return OrderErrors.OrderNotFound;
 
             var orderStatus = await _orderRepository.GetOrderStatusAsync(request.OrderId, cancellationToken);
-            if (orderStatus == OrderStatus.Approved)
+            if (orderStatus == OrderStatus.approved)
                 return OrderErrors.CanNotUpdatedApprovedOrder;
-            else if (orderStatus == OrderStatus.Declined)
+            else if (orderStatus == OrderStatus.declined)
                 return OrderErrors.CanNotUpdatedDeclinedOrder;
 
             order.PaymentReference = request.PaymentReference;

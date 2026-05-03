@@ -2,8 +2,8 @@
 {
     public enum OrderStatus
     {
-        Pending,
-        Approved,
-        Declined
+        pending,
+        approved,
+        declined
     }
 }

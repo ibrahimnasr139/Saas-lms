@@ -31,7 +31,7 @@ namespace Application.Features.TenantOrders.Commands.BulkOrderAction
             var subDomain = _httpContextAccessor.HttpContext?.Request.Cookies[AuthConstants.SubDomain];
             var tenantId = await _tenantRepository.GetTenantIdAsync(subDomain!, cancellationToken);
 
-            if(request.Action == OrderStatus.Approved)
+            if(request.Action == OrderStatus.approved)
             {
                 var isSubscribed = await _subscriptionRepository.HasActiveSubscriptionByTenantDomain(subDomain!, cancellationToken);
                 if (!isSubscribed)
@@ -49,7 +49,7 @@ namespace Application.Features.TenantOrders.Commands.BulkOrderAction
             if (!result)
                 return OrderErrors.BulkActionFailed;
 
-            return request.Action == OrderStatus.Approved
+            return request.Action == OrderStatus.approved
                 ? new TenantOrderResponse { Message = MessagesConstants.OrdersApproved }
                 : new TenantOrderResponse { Message = MessagesConstants.OrdersDeclined };
         }

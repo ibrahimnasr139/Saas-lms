@@ -112,11 +112,11 @@ namespace Application.Features.TenantOrders.Commands.ApproveOrder
         {
             return course.PricingType switch
             {
-                PricingType.PerSemester => now.AddMonths(3),
-                PricingType.Subscription => course.BillingCycle switch
+                PricingType.perSemester => now.AddMonths(3),
+                PricingType.subscription => course.BillingCycle switch
                 {
-                    BillingCycle.Monthly => now.AddMonths(1),
-                    BillingCycle.Annually => now.AddMonths(8),
+                    BillingCycle.monthly => now.AddMonths(1),
+                    BillingCycle.annually => now.AddMonths(8),
                     _ => null
                 },
                 _ => null

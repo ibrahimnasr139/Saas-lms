@@ -2,8 +2,8 @@
 {
     public enum BillingCycle
     {
-        Monthly = 1,
-        Annually = 2,
-        Trial = 3,
+        monthly = 1,
+        annually = 2,
+        trial = 3,
     }
 }

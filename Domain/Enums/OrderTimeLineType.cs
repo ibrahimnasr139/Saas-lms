@@ -2,9 +2,9 @@
 {
     public enum OrderTimeLineType
     {
-        Created,
-        Approved,
-        Declined,
-        PaymentUploaded
+        created,
+        approved,
+        declined,
+        paymentuploaded
     }
 }

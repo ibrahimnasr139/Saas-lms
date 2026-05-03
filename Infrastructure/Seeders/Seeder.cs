@@ -733,7 +733,7 @@ namespace Infrastructure.Seeders
                             Id = Guid.NewGuid(),
                             Price = 0m,
                             Currency = "EGP",
-                            BillingCycle = BillingCycle.Trial,
+                            BillingCycle = BillingCycle.trial,
                             DiscountPercent = 0,
                             CreatedAt = baseDate
                         }
@@ -834,7 +834,7 @@ namespace Infrastructure.Seeders
                             Id = Guid.NewGuid(),
                             Price = 2000m,
                             Currency = "EGP",
-                            BillingCycle = BillingCycle.Monthly,
+                            BillingCycle = BillingCycle.monthly,
                             DiscountPercent = 0,
                             CreatedAt = baseDate
                         },
@@ -843,7 +843,7 @@ namespace Infrastructure.Seeders
                             Id = Guid.NewGuid(),
                             Price = 20000m,
                             Currency = "EGP",
-                            BillingCycle = BillingCycle.Annually,
+                            BillingCycle = BillingCycle.annually,
                             DiscountPercent = 15,
                             CreatedAt = baseDate
                         }
@@ -877,7 +877,7 @@ namespace Infrastructure.Seeders
                             Id = Guid.NewGuid(),
                             Price = 6500m,
                             Currency = "EGP",
-                            BillingCycle = BillingCycle.Monthly,
+                            BillingCycle = BillingCycle.monthly,
                             DiscountPercent = 0,
                             CreatedAt = baseDate
                         },
@@ -886,7 +886,7 @@ namespace Infrastructure.Seeders
                             Id = Guid.NewGuid(),
                             Price = 65000m,
                             Currency = "EGP",
-                            BillingCycle = BillingCycle.Annually,
+                            BillingCycle = BillingCycle.annually,
                             DiscountPercent = 20,
                             CreatedAt = baseDate
                         }
@@ -920,7 +920,7 @@ namespace Infrastructure.Seeders
                             Id = Guid.NewGuid(),
                             Price = 20000m,
                             Currency = "EGP",
-                            BillingCycle = BillingCycle.Monthly,
+                            BillingCycle = BillingCycle.monthly,
                             DiscountPercent = 0,
                             CreatedAt = baseDate
                         },
@@ -929,7 +929,7 @@ namespace Infrastructure.Seeders
                             Id = Guid.NewGuid(),
                             Price = 200000m,
                             Currency = "EGP",
-                            BillingCycle = BillingCycle.Annually,
+                            BillingCycle = BillingCycle.annually,
                             DiscountPercent = 25,
                             CreatedAt = baseDate
                         }

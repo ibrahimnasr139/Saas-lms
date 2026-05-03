@@ -8,7 +8,7 @@ namespace Application.Contracts.Repositories
     public interface IOrderRepository
     {
         Task CreateOrderAsync(Order order, CancellationToken cancellationToken);
-        Task<List<TenantOrderDto>> GetTenantOrdersAsync(int tenantId, CancellationToken cancellationToken);
+        Task<List<TenantOrderDto>> GetTenantOrdersAsync(string subDomain, CancellationToken cancellationToken);
         Task<TenantOrderStatisticsDto> GetTenantOrderStatisticsAsync(int tenantId, CancellationToken cancellationToken);
         Task<bool> ApproveOrderWithEnrollmentAsync(int orderId, int tenantId, string actor, Enrollment enrollment, StudentSubscription subscription, CancellationToken cancellationToken);
         Task<bool> DeclineOrderAsync(int orderId, int tenantId, string actor, string? reason, CancellationToken cancellationToken);
@@ -17,5 +17,6 @@ namespace Application.Contracts.Repositories
         Task<OrderDto?> GetStudentOrderAsync(int orderId, int studentId, string subDomain, CancellationToken cancellationToken);
         Task<OrderStatus> GetOrderStatusAsync(int orderId, CancellationToken cancellationToken);
         Task<Order?> GetOrderByIdAsync(int orderId, int studentId, string subDomain, CancellationToken cancellationToken);
+        Task CreateOrderTimeLineAsync(OrderTimeLine orderTimeLine, CancellationToken cancellationToken);
     }
 }

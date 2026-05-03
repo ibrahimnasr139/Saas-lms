@@ -1,5 +1,5 @@
-﻿using Application.Contracts.Repositories;
-using Application.Features.Public.Dtos;
+﻿using Application.Features.Public.Dtos;
+using Domain.Enums;
 using Microsoft.AspNetCore.Http;
 
 namespace Application.Features.Public.Commands.CreateOrder
@@ -14,10 +14,11 @@ namespace Application.Features.Public.Commands.CreateOrder
         private readonly IEnrollmentRepository _enrollmentRepository;
         private readonly IStudentSubscriptionRepository _studentSubscriptionRepository;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IStudentRepository _studentRepository;
 
         public CreateOrderCommandHandler(ITenantRepository tenantRepository, HybridCache hybridCache, IOrderRepository orderRepository,
             IHttpContextAccessor httpContextAccessor, ICourseRepository courseRepository, IEnrollmentRepository enrollmentRepository,
-            IStudentSubscriptionRepository studentSubscriptionRepository, IUnitOfWork unitOfWork)
+            IStudentSubscriptionRepository studentSubscriptionRepository, IUnitOfWork unitOfWork, IStudentRepository studentRepository)
         {
             _tenantRepository = tenantRepository;
             _orderRepository = orderRepository;
@@ -27,6 +28,7 @@ namespace Application.Features.Public.Commands.CreateOrder
             _enrollmentRepository = enrollmentRepository;
             _studentSubscriptionRepository = studentSubscriptionRepository;
             _unitOfWork = unitOfWork;
+            _studentRepository = studentRepository;
         }
         public async Task<OneOf<PublicOrderDto, Error>> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
         {
@@ -59,7 +61,7 @@ namespace Application.Features.Public.Commands.CreateOrder
                 if (studentSubscriptionIsActive)
                     return StudentErrors.AlreadyEnrolled;
             }
-
+            
             var tenantId = await _tenantRepository.GetTenantIdAsync(subDomain, cancellationToken);
             var newOrder = new Order
             {
@@ -71,8 +73,25 @@ namespace Application.Features.Public.Commands.CreateOrder
                 TenantId = tenantId,
                 StudentId = session.StudentId,
             };
-            await _orderRepository.CreateOrderAsync(newOrder, cancellationToken);
-            await _unitOfWork.SaveAsync(cancellationToken);
+            var newOrderTimeLine = new OrderTimeLine
+            {
+                OrderId = newOrder.Id,
+                Description = " تم إنشاء الطلب.",
+                Type = OrderTimeLineType.created,
+                Actor = await _studentRepository.GetStuentNameByIdAsync(session.StudentId, cancellationToken)
+            };
+            await _unitOfWork.BeginTransactionAsync(cancellationToken);
+            try
+            {
+                await _orderRepository.CreateOrderAsync(newOrder, cancellationToken);
+                await _orderRepository.CreateOrderTimeLineAsync(newOrderTimeLine, cancellationToken);
+                await _unitOfWork.CommitTransactionAsync(cancellationToken);
+            }
+            catch
+            {
+                await _unitOfWork.RollbackTransactionAsync(cancellationToken);
+                throw;
+            }
             return new PublicOrderDto
             {
                 Id = newOrder.Id,

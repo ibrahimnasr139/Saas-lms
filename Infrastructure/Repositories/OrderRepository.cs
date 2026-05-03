@@ -22,10 +22,10 @@ namespace Infrastructure.Repositories
         {
             await _context.Orders.AddAsync(order, cancellationToken);
         }
-        public async Task<List<TenantOrderDto>> GetTenantOrdersAsync(int tenantId, CancellationToken cancellationToken)
+        public async Task<List<TenantOrderDto>> GetTenantOrdersAsync(string subDomain, CancellationToken cancellationToken)
         {
             return await _context.Orders
-                .Where(o => o.TenantId == tenantId)
+                .Where(o => o.Tenant.SubDomain == subDomain)
                 .ProjectTo<TenantOrderDto>(_mapper.ConfigurationProvider)
                 .ToListAsync(cancellationToken);
         }
@@ -37,10 +37,10 @@ namespace Infrastructure.Repositories
                 .Select(g => new TenantOrderStatisticsDto
                 {
                     TotalOrders = g.Count(),
-                    PendingOrders = g.Count(o => o.Status == OrderStatus.Pending),
-                    ApprovedOrders = g.Count(o => o.Status == OrderStatus.Approved),
-                    DeclinedOrders = g.Count(o => o.Status == OrderStatus.Declined),
-                    TotalRevenue = g.Where(o => o.Status == OrderStatus.Approved).Sum(o => o.PricePaid)
+                    PendingOrders = g.Count(o => o.Status == OrderStatus.pending),
+                    ApprovedOrders = g.Count(o => o.Status == OrderStatus.approved),
+                    DeclinedOrders = g.Count(o => o.Status == OrderStatus.declined),
+                    TotalRevenue = g.Where(o => o.Status == OrderStatus.approved).Sum(o => o.PricePaid)
                 }).FirstOrDefaultAsync(cancellationToken) ?? new TenantOrderStatisticsDto();
         }
         public async Task<bool> ApproveOrderWithEnrollmentAsync(int orderId, int tenantId, string actor, Enrollment enrollment, StudentSubscription subscription, CancellationToken cancellationToken)
@@ -50,16 +50,16 @@ namespace Infrastructure.Repositories
             {
                 var order = await _context.Orders
                     .FirstOrDefaultAsync(o => o.Id == orderId && o.TenantId == tenantId, cancellationToken);
-                if (order is null || order.Status != OrderStatus.Pending)
+                if (order is null || order.Status != OrderStatus.pending)
                     return false;
 
-                order.Status = OrderStatus.Approved;
+                order.Status = OrderStatus.approved;
                 order.ApprovedAt = DateTime.UtcNow;
                 order.OrderTimeLines.Add(new OrderTimeLine
                 {
                     Description = OrderTimeLineConstants.OrderTimeLineApproved,
                     Actor = actor,
-                    Type = OrderTimeLineType.Approved,
+                    Type = OrderTimeLineType.approved,
                     OrderId = order.Id
                 });
 
@@ -78,17 +78,17 @@ namespace Infrastructure.Repositories
         public async Task<bool> DeclineOrderAsync(int orderId, int tenantId, string actor, string? reason, CancellationToken cancellationToken)
         {
             var order = await _context.Orders.FirstOrDefaultAsync(o => o.Id == orderId && o.TenantId == tenantId);
-            if (order == null || order.Status != OrderStatus.Pending)
+            if (order == null || order.Status != OrderStatus.pending)
                 return false;
 
-            order.Status = OrderStatus.Declined;
+            order.Status = OrderStatus.declined;
             order.DeclinedAt = DateTime.UtcNow;
             order.RejectionReason = reason;
             order.OrderTimeLines.Add(new OrderTimeLine
             {
                 Description = OrderTimeLineConstants.OrderTimeLineDeclined,
                 Actor = actor,
-                Type = OrderTimeLineType.Declined,
+                Type = OrderTimeLineType.declined,
                 OrderId = order.Id
             });
             _context.Orders.Update(order);
@@ -106,30 +106,30 @@ namespace Infrastructure.Repositories
 
             foreach (var order in orders)
             {
-                if (order.Status != OrderStatus.Pending)
+                if (order.Status != OrderStatus.pending)
                     continue;
-                if (request.Action == OrderStatus.Approved)
+                if (request.Action == OrderStatus.approved)
                 {
-                    order.Status = OrderStatus.Approved;
+                    order.Status = OrderStatus.approved;
                     order.ApprovedAt = DateTime.UtcNow;
                     order.OrderTimeLines.Add(new OrderTimeLine
                     {
                         Description = OrderTimeLineConstants.OrderTimeLineApproved,
                         Actor = actor,
-                        Type = OrderTimeLineType.Approved,
+                        Type = OrderTimeLineType.approved,
                         OrderId = order.Id
                     });
                 }
-                else if (request.Action == OrderStatus.Declined)
+                else if (request.Action == OrderStatus.declined)
                 {
-                    order.Status = OrderStatus.Declined;
+                    order.Status = OrderStatus.declined;
                     order.DeclinedAt = DateTime.UtcNow;
                     order.RejectionReason = request.Reason;
                     order.OrderTimeLines.Add(new OrderTimeLine
                     {
                         Description = OrderTimeLineConstants.OrderTimeLineDeclined,
                         Actor = actor,
-                        Type = OrderTimeLineType.Declined,
+                        Type = OrderTimeLineType.declined,
                         OrderId = order.Id
                     });
                 }
@@ -167,6 +167,10 @@ namespace Infrastructure.Repositories
         {
             return await _context.Orders
                 .FirstOrDefaultAsync(o => o.Id == orderId && o.StudentId == studentId && o.Tenant.SubDomain == subDomain, cancellationToken);
+        }
+        public async Task CreateOrderTimeLineAsync(OrderTimeLine orderTimeLine, CancellationToken cancellationToken)
+        {
+            await _context.OrderTimeLines.AddAsync(orderTimeLine, cancellationToken);
         }
     }
 }

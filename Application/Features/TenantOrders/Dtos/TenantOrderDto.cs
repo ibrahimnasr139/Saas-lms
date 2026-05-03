@@ -1,4 +1,6 @@
-﻿namespace Application.Features.TenantOrders.Dtos
+﻿using Domain.Enums;
+
+namespace Application.Features.TenantOrders.Dtos
 {
     public sealed class TenantOrderDto
     {
@@ -6,7 +8,7 @@
         public string OrderNumber { get; set; } = string.Empty;
         public StudentDto Student { get; set; } = new();
         public CourseDto Course { get; set; } = new();
-        public string PaymentMethod { get; set; } = string.Empty;
+        public PaymentMethodType PaymentMethod { get; set; }
         public string PaymentProof { get; set; } = string.Empty;
         public string? PaymentReference { get; set; }
         public decimal PricePaid { get; set; }
@@ -16,6 +18,6 @@
         public DateTime? UpdatedAt { get; set; }
         public DateTime? ApprovedAt { get; set; }
         public DateTime? DeclinedAt { get; set; }
-        public TimelineDto Timeline { get; set; } = new();
+        public List<TimelineDto> Timeline { get; set; } = new();
     }
 }

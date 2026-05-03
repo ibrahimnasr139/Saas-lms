@@ -12,7 +12,7 @@ namespace Domain.Entites
         public string? PaymentReference { get; set; }
         public string? RejectionReason { get; set; }
         public PaymentMethodType PaymentType { get; set; }
-        public OrderStatus Status { get; set; } = OrderStatus.Pending;
+        public OrderStatus Status { get; set; } = OrderStatus.pending;
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? UpdatedAt { get; set; }
         public DateTime? ApprovedAt { get; set; }
