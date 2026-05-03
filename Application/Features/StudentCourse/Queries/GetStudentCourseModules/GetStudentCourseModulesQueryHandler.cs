@@ -27,11 +27,7 @@ namespace Application.Features.StudentCourse.Queries.GetStudentCourseModules
             );
             if (session is null)
                 return UserErrors.Unauthorized;
-
-            var result = await _enrollmentRepository.GetStudentCourseModulesAsync(session.StudentId, request.CourseId, cancellationToken);
-            if (result is null)
-                return StudentCourseErrors.StudentNotEnrolledInCourse;
-            return result;
+            return await _enrollmentRepository.GetStudentCourseModulesAsync(session.StudentId, request.CourseId, cancellationToken);
         }
     }
 }
