@@ -56,38 +56,6 @@ namespace Infrastructure.Repositories
         }
         public async Task<List<StudentModuleDto>> GetStudentCourseModulesAsync(int studentId, int courseId, CancellationToken cancellationToken)
         {
-            //var currentModuleItemId = await _context.Enrollments
-            //    .AsNoTracking()
-            //    .Where(e => e.StudentId == studentId && e.CourseId == courseId 
-            //        && e.Module!.Status == CourseStatus.Published && e.ModuleItem!.Status == CourseStatus.Published)
-            //    .Select(e => e.CurrentModuleItemId)
-            //    .FirstOrDefaultAsync(cancellationToken);
-
-            //if (currentModuleItemId is null)
-            //    return null;
-
-            //return await _context.Enrollments
-            //    .AsNoTracking()
-            //    .Where(e => e.StudentId == studentId && e.CourseId == courseId)
-            //    .SelectMany(e => e.Course.Modules)
-            //    .Select(m => new StudentModuleDto
-            //    {
-            //        Id = m.Id,
-            //        Title = m.Title,
-            //        Description = m.Description,
-            //        TotalItems = m.ModuleItems.Count(mi => mi.Status == CourseStatus.Published),
-            //        CompletedItems = 0,
-            //        IsCurrentModule = m.ModuleItems.Any(mi => mi.Id == currentModuleItemId),
-            //        ModuleItems = m.ModuleItems.Select(mi => new ModuleItemDto
-            //        {
-            //            Id = mi.Id,
-            //            Title = mi.Title,
-            //            Type = mi.Type,
-            //            DueDate = mi.Assignment != null ? mi.Assignment.DueDate : null
-            //        }).ToList()
-            //    }).ToListAsync(cancellationToken);
-
-
             var enrollment = await _context.Enrollments
                 .AsNoTracking()
                 .Where(e => e.StudentId == studentId && e.CourseId == courseId)
@@ -96,30 +64,90 @@ namespace Infrastructure.Repositories
                     e.CurrentModuleItemId,
                     Modules = e.Course.Modules
                         .Where(m => m.Status == CourseStatus.Published)
-                        .Select(m => new StudentModuleDto
+                        .Select(m => new
                         {
-                            Id = m.Id,
-                            Title = m.Title,
-                            Description = m.Description,
+                            m.Id,
+                            m.Title,
+                            m.Description,
                             TotalItems = m.ModuleItems.Count(mi => mi.Status == CourseStatus.Published),
-                            CompletedItems = 0,
                             IsCurrentModule = m.ModuleItems.Any(mi => mi.Id == e.CurrentModuleItemId),
                             ModuleItems = m.ModuleItems
                                 .Where(mi => mi.Status == CourseStatus.Published)
-                                .Select(mi => new ModuleItemDto
+                                .Select(mi => new
                                 {
-                                    Id = mi.Id,
-                                    Title = mi.Title,
-                                    Type = mi.Type,
-                                    DueDate = mi.Assignment != null ? mi.Assignment.DueDate : null
+                                    mi.Id,
+                                    mi.Title,
+                                    mi.Type,
+                                    DueDate = mi.Assignment != null ? (DateTime?)mi.Assignment.DueDate : null,
+                                    IsCompleted =
+                                        _context.LessonViews.Any(lv => lv.ModuleItemId == mi.Id && lv.StudentId == studentId && lv.Status == ViewStatus.Completed) ||
+                                        _context.QuizAttempts.Any(qa => qa.ModuleItemId == mi.Id && qa.StudentId == studentId) ||
+                                        _context.AssignmentSubmissions.Any(asub => asub.AssignmentId == mi.Id && asub.StudentId == studentId),
+                                    Conditions = mi.Conditions
+                                        .Where(c => c.Enabled)
+                                        .Select(c => new
+                                        {
+                                            c.ConditionType,
+                                            c.Value,
+                                            c.RequiredModuleItemId,
+                                            c.Message,
+                                            IsMet =
+                                                c.ConditionType == ConditionType.completed &&
+                                                    _context.LessonViews.Any(lv => lv.ModuleItemId == c.RequiredModuleItemId && lv.StudentId == studentId && lv.Status == ViewStatus.Completed) ||
+                                                c.ConditionType == ConditionType.passed &&
+                                                    _context.QuizAttempts.Any(qa => qa.ModuleItemId == c.RequiredModuleItemId && qa.StudentId == studentId && qa.Score >= qa.Quiz.PassingScore) ||
+                                                c.ConditionType == ConditionType.score_gte &&
+                                                    _context.QuizAttempts.Any(qa => qa.ModuleItemId == c.RequiredModuleItemId && qa.StudentId == studentId && qa.Score >= c.Value) ||
+                                                c.ConditionType == ConditionType.submitted &&
+                                                    _context.AssignmentSubmissions.Any(asub => asub.AssignmentId == c.RequiredModuleItemId && asub.StudentId == studentId)
+                                        }).ToList()
                                 }).ToList()
                         }).ToList()
-                }).FirstOrDefaultAsync(cancellationToken);
+                })
+                .FirstOrDefaultAsync(cancellationToken);
 
             if (enrollment is null)
                 return [];
 
-            return enrollment.Modules;
+            return enrollment.Modules.Select(m => new StudentModuleDto
+            {
+                Id = m.Id,
+                Title = m.Title,
+                Description = m.Description,
+                TotalItems = m.TotalItems,
+                CompletedItems = m.ModuleItems.Count(mi => mi.IsCompleted),
+                IsCurrentModule = m.IsCurrentModule,
+                ModuleItems = m.ModuleItems.Select(mi =>
+                {
+                    ModuleItemStatus status;
+
+                    if (mi.IsCompleted)
+                        status = ModuleItemStatus.completed;
+                    else
+                    {
+                        if (mi.Conditions.Any())
+                        {
+                            var allConditionsMet = mi.Conditions.All(c => c.IsMet);
+                            status = allConditionsMet ? ModuleItemStatus.avilable : ModuleItemStatus.locked;
+                        }
+                        else
+                            status = ModuleItemStatus.avilable;
+                    }
+
+                    return new ModuleItemDto
+                    {
+                        Id = mi.Id,
+                        Title = mi.Title,
+                        Type = mi.Type,
+                        Status = status,
+                        DueDate = mi.DueDate,
+                        Reason = mi.Conditions
+                            .Where(c => !c.IsMet)
+                            .Select(c => c.Message)
+                            .FirstOrDefault()
+                    };
+                }).ToList()
+            }).ToList();
         }
         public async Task<int> GetTenantIdAsync(int studentId, int courseId, CancellationToken cancellationToken)
         {

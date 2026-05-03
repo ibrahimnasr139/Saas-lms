@@ -2,9 +2,9 @@
 {
     public enum ConditionType
     {
-        Completed,
-        Passed,
-        Submitted,
-        ScoreGte
+        completed,
+        passed,
+        submitted,
+        score_gte
     }
 }
