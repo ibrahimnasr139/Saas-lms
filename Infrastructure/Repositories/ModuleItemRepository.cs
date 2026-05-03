@@ -129,7 +129,7 @@ namespace Infrastructure.Repositories
                 return null;
 
             return await _dbContext.ModuleItems
-                .Where(mt => mt.ModuleId == moduleId && mt.Order == 1)
+                .Where(mt => mt.ModuleId == moduleId && mt.Status == CourseStatus.Published)
                 .Select(mt => (int?)mt.Id)
                 .FirstOrDefaultAsync(cancellationToken);
         }

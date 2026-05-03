@@ -119,8 +119,7 @@ namespace Infrastructure.Repositories
                 }).FirstOrDefaultAsync(cancellationToken);
 
             if (enrollment?.CurrentModuleItemId is null)
-                return [];
-
+                return new List<StudentModuleDto>();
             return enrollment.Modules;
         }
         public async Task<int> GetTenantIdAsync(int studentId, int courseId, CancellationToken cancellationToken)

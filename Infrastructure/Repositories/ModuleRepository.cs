@@ -91,7 +91,7 @@ namespace Infrastructure.Repositories
         public async Task<int?> GetFirstModuleIdAsync(int courseId, CancellationToken cancellationToken)
         {
             return await _context.Modules
-                .Where(m => m.CourseId == courseId && m.Order == 1)
+                .Where(m => m.CourseId == courseId && m.Status == CourseStatus.Published)
                 .Select(m => (int?)m.Id)
                 .FirstOrDefaultAsync(cancellationToken);
         }
