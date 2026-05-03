@@ -166,6 +166,7 @@ namespace Infrastructure.Repositories
         public async Task<Order?> GetOrderByIdAsync(int orderId, int studentId, string subDomain, CancellationToken cancellationToken)
         {
             return await _context.Orders
+                .Include(o => o.OrderTimeLines)
                 .FirstOrDefaultAsync(o => o.Id == orderId && o.StudentId == studentId && o.Tenant.SubDomain == subDomain, cancellationToken);
         }
         public async Task CreateOrderTimeLineAsync(OrderTimeLine orderTimeLine, CancellationToken cancellationToken)

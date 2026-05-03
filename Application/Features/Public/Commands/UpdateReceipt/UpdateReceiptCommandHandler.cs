@@ -1,5 +1,4 @@
-﻿using Application.Contracts.Repositories;
-using Application.Features.TenantOrders.Dtos;
+﻿using Application.Features.TenantOrders.Dtos;
 using Domain.Enums;
 using Microsoft.AspNetCore.Http;
 
@@ -7,17 +6,17 @@ namespace Application.Features.Public.Commands.UpdateReceipt
 {
     internal sealed class UpdateReceiptCommandHandler : IRequestHandler<UpdateReceiptCommand, OneOf<TenantOrderResponse, Error>>
     {
-        private readonly ITenantRepository _tenantRepository;
         private readonly IOrderRepository _orderRepository;
+        private readonly IStudentRepository _studentRepository;
         private readonly HybridCache _hybridCache;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IUnitOfWork _unitOfWork;
 
-        public UpdateReceiptCommandHandler(ITenantRepository tenantRepository, HybridCache hybridCache, IOrderRepository orderRepository,
+        public UpdateReceiptCommandHandler(IStudentRepository studentRepository, HybridCache hybridCache, IOrderRepository orderRepository,
             IHttpContextAccessor httpContextAccessor, IUnitOfWork unitOfWork)
         {
-            _tenantRepository = tenantRepository;
             _orderRepository = orderRepository;
+            _studentRepository = studentRepository;
             _hybridCache = hybridCache;
             _httpContextAccessor = httpContextAccessor;
             _unitOfWork = unitOfWork;
@@ -54,6 +53,13 @@ namespace Application.Features.Public.Commands.UpdateReceipt
 
             order.PaymentReference = request.PaymentReference;
             order.PaymentProof = request.PaymentProof;
+            order.OrderTimeLines.Add(new OrderTimeLine
+            {
+                OrderId = order.Id,
+                Description = "تم رفع إثبات الدفع",
+                Type = OrderTimeLineType.paymentuploaded,
+                Actor = await _studentRepository.GetStuentNameByIdAsync(session.StudentId, cancellationToken)
+            });
             await _unitOfWork.SaveAsync(cancellationToken);
             return new TenantOrderResponse { Message = MessagesConstants.OrderUpdated };
         }
