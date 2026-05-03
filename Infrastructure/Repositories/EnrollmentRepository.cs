@@ -90,9 +90,7 @@ namespace Infrastructure.Repositories
 
             var enrollment = await _context.Enrollments
                 .AsNoTracking()
-                .Where(e => e.StudentId == studentId && e.CourseId == courseId
-                         && e.Module!.Status == CourseStatus.Published
-                         && e.ModuleItem!.Status == CourseStatus.Published)
+                .Where(e => e.StudentId == studentId && e.CourseId == courseId)
                 .Select(e => new
                 {
                     e.CurrentModuleItemId,
@@ -118,8 +116,9 @@ namespace Infrastructure.Repositories
                         }).ToList()
                 }).FirstOrDefaultAsync(cancellationToken);
 
-            if (enrollment?.CurrentModuleItemId is null)
-                return new List<StudentModuleDto>();
+            if (enrollment is null)
+                return [];
+
             return enrollment.Modules;
         }
         public async Task<int> GetTenantIdAsync(int studentId, int courseId, CancellationToken cancellationToken)
