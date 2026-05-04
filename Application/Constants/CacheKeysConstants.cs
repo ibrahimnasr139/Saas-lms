@@ -12,5 +12,7 @@
         public const string DiscussionStatistics = "Discussion_Statistics";
         public const string SessionKey = "Session";
         public const string StudentCoursesKey = "Student_Courses";
+        public const string CourseKey = "Course";
+        public const string ItemKey = "Item";
     }
 }

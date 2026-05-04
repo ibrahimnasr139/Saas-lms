@@ -1,5 +1,5 @@
-﻿using Application.Contracts.Repositories;
-using Application.Features.StudentAssignments.Dtos;
+﻿using Application.Features.StudentAssignments.Dtos;
+using Domain.Enums;
 using Microsoft.AspNetCore.Http;
 
 namespace Application.Features.StudentAssignments.Queries.GetStudentAssignment
@@ -48,7 +48,55 @@ namespace Application.Features.StudentAssignments.Queries.GetStudentAssignment
             if (!moduleItemIsExist)
                 return ModuleItemErrors.ModuleItemNotFound;
 
-            return await _assignmentRepository.GetStudentAssignmentAsync(session.StudentId, request.ItemId, request.CourseId, cancellationToken);
+            var cacheKey = $"{CacheKeysConstants.CourseKey}_{request.CourseId}_{CacheKeysConstants.ItemKey}_{request.ItemId}";
+            var assignment = await _hybridCache.GetOrCreateAsync(
+                cacheKey,
+                async _ =>
+                {
+                    return await _assignmentRepository.GetAssignmentAsync(request.ItemId, request.CourseId, cancellationToken);
+                },
+                cancellationToken: cancellationToken,
+                options: new HybridCacheEntryOptions
+                {
+                    Expiration = TimeSpan.FromHours(1)
+                }
+            );
+            if (assignment is null)
+                return ModuleItemErrors.ModuleItemNotFound;
+
+            var submission = await _assignmentRepository.GetStudentSubmissionAsync(session.StudentId, request.ItemId, cancellationToken);
+            var isCompleted = submission != null;
+            var conditions = await _assignmentRepository.GetConditionsStatusAsync(session.StudentId, request.ItemId, cancellationToken);
+            
+            ModuleItemStatus status;
+            if (isCompleted)
+                status = ModuleItemStatus.completed;
+
+            else if (conditions.Any())
+            {
+                var allMet = conditions.All(x => x);
+                status = allMet ? ModuleItemStatus.avilable : ModuleItemStatus.locked;
+            }
+            else
+                status = ModuleItemStatus.avilable;
+
+            return new StudentAssignmentDto
+            {
+                Assignment = new AssignmentDto
+                {
+                    Title = assignment.Title,
+                    Description = assignment.Description,
+                    Instructions = assignment.Instructions,
+                    SubmissionType = assignment.SubmissionType,
+                    DueDate = assignment.DueDate,
+                    TotalMarks = assignment.TotalMarks,
+                    Attachments = assignment.Attachments,
+                    CreatedAt = assignment.CreatedAt,
+                    UpdatedAt = assignment.UpdatedAt,
+                    Status = status
+                },
+                AssignmentSubmission = submission
+            };
         }
     }
 }

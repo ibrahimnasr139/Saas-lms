@@ -1,6 +1,5 @@
 ﻿using Application.Features.Assignments.Dtos;
 using Application.Features.StudentAssignments.Dtos;
-using AutoMapper;
 using Domain.Enums;
 
 namespace Infrastructure.Repositories
@@ -8,12 +7,10 @@ namespace Infrastructure.Repositories
     internal sealed class AssignmentRepository : IAssignmentRepository
     {
         private readonly AppDbContext _dbContext;
-        private readonly IMapper _mapper;
 
-        public AssignmentRepository(AppDbContext dbContext, IMapper mapper)
+        public AssignmentRepository(AppDbContext dbContext)
         {
             _dbContext = dbContext;
-            _mapper = mapper;
         }
         public async Task<OverviewDto?> GetOverviewAsync(int itemId, CancellationToken cancellationToken)
         {
@@ -53,19 +50,76 @@ namespace Infrastructure.Repositories
                      }
                  ).ToListAsync(cancellationToken);
         }
-        public async Task<StudentAssignmentDto> GetStudentAssignmentAsync(int studentId, int itemId, int courseId, CancellationToken cancellationToken)
+        public async Task<AssignmentDto?> GetAssignmentAsync(int itemId, int courseId, CancellationToken cancellationToken)
         {
-            var result = await _dbContext.ModuleItems
-                .Where(dt => dt.Id == itemId && dt.CourseId == courseId)
-                .Include(mi => mi.Assignment)
-                    .ThenInclude(a => a!.Submissions.Where(s => s.StudentId == studentId))
-                        .ThenInclude(s => s.Student)
-                            .ThenInclude(sg => sg.StudentGrades)
-                .Include(a => a.Assignment)
-                    .ThenInclude(a => a!.Submissions.Where(s => s.StudentId == studentId))
-                        .ThenInclude(s => s.File)
+            var moduleItem = await _dbContext.ModuleItems
+                .AsNoTracking()
+                .Where(mi => mi.Id == itemId && mi.CourseId == courseId)
+                .Select(mi => new AssignmentDto
+                {
+                    Title = mi.Title,
+                    Description = mi.Description,
+                    Instructions = mi.Assignment!.Instructions,
+                    SubmissionType = mi.Assignment.SubmissionType,
+                    DueDate = mi.Assignment.DueDate,
+                    TotalMarks = mi.Assignment.Marks,
+                    Attachments = mi.Assignment.Attachments,
+                    CreatedAt = mi.Assignment.ModuleItem.CreatedAt,
+                    UpdatedAt = mi.Assignment.ModuleItem.UpdatedAt
+                })
                 .FirstOrDefaultAsync(cancellationToken);
-            return _mapper.Map<StudentAssignmentDto>(result!);
+
+            return moduleItem;
+        }
+        public async Task<AssignmentSubmissionDto?> GetStudentSubmissionAsync(int studentId, int itemId, CancellationToken cancellationToken)
+        {
+            var submission = await _dbContext.AssignmentSubmissions
+                .AsNoTracking()
+                .Where(s => s.StudentId == studentId && s.AssignmentId == itemId)
+                .Select(s => new AssignmentSubmissionDto
+                {
+                    Id = s.Id,
+                    AssignmentId = s.AssignmentId,
+                    StudentId = s.StudentId,
+                    Status = s.Status,
+                    Score = (int)s.EarnedMarks,
+                    Feedback = s.Feedback,
+                    Link = s.Link,
+                    Text = s.Text,
+                    SubmittedAt = s.SubmittedAt,
+                    SubmissionFiles = s.File == null ? null : new SubmissionFileDto
+                    {
+                        FileName = s.File.Name,
+                        Url = s.File.Url
+                    },
+                    GradedBy = s.Student.StudentGrades.Select(x => x.GraderId).FirstOrDefault(),
+                    GradedAt = s.Student.StudentGrades.Select(x => x.GradedAt).FirstOrDefault()
+                })
+                .FirstOrDefaultAsync(cancellationToken);
+
+            return submission;
+        }
+        public async Task<List<bool>> GetConditionsStatusAsync(int studentId, int itemId, CancellationToken cancellationToken)
+        {
+            return await _dbContext.ModuleItemConditions
+                .Where(c => c.ModuleItemId == itemId && c.Enabled)
+                .Select(c => c.ConditionType == ConditionType.completed && 
+                       _dbContext.LessonViews.Any(lv => lv.ModuleItemId == c.RequiredModuleItemId &&
+                            lv.StudentId == studentId && lv.Status == ViewStatus.Completed) ||
+
+                    c.ConditionType == ConditionType.passed &&
+                        _dbContext.QuizAttempts.Any(qa => qa.ModuleItemId == c.RequiredModuleItemId &&
+                            qa.StudentId == studentId && qa.Score >= qa.Quiz.PassingScore)  ||
+
+                    c.ConditionType == ConditionType.score_gte &&
+                        _dbContext.QuizAttempts.Any(qa => qa.ModuleItemId == c.RequiredModuleItemId &&
+                            qa.StudentId == studentId && qa.Score >= c.Value) ||
+
+                    c.ConditionType == ConditionType.submitted &&
+                        _dbContext.AssignmentSubmissions.Any(asub => asub.AssignmentId == c.RequiredModuleItemId &&
+                            asub.StudentId == studentId)
+                )
+                .ToListAsync(cancellationToken);
         }
         public async Task CreateAssignmentSubmissionAsync(AssignmentSubmission assignmentSubmission, CancellationToken cancellationToken)
         {

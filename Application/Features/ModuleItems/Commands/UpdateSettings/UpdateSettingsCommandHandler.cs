@@ -11,10 +11,11 @@ namespace Application.Features.ModuleItems.Commands.UpdateSettings
         private readonly IModuleItemRepository _moduleItemRepository;
         private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly HybridCache _hybridCache;
 
         public UpdateSettingsCommandHandler(ITenantMemberRepository tenantMemberRepository, ICurrentUserId currentUserId,
             ISubscriptionRepository subscriptionRepository, IHttpContextAccessor httpContextAccessor,
-            IMapper mapper, IModuleItemRepository moduleItemRepository, IUnitOfWork unitOfWork)
+            IMapper mapper, IModuleItemRepository moduleItemRepository, IUnitOfWork unitOfWork, HybridCache hybridCache)
         {
             _tenantMemberRepository = tenantMemberRepository;
             _currentUserId = currentUserId;
@@ -23,6 +24,7 @@ namespace Application.Features.ModuleItems.Commands.UpdateSettings
             _mapper = mapper;
             _moduleItemRepository = moduleItemRepository;
             _unitOfWork = unitOfWork;
+            _hybridCache = hybridCache;
         }
         public async Task<OneOf<SuccessDto, Error>> Handle(UpdateSettingsCommand request, CancellationToken cancellationToken)
         {
@@ -49,6 +51,8 @@ namespace Application.Features.ModuleItems.Commands.UpdateSettings
                 moduleItem.Conditions.Add(condition);
             }
             await _unitOfWork.SaveAsync(cancellationToken);
+            var cacheKey = $"{CacheKeysConstants.CourseKey}_{request.CourseId}_{CacheKeysConstants.ItemKey}_{request.ItemId}";
+            await _hybridCache.RemoveAsync(cacheKey, cancellationToken);
             return new SuccessDto
             {
                 Id = moduleItem.Id.ToString(),

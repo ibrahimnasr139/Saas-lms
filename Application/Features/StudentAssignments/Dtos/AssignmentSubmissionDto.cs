@@ -13,7 +13,7 @@ namespace Application.Features.StudentAssignments.Dtos
         public int GradedBy { get; set; }
         public DateTime GradedAt { get; set; }
         public DateTime SubmittedAt { get; set; }
-        public SubmissionFileDto? SubmissionFiles { get; set; } 
+        public SubmissionFileDto? SubmissionFiles { get; set; }
         public string? Link { get; set; }
         public string? Text { get; set; }
     }

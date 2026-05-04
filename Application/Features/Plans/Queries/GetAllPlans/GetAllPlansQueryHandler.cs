@@ -20,7 +20,6 @@ namespace Application.Features.Plans.Queries.GetAllPlans
         public async Task<PlansResponseDto> Handle(GetAllPlansQuery request, CancellationToken cancellationToken)
         {
             var cacheKey = CacheKeysConstants.PlanKey;
-
             var plans = await _hybridCache.GetOrCreateAsync(
                 cacheKey,
                 async cacheEntry =>
@@ -30,7 +29,6 @@ namespace Application.Features.Plans.Queries.GetAllPlans
                 },
                 cancellationToken: cancellationToken
             );
-
             return plans;
         }
     }

@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
 
-namespace Application.Features.Assignments.Commands.UpdateAssignment
+namespace Application.Features.ModuleItems.Commands.UpdateModuleItem
 {
-    internal sealed class UpdateAssignmentCommandHandler : IRequestHandler<UpdateAssignmentCommand, OneOf<SuccessDto, Error>>
+    internal sealed class UpdateModuleItemCommandHandler : IRequestHandler<UpdateModuleItemCommand, OneOf<SuccessDto, Error>>
     {
         private readonly ITenantMemberRepository _tenantMemberRepository;
         private readonly ICurrentUserId _currentUserId;
@@ -11,21 +11,19 @@ namespace Application.Features.Assignments.Commands.UpdateAssignment
         private readonly IModuleItemRepository _moduleItemRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly HybridCache _hybridCache;
-        private readonly IMapper _mapper;
-        public UpdateAssignmentCommandHandler(ITenantMemberRepository tenantMemberRepository, ICurrentUserId currentUserId,
-            ISubscriptionRepository subscriptionRepository, IHttpContextAccessor httpContextAccessor, IMapper mapper,
+        public UpdateModuleItemCommandHandler(ITenantMemberRepository tenantMemberRepository, ICurrentUserId currentUserId,
+            ISubscriptionRepository subscriptionRepository, IHttpContextAccessor httpContextAccessor,
             IModuleItemRepository moduleItemRepository, IUnitOfWork unitOfWork, HybridCache hybridCache)
         {
             _tenantMemberRepository = tenantMemberRepository;
             _currentUserId = currentUserId;
             _subscriptionRepository = subscriptionRepository;
             _httpContextAccessor = httpContextAccessor;
-            _mapper = mapper;
             _moduleItemRepository = moduleItemRepository;
             _unitOfWork = unitOfWork;
             _hybridCache = hybridCache;
         }
-        public async Task<OneOf<SuccessDto, Error>> Handle(UpdateAssignmentCommand request, CancellationToken cancellationToken)
+        public async Task<OneOf<SuccessDto, Error>> Handle(UpdateModuleItemCommand request, CancellationToken cancellationToken)
         {
             var userId = _currentUserId.GetUserId();
             var subdomain = _httpContextAccessor?.HttpContext?.Request.Cookies[AuthConstants.SubDomain];
@@ -37,17 +35,20 @@ namespace Application.Features.Assignments.Commands.UpdateAssignment
             if (!isSubscribed)
                 return TenantErrors.NotSubscribed;
 
-            var assignment = await _moduleItemRepository.GetAssignmentByModuleItemIdAsync(request.ItemId, request.ModuleId, request.CourseId, subdomain!, cancellationToken);
-            if (assignment is null)
+            var moduleItem = await _moduleItemRepository.GetAsync(request.ItemId, request.ModuleId, request.CourseId, subdomain!, cancellationToken);
+            if (moduleItem is null)
                 return ModuleItemErrors.ModuleItemNotFound;
 
-            _mapper.Map(request, assignment);
+            moduleItem.Title = request.Title ?? moduleItem.Title;
+            moduleItem.Description = request.Description ?? moduleItem.Description;
             await _unitOfWork.SaveAsync(cancellationToken);
+
             var cacheKey = $"{CacheKeysConstants.CourseKey}_{request.CourseId}_{CacheKeysConstants.ItemKey}_{request.ItemId}";
             await _hybridCache.RemoveAsync(cacheKey, cancellationToken);
+
             return new SuccessDto
             {
-                Id = assignment.ModuleItemId.ToString(),
+                Id = moduleItem.Id.ToString(),
                 Message = $"{nameof(ModuleItem)} {SuccessConstants.ItemUpdated}"
             };
         }

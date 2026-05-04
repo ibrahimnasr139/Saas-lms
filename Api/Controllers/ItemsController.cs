@@ -3,6 +3,7 @@ using Application.Constants;
 using Application.Features.ModuleItems.Commands.CreateModuleItem;
 using Application.Features.ModuleItems.Commands.DeleteModuleItem;
 using Application.Features.ModuleItems.Commands.ReorderModuleItem;
+using Application.Features.ModuleItems.Commands.UpdateModuleItem;
 using Application.Features.ModuleItems.Commands.UpdateSettings;
 using Application.Features.ModuleItems.Queries.GetAll;
 using Application.Features.ModuleItems.Queries.GetItem;
@@ -95,6 +96,17 @@ namespace Api.Controllers
             return result.Match<IActionResult>(
                 success => Ok(),
                 error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message }));
+        }
+
+
+        [HttpPatch("{itemId}")]
+        public async Task<IActionResult> UpdateModuleItem(int courseId, int moduleId, int itemId, [FromBody] UpdateModuleItemCommand command, CancellationToken cancellationToken)
+        {
+            var result = await _mediator.Send(command with { CourseId = courseId, ModuleId = moduleId, ItemId = itemId }, cancellationToken);
+            return result.Match<IActionResult>(
+                success => Ok(success),
+                error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message })
+            );
         }
     }
 }
