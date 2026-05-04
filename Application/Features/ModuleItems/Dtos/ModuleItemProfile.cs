@@ -27,8 +27,6 @@ namespace Application.Features.ModuleItems.Dtos
                 .ForPath(dest => dest.ModuleItem.Description, opt => opt.MapFrom(src => src.Description));
 
             CreateMap<UpdateAssignmentCommand, Assignment>()
-                .ForPath(dest => dest.ModuleItem.Title, opt => opt.MapFrom(src => src.Title))
-                .ForPath(dest => dest.ModuleItem.Description, opt => opt.MapFrom(src => src.Description))
                 .ForMember(dest => dest.Marks, opt => opt.MapFrom(src => src.TotalMarks));
 
             CreateMap<ModuleItem, ItemDto>();

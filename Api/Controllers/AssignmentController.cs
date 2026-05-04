@@ -24,11 +24,11 @@ namespace Api.Controllers
         [HttpPatch]
         public async Task<IActionResult> UpdateAssignment(int courseId, int moduleId, int itemId, [FromBody] UpdateAssignmentCommand command, CancellationToken cancellationToken)
         {
-            command = command with { CourseId = courseId, ModuleId = moduleId, ItemId = itemId };
-            var result = await _mediator.Send(command, cancellationToken);
+            var result = await _mediator.Send(command with { CourseId = courseId, ModuleId = moduleId, ItemId = itemId }, cancellationToken);
             return result.Match<IActionResult>(
                 success => Ok(success),
-                error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message }));
+                error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message })
+            );
         }
 
 
@@ -48,7 +48,8 @@ namespace Api.Controllers
             var result = await _mediator.Send(query, cancellationToken);
             return result.Match<IActionResult>(
                 success => Ok(success),
-                error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message }));
+                error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message })
+            );
         }
 
 
@@ -58,7 +59,8 @@ namespace Api.Controllers
             var result = await _mediator.Send(query, cancellationToken);
             return result.Match<IActionResult>(
                 success => Ok(success),
-                error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message }));
+                error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message })
+            );
         }
     }
 }
