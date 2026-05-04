@@ -104,47 +104,55 @@ namespace Infrastructure.Repositories
             var member = await _context.TenantMembers
                 .FirstOrDefaultAsync(tm => tm.Id == memberId, cancellationToken);
 
-            member!.DisplayName = request.DisplayName;
-            member.ExperienceYears = request.ExperienceYears;
-            member.JobTitle = request.JobTitle;
-            member.Bio = request.Bio;
+            member!.DisplayName = request.DisplayName ?? member.DisplayName;
+            member.ExperienceYears = request.ExperienceYears ?? member.ExperienceYears;
+            member.JobTitle = request.JobTitle ?? member.JobTitle;
+            member.Bio = request.Bio ?? member.Bio;
 
-            await _context.Subjects
-                .Where(s => s.TenantId == tenantId)
-                .ExecuteDeleteAsync(cancellationToken);
-
-            var newSubjects = request.Subjects.Select(s => new Subject
+            if (request.Subjects != null)
             {
-                TenantId = tenantId,
-                Label = s.Label,
-                Value = s.Value
-            });
-            await _context.Subjects.AddRangeAsync(newSubjects, cancellationToken);
+                await _context.Subjects
+                    .Where(s => s.TenantId == tenantId)
+                    .ExecuteDeleteAsync(cancellationToken);
 
-            await _context.TeachingLevels
-                .Where(t => t.TenantId == tenantId)
-                .ExecuteDeleteAsync(cancellationToken);
+                var newSubjects = request.Subjects.Select(s => new Subject
+                {
+                    TenantId = tenantId,
+                    Label = s.Label,
+                    Value = s.Value
+                });
+                await _context.Subjects.AddRangeAsync(newSubjects, cancellationToken);
+            }
 
-            var newTeachingLevels = request.TeachingLevels.Select(t => new TeachingLevel
+            if (request.TeachingLevels != null)
             {
-                TenantId = tenantId,
-                Label = t.Label,
-                Value = t.Value
-            });
-            await _context.TeachingLevels.AddRangeAsync(newTeachingLevels, cancellationToken);
+                await _context.TeachingLevels
+                    .Where(t => t.TenantId == tenantId)
+                    .ExecuteDeleteAsync(cancellationToken);
 
-            await _context.Grades
-                .Where(g => g.TenantId == tenantId)
-                .ExecuteDeleteAsync(cancellationToken);
+                var newTeachingLevels = request.TeachingLevels.Select(t => new TeachingLevel
+                {
+                    TenantId = tenantId,
+                    Label = t.Label,
+                    Value = t.Value
+                });
+                await _context.TeachingLevels.AddRangeAsync(newTeachingLevels, cancellationToken);
+            }
 
-            var newGrades = request.Grades.Select(g => new Grade
+            if (request.Grades != null)
             {
-                TenantId = tenantId,
-                Label = g.Label,
-                Value = g.Value
-            });
-            await _context.Grades.AddRangeAsync(newGrades, cancellationToken);
+                await _context.Grades
+                    .Where(g => g.TenantId == tenantId)
+                    .ExecuteDeleteAsync(cancellationToken);
 
+                var newGrades = request.Grades.Select(g => new Grade
+                {
+                    TenantId = tenantId,
+                    Label = g.Label,
+                    Value = g.Value
+                });
+                await _context.Grades.AddRangeAsync(newGrades, cancellationToken);
+            }
             await _context.SaveChangesAsync(cancellationToken);
         }
         public async Task<int> GetTenantmemberIdAsync(int tenantId, CancellationToken cancellationToken)

@@ -1,5 +1,4 @@
-﻿using Application.Contracts.Repositories;
-using Application.Features.TenantMembers.Dtos;
+﻿using Application.Features.TenantMembers.Dtos;
 using Microsoft.AspNetCore.Http;
 
 namespace Application.Features.TenantMembers.Commands.UpdateCurrentMember
@@ -13,7 +12,7 @@ namespace Application.Features.TenantMembers.Commands.UpdateCurrentMember
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly HybridCache _hybridCache;
 
-        public UpdateCurrentMemberCommandHandler(ITenantMemberRepository tenantMemberRepository,ITenantRepository tenantRepository,
+        public UpdateCurrentMemberCommandHandler(ITenantMemberRepository tenantMemberRepository, ITenantRepository tenantRepository,
             ICurrentUserId currentUserId, IHttpContextAccessor httpContextAccessor, UserManager<ApplicationUser> userManager, HybridCache hybridCache)
         {
             _tenantMemberRepository = tenantMemberRepository;
@@ -33,18 +32,17 @@ namespace Application.Features.TenantMembers.Commands.UpdateCurrentMember
             var user = await _userManager.FindByIdAsync(userId);
             if (user != null)
             {
-                user.FirstName = request.FirstName;
-                user.LastName = request.LastName;
-                user.Email = request.Email;
-                user.PhoneNumber = request.Phone;
-                user.ProfilePicture = request.ProfilePicture;
+                user.FirstName = request.FirstName ?? user.FirstName;
+                user.LastName = request.LastName ?? user.LastName;
+                user.Email = request.Email ?? user.Email;
+                user.PhoneNumber = request.Phone ?? user.PhoneNumber;
+                user.ProfilePicture = request.ProfilePicture ?? user.ProfilePicture;
                 await _userManager.UpdateAsync(user);
             }
 
             await _tenantMemberRepository.UpdateCurrentMemberAsync(tenantId, memberId, request, cancellationToken);
             var cacheKey = $"{CacheKeysConstants.CurrentTenantMemberKey}_{userId}";
             await _hybridCache.RemoveAsync(cacheKey, cancellationToken);
-
             return new UpdateCurrentMemberDto { Message = MessagesConstants.TenantMemberUpdateCurrentMember };
         }
     }
