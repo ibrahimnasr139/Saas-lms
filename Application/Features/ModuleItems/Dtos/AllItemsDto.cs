@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Application.Features.ModuleItems.Dtos
+﻿namespace Application.Features.ModuleItems.Dtos
 {
     public sealed class AllItemsDto
     {

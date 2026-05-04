@@ -1,9 +1,5 @@
-﻿using Application.Contracts.Repositories;
-using Application.Features.ModuleItems.Dtos;
+﻿using Application.Features.ModuleItems.Dtos;
 using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Application.Features.ModuleItems.Queries.GetAll
 {
@@ -26,15 +22,13 @@ namespace Application.Features.ModuleItems.Queries.GetAll
             var subdomain = _httpContextAccessor?.HttpContext?.Request.Cookies[AuthConstants.SubDomain];
             var course = await _courseRepository.GetCourseByIdAsync(request.CourseId, subdomain!, cancellationToken);
             if (course is null)
-            {
                 return CourseErrors.CourseNotFound;
-            }
+
             var module = await _moduleRepository.GetModuleByIdAsync(request.ModuleId, request.CourseId, subdomain!, cancellationToken);
             if (module is null)
-            {
                 return ModuleErrors.ModuleNotFound;
-            }
-            return await _moduleItemRepository.GetAllItemsAsync(request.ModuleId, request.Type, cancellationToken);
+
+            return await _moduleItemRepository.GetAllItemsAsync(request.ItemId, request.ModuleId, request.Type, request.CourseId, cancellationToken);
         }
     }
 }

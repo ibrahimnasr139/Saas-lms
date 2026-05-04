@@ -43,15 +43,21 @@ namespace Infrastructure.Repositories
             await _dbContext.Quizzes.AddAsync(quiz);
             await _dbContext.SaveChangesAsync(cancellationToken);
         }
-        public async Task<List<AllItemsDto>> GetAllItemsAsync(int moduleId, ModuleItemType? type, CancellationToken cancellationToken)
+        public async Task<List<AllItemsDto>> GetAllItemsAsync(int moduleItemId, int moduleId, ModuleItemType? type, int courseId, CancellationToken cancellationToken)
         {
+            var currentModuleItem = await _dbContext.ModuleItems
+                .AsNoTracking()
+                .Where(mi => mi.Id == moduleItemId && mi.ModuleId == moduleId && mi.CourseId == courseId)
+                .FirstOrDefaultAsync(cancellationToken);
+
             var query = _dbContext.ModuleItems
                 .AsNoTracking()
-                .Where(mi => mi.ModuleId == moduleId);
+                .Where(mi => mi.ModuleId == moduleId && mi.CourseId == courseId && mi.Status == CourseStatus.Published
+                    && mi.Order < currentModuleItem!.Order);
+
             if (type.HasValue)
-            {
                 query = query.Where(mi => mi.Type == type.Value);
-            }
+
             return await query
                 .ProjectTo<AllItemsDto>(_mapper.ConfigurationProvider)
                 .ToListAsync(cancellationToken);

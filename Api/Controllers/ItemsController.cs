@@ -60,7 +60,8 @@ namespace Api.Controllers
             var result = await _mediator.Send(query, cancellationToken);
             return result.Match<IActionResult>(
                 success => Ok(success),
-                error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message }));
+                error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message })
+            );
         }
 
 
@@ -76,12 +77,13 @@ namespace Api.Controllers
 
 
         [HttpGet]
-        public async Task<IActionResult> GetAllItems([FromRoute] GetAllItemsQuery query, [FromQuery] ModuleItemType? type, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetAllItems([FromRoute] GetAllItemsQuery query, [FromQuery] ModuleItemType? type, [FromQuery] int itemId, CancellationToken cancellationToken)
         {
-            var result = await _mediator.Send(query with { Type = type }, cancellationToken);
+            var result = await _mediator.Send(query with { Type = type, ItemId = itemId }, cancellationToken);
             return result.Match<IActionResult>(
                 success => Ok(success),
-                error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message }));
+                error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message })
+            );
         }
 
 
