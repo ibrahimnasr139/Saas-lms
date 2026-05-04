@@ -1,18 +1,15 @@
-﻿using Application.Common;
-using Application.Constants;
-using Application.Contracts.Repositories;
-using Application.Features.TenantMembers.Dtos;
+﻿using Application.Features.TenantMembers.Dtos;
 
 namespace Application.Features.TenantMembers.Queries.GetCurrentTenantMember
 {
-    internal sealed class GetCurrentTenantMemberHandler : IRequestHandler<GetCurrentTenantMemberQuery, CurrentTenantMemberDto>
+    internal sealed class GetCurrentTenantMemberQueryHandler : IRequestHandler<GetCurrentTenantMemberQuery, CurrentTenantMemberDto>
     {
         private readonly ICurrentUserId _currentUserId;
         private readonly ITenantMemberRepository _tenantMemberRepository;
         private readonly IMapper _mapper;
         private readonly HybridCache _hybridCache;
 
-        public GetCurrentTenantMemberHandler(ICurrentUserId currentUserId,
+        public GetCurrentTenantMemberQueryHandler(ICurrentUserId currentUserId,
             ITenantMemberRepository tenantMemberRepository,
             IMapper mapper, HybridCache hybridCache)
         {

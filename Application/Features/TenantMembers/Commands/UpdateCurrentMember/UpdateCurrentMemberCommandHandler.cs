@@ -41,8 +41,9 @@ namespace Application.Features.TenantMembers.Commands.UpdateCurrentMember
             }
 
             await _tenantMemberRepository.UpdateCurrentMemberAsync(tenantId, memberId, request, cancellationToken);
-            var cacheKey = $"{CacheKeysConstants.CurrentTenantMemberKey}_{userId}";
-            await _hybridCache.RemoveAsync(cacheKey, cancellationToken);
+            //var cacheKey = $"{CacheKeysConstants.CurrentTenantMemberKey}_{userId}";
+            await _hybridCache.RemoveAsync($"{CacheKeysConstants.CurrentTenantMemberKey}_{userId}", cancellationToken);
+            await _hybridCache.RemoveAsync($"{CacheKeysConstants.LastTenantKey}_{userId}", cancellationToken);
             return new UpdateCurrentMemberDto { Message = MessagesConstants.TenantMemberUpdateCurrentMember };
         }
     }
