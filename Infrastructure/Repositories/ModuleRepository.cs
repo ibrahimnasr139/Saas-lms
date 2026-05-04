@@ -56,7 +56,9 @@ namespace Infrastructure.Repositories
                     TotalLessons = a.Lessons.Count(),
                     TotalAssignments = a.Assignments.Count(),
                     TotalQuizzes = a.Quizzes.Count(),
-                    Items = a.ModuleItems.Select(i => new ModuleItemDto
+                    Items = a.ModuleItems
+                    .OrderBy(i => i.Order)
+                    .Select(i => new ModuleItemDto
                     {
                         Id = i.Id,
                         ItemType = i.Type,
