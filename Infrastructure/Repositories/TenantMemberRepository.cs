@@ -111,47 +111,72 @@ namespace Infrastructure.Repositories
 
             if (request.Subjects != null)
             {
-                await _context.Subjects
+                var existingSubjects = await _context.Subjects
                     .Where(s => s.TenantId == tenantId)
-                    .ExecuteDeleteAsync(cancellationToken);
+                    .ToListAsync(cancellationToken);
 
-                var newSubjects = request.Subjects.Select(s => new Subject
-                {
-                    TenantId = tenantId,
-                    Label = s.Label,
-                    Value = s.Value
-                });
-                await _context.Subjects.AddRangeAsync(newSubjects, cancellationToken);
+                var newValues = request.Subjects.Select(s => s.Value).ToHashSet();
+                var toDelete = existingSubjects.Where(s => !newValues.Contains(s.Value)).ToList();
+                _context.Subjects.RemoveRange(toDelete);
+
+                var existingValues = existingSubjects.Select(s => s.Value).ToHashSet();
+                var toAdd = request.Subjects
+                    .Where(s => !existingValues.Contains(s.Value))
+                    .Select(s => new Subject
+                    {
+                        TenantId = tenantId,
+                        Label = s.Label,
+                        Value = s.Value
+                    });
+                await _context.Subjects.AddRangeAsync(toAdd, cancellationToken);
             }
 
             if (request.TeachingLevels != null)
             {
-                await _context.TeachingLevels
+                var existingLevels = await _context.TeachingLevels
                     .Where(t => t.TenantId == tenantId)
-                    .ExecuteDeleteAsync(cancellationToken);
+                    .ToListAsync(cancellationToken);
 
-                var newTeachingLevels = request.TeachingLevels.Select(t => new TeachingLevel
-                {
-                    TenantId = tenantId,
-                    Label = t.Label,
-                    Value = t.Value
-                });
-                await _context.TeachingLevels.AddRangeAsync(newTeachingLevels, cancellationToken);
+                var newValues = request.TeachingLevels.Select(t => t.Value).ToHashSet();
+                var toDelete = existingLevels
+                    .Where(t => !newValues.Contains(t.Value))
+                    .ToList();
+                _context.TeachingLevels.RemoveRange(toDelete);
+
+                var existingValues = existingLevels.Select(t => t.Value).ToHashSet();
+                var toAdd = request.TeachingLevels
+                    .Where(t => !existingValues.Contains(t.Value))
+                    .Select(t => new TeachingLevel
+                    {
+                        TenantId = tenantId,
+                        Label = t.Label,
+                        Value = t.Value
+                    });
+                await _context.TeachingLevels.AddRangeAsync(toAdd, cancellationToken);
             }
 
             if (request.Grades != null)
             {
-                await _context.Grades
+                var existingGrades = await _context.Grades
                     .Where(g => g.TenantId == tenantId)
-                    .ExecuteDeleteAsync(cancellationToken);
+                    .ToListAsync(cancellationToken);
 
-                var newGrades = request.Grades.Select(g => new Grade
-                {
-                    TenantId = tenantId,
-                    Label = g.Label,
-                    Value = g.Value
-                });
-                await _context.Grades.AddRangeAsync(newGrades, cancellationToken);
+                var newValues = request.Grades.Select(g => g.Value).ToHashSet();
+                var toDelete = existingGrades
+                    .Where(g => !newValues.Contains(g.Value))
+                    .ToList();
+                _context.Grades.RemoveRange(toDelete);
+
+                var existingValues = existingGrades.Select(g => g.Value).ToHashSet();
+                var toAdd = request.Grades
+                    .Where(g => !existingValues.Contains(g.Value))
+                    .Select(g => new Grade
+                    {
+                        TenantId = tenantId,
+                        Label = g.Label,
+                        Value = g.Value
+                    });
+                await _context.Grades.AddRangeAsync(toAdd, cancellationToken);
             }
             await _context.SaveChangesAsync(cancellationToken);
         }
