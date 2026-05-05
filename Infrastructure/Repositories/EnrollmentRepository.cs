@@ -64,6 +64,7 @@ namespace Infrastructure.Repositories
                     e.CurrentModuleItemId,
                     Modules = e.Course.Modules
                         .Where(m => m.Status == CourseStatus.Published)
+                        .OrderBy(mi => mi.Order)
                         .Select(m => new
                         {
                             m.Id,
@@ -73,6 +74,7 @@ namespace Infrastructure.Repositories
                             IsCurrentModule = m.ModuleItems.Any(mi => mi.Id == e.CurrentModuleItemId),
                             ModuleItems = m.ModuleItems
                                 .Where(mi => mi.Status == CourseStatus.Published)
+                                .OrderBy(mi => mi.Order)
                                 .Select(mi => new
                                 {
                                     mi.Id,
@@ -103,8 +105,7 @@ namespace Infrastructure.Repositories
                                         }).ToList()
                                 }).ToList()
                         }).ToList()
-                })
-                .FirstOrDefaultAsync(cancellationToken);
+                }).FirstOrDefaultAsync(cancellationToken);
 
             if (enrollment is null)
                 return [];
