@@ -1,7 +1,4 @@
 ﻿using Application.Features.Assignments.Dtos;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Application.Features.Assignments.Queries.GetPerformance
 {

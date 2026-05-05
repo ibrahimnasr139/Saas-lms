@@ -1,8 +1,5 @@
 ﻿using Application.Features.Assignments.Dtos;
 using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Application.Features.Assignments.Queries.GetPerformance
 {
@@ -22,12 +19,11 @@ namespace Application.Features.Assignments.Queries.GetPerformance
             var subdomain = _httpContextAccessor?.HttpContext?.Request.Cookies[AuthConstants.SubDomain];
             var assignment = await _moduleItemRepository.GetAssignmentAsync(request.ItemId, request.ModuleId, request.CourseId, subdomain!, cancellationToken);
             if (assignment is null)
-            {
                 return ModuleItemErrors.ModuleItemNotFound;
-            }
+
             return new PerformanceDto
             {
-                GradesDistribution = await _submissionRepository.GetSubmissionGradeDistributionAsync(request.ItemId, cancellationToken),
+                GradesDistribution = await _submissionRepository.GetSubmissionGradeDistributionAsync(request.ItemId, assignment.TotalMarks, cancellationToken),
                 SubmissionsOverTime = await _submissionRepository.GetSubmissionsOverTimeAsync(request.ItemId, cancellationToken)
             };
         }

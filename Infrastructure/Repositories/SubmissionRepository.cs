@@ -10,16 +10,26 @@ namespace Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<List<GradeDistribution>> GetSubmissionGradeDistributionAsync(int itemId, CancellationToken cancellationToken)
+        public async Task<List<GradeDistribution>> GetSubmissionGradeDistributionAsync(int itemId, int totalMarks, CancellationToken cancellationToken)
         {
-            return await _context.AssignmentSubmissions.Where(s => s.AssignmentId == itemId)
-                   .GroupBy(g => (g.EarnedMarks / 10) * 10)
-                   .Select(g => new GradeDistribution
-                   {
-                       Range = $"{g.Key}-{g.Key + 9}",
-                       Count = g.Count()
-                   })
-                   .ToListAsync(cancellationToken);
+            var submissions = await _context.AssignmentSubmissions
+                .Where(s => s.AssignmentId == itemId)
+                .Select(s => s.EarnedMarks)
+                .ToListAsync(cancellationToken);
+
+            var rangeSize = (double)totalMarks / 5;
+
+            return Enumerable.Range(0, 5)
+                .Select(i =>
+                {
+                    var from = (int)(i * rangeSize);
+                    var to = (int)((i + 1) * rangeSize);
+                    return new GradeDistribution
+                    {
+                        Range = $"{from}-{to}",
+                        Count = submissions.Count(m => m >= from && m < to)
+                    };
+                }).ToList();
         }
         public async Task<List<SubmissionOverTime>> GetSubmissionsOverTimeAsync(int itemId, CancellationToken cancellationToken)
         {
