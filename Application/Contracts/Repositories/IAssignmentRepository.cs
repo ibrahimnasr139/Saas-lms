@@ -9,7 +9,6 @@ namespace Application.Contracts.Repositories
         Task<OverviewDto?> GetOverviewAsync(int itemId, CancellationToken cancellationToken);
         Task CreateAssignmentSubmissionAsync(AssignmentSubmission assignmentSubmission,  CancellationToken cancellationToken);
         Task<AssignmentDto?> GetAssignmentAsync(int itemId, int courseId, CancellationToken cancellationToken);
-        Task<List<bool>> GetConditionsStatusAsync(int studentId, int itemId, CancellationToken cancellationToken);
         Task<AssignmentSubmissionDto?> GetStudentSubmissionAsync(int studentId, int itemId, CancellationToken cancellationToken);
     }
 }

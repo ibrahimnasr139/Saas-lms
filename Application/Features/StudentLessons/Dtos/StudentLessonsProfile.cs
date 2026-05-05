@@ -1,5 +1,4 @@
 ﻿using Domain.Enums;
-using System.Text.Json;
 
 namespace Application.Features.StudentLessons.Dtos
 {
@@ -8,14 +7,14 @@ namespace Application.Features.StudentLessons.Dtos
         public StudentLessonsProfile()
         {
             CreateMap<ModuleItem, StudentLessonItemDto>()
-                .ForMember(dest => dest.IsCompleted, opt => opt.MapFrom(src => src.Lesson != null && src.Lesson.LessonViews.Any(lv => lv.Status == ViewStatus.Completed)))
+                .ForMember(dest => dest.IsCompleted, opt => opt.Ignore())
                 .ForMember(dest => dest.Resources, opt => opt.MapFrom(src => src.Lesson!.Resources))
-                .ForMember(dest => dest.Content, opt => opt.MapFrom(src => src.Lesson!.File));
+                .ForMember(dest => dest.Content, opt => opt.MapFrom(src => src.Lesson!.File))
+                .ForMember(dest => dest.Status, opt => opt.Ignore());
 
             CreateMap<Domain.Entites.File, ContentDto>()
                 .ForMember(dest => dest.VideoId, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.VideoUrl, opt => opt.MapFrom(src => src.Url));
-
 
             CreateMap<DicussionThread, StudentDiscussionDto>()
                 .ForMember(dest => dest.Author, opt => opt.MapFrom(src => src.User))

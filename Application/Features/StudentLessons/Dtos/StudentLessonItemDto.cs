@@ -8,7 +8,7 @@ namespace Application.Features.StudentLessons.Dtos
         public string Title { get; set; } = string.Empty;
         public string? Description { get; set; }
         public ModuleItemType Type { get; set; }
-        public CourseStatus Status { get; set; }
+        public ModuleItemStatus Status { get; set; }
         public bool IsCompleted { get; set; }
         public ContentDto Content { get; set; } = new();
         public List<Resource> Resources { get; set; } = [];

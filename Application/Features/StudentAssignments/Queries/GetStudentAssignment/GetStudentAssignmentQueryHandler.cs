@@ -66,17 +66,13 @@ namespace Application.Features.StudentAssignments.Queries.GetStudentAssignment
 
             var submission = await _assignmentRepository.GetStudentSubmissionAsync(session.StudentId, request.ItemId, cancellationToken);
             var isCompleted = submission != null;
-            var conditions = await _assignmentRepository.GetConditionsStatusAsync(session.StudentId, request.ItemId, cancellationToken);
-            
+            var conditions = await _moduleItemRepository.GetConditionsStatusAsync(session.StudentId, request.ItemId, cancellationToken);
+
             ModuleItemStatus status;
             if (isCompleted)
                 status = ModuleItemStatus.completed;
-
             else if (conditions.Any())
-            {
-                var allMet = conditions.All(x => x);
-                status = allMet ? ModuleItemStatus.avilable : ModuleItemStatus.locked;
-            }
+                status = conditions.All(x => x) ? ModuleItemStatus.avilable : ModuleItemStatus.locked;
             else
                 status = ModuleItemStatus.avilable;
 

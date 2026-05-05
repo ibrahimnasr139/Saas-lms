@@ -28,5 +28,6 @@ namespace Application.Contracts.Repositories
         Task<StudentLessonItemDto> GetStudentLessonItemAsync(int moduleItemId, int courseId, CancellationToken cancellationToken);
         Task<int> GetModuleIdAsync(int itemId, int courseId, CancellationToken cancellationToken);
         Task<int> GetMaxOrder(int courseId, int moduleId, CancellationToken cancellationToken);
+        Task<List<bool>> GetConditionsStatusAsync(int studentId, int itemId, CancellationToken cancellationToken);
     }
 }

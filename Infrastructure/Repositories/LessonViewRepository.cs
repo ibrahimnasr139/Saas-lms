@@ -1,4 +1,6 @@
-﻿namespace Infrastructure.Repositories
+﻿using Domain.Enums;
+
+namespace Infrastructure.Repositories
 {
     internal sealed class LessonViewRepository : ILessonViewRepository
     {
@@ -17,6 +19,11 @@
             return await _context.LessonViews
                      .Include(lv => lv.VideoSegmants)
                      .FirstOrDefaultAsync(lv => lv.StudentId == studentId && lv.ModuleItemId == itemId, cancellationToken);
+        }
+        public async Task<bool> IsLessonCompletedAsync(int studentId, int itemId, CancellationToken cancellationToken)
+        {
+            return await _context.LessonViews.AnyAsync(lv => lv.ModuleItemId == itemId && lv.StudentId == studentId
+                && lv.Status == ViewStatus.Completed, cancellationToken);
         }
     }
 }

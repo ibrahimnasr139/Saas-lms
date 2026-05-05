@@ -1,5 +1,5 @@
-﻿using Application.Contracts.Repositories;
-using Application.Features.StudentLessons.Dtos;
+﻿using Application.Features.StudentLessons.Dtos;
+using Domain.Enums;
 using Microsoft.AspNetCore.Http;
 
 namespace Application.Features.StudentLessons.Queries.GetStudentLessonItem
@@ -11,16 +11,18 @@ namespace Application.Features.StudentLessons.Queries.GetStudentLessonItem
         private readonly IEnrollmentRepository _enrollmentRepository;
         private readonly IStudentSubscriptionRepository _studentSubscriptionRepository;
         private readonly IModuleItemRepository _moduleItemRepository;
+        private readonly ILessonViewRepository _lessonViewRepository;
 
         public GetStudentLessonItemQueryHandler(HybridCache hybridCache, IHttpContextAccessor httpContextAccessor,
             IEnrollmentRepository enrollmentRepository, IStudentSubscriptionRepository studentSubscriptionRepository,
-            IModuleItemRepository moduleItemRepository)
+            IModuleItemRepository moduleItemRepository, ILessonViewRepository lessonViewRepository)
         {
             _hybridCache = hybridCache;
             _httpContextAccessor = httpContextAccessor;
             _enrollmentRepository = enrollmentRepository;
             _studentSubscriptionRepository = studentSubscriptionRepository;
             _moduleItemRepository = moduleItemRepository;
+            _lessonViewRepository = lessonViewRepository;
         }
         public async Task<OneOf<StudentLessonItemDto, Error>> Handle(GetStudentLessonItemQuery request, CancellationToken cancellationToken)
         {
@@ -46,7 +48,31 @@ namespace Application.Features.StudentLessons.Queries.GetStudentLessonItem
             if (!moduleItemIsExist)
                 return ModuleItemErrors.ModuleItemNotFound;
 
-            return await _moduleItemRepository.GetStudentLessonItemAsync(request.ItemId, request.CourseId, cancellationToken);
+
+            var cacheKey = $"{CacheKeysConstants.CourseKey}_{request.CourseId}_{CacheKeysConstants.ItemKey}_{request.ItemId}";
+            var lessonItem = await _hybridCache.GetOrCreateAsync<StudentLessonItemDto?>(
+                cacheKey,
+                async _ => await _moduleItemRepository.GetStudentLessonItemAsync(request.ItemId, request.CourseId, cancellationToken),
+                cancellationToken: cancellationToken
+            );
+
+            if (lessonItem is null)
+                return ModuleItemErrors.ModuleItemNotFound;
+
+            var isCompleted = await _lessonViewRepository.IsLessonCompletedAsync(session.StudentId, request.ItemId, cancellationToken);
+            var conditions = await _moduleItemRepository.GetConditionsStatusAsync(session.StudentId, request.ItemId, cancellationToken);
+
+            ModuleItemStatus status;
+            if (isCompleted)
+                status = ModuleItemStatus.completed;
+            else if (conditions.Any())
+                status = conditions.All(x => x) ? ModuleItemStatus.avilable : ModuleItemStatus.locked;
+            else
+                status = ModuleItemStatus.avilable;
+
+            lessonItem.Status = status;
+            lessonItem.IsCompleted = isCompleted;
+            return lessonItem;
         }
     }
 }

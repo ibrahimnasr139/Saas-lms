@@ -156,7 +156,6 @@ namespace Infrastructure.Repositories
 
             if (result is null)
                 return null!;
-
             return _mapper.Map<StudentLessonItemDto>(result);
         }
         public async Task<int> GetModuleIdAsync(int itemId, int courseId, CancellationToken cancellationToken)
@@ -172,6 +171,28 @@ namespace Infrastructure.Repositories
                 .Where(x => x.CourseId == courseId && x.ModuleId == moduleId)
                 .MaxAsync(x => (int?)x.Order, cancellationToken);
             return maxOrder ?? 0;
+        }
+        public async Task<List<bool>> GetConditionsStatusAsync(int studentId, int itemId, CancellationToken cancellationToken)
+        {
+            return await _dbContext.ModuleItemConditions
+                .Where(c => c.ModuleItemId == itemId && c.Enabled)
+                .Select(c => c.ConditionType == ConditionType.completed &&
+                       _dbContext.LessonViews.Any(lv => lv.ModuleItemId == c.RequiredModuleItemId &&
+                            lv.StudentId == studentId && lv.Status == ViewStatus.Completed) ||
+
+                    c.ConditionType == ConditionType.passed &&
+                        _dbContext.QuizAttempts.Any(qa => qa.ModuleItemId == c.RequiredModuleItemId &&
+                            qa.StudentId == studentId && qa.Score >= qa.Quiz.PassingScore) ||
+
+                    c.ConditionType == ConditionType.score_gte &&
+                        _dbContext.QuizAttempts.Any(qa => qa.ModuleItemId == c.RequiredModuleItemId &&
+                            qa.StudentId == studentId && qa.Score >= c.Value) ||
+
+                    c.ConditionType == ConditionType.submitted &&
+                        _dbContext.AssignmentSubmissions.Any(asub => asub.AssignmentId == c.RequiredModuleItemId &&
+                            asub.StudentId == studentId)
+                )
+                .ToListAsync(cancellationToken);
         }
     }
 }
