@@ -27,6 +27,11 @@ namespace Infrastructure.Repositories
         }
         public async Task<List<StudentSubmissionDto>> GetSubmissionsAsync(int courseId, int itemId, CancellationToken cancellationToken)
         {
+            var totalMarks = await _dbContext.Assignments
+                .Where(a => a.ModuleItemId == itemId)
+                .Select(a => a.Marks)
+                .FirstOrDefaultAsync(cancellationToken);
+
             return await _dbContext.Students.Where(s => s.Enrollments.Any(c => c.CourseId == courseId))
                  .LeftJoin(_dbContext.AssignmentSubmissions.Where(sv => sv.AssignmentId == itemId),
                      student => student.Id,
@@ -42,7 +47,7 @@ namespace Infrastructure.Repositories
                          Feedback = studentSubmission != null ? studentSubmission.Feedback : null,
                          Link = studentSubmission != null ? studentSubmission.Link : null,
                          Text = studentSubmission != null ? studentSubmission.Text : null,
-                         TotalMarks = studentSubmission != null ? studentSubmission.Assignment.Marks : 0,
+                         TotalMarks = totalMarks,
                          File = studentSubmission != null ? new FileDto
                          {
                              FileName = studentSubmission.File!.Name,
