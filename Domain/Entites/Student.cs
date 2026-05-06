@@ -16,11 +16,11 @@ namespace Domain.Entites
         public string UserId { get; set; } = string.Empty;
         public ApplicationUser User { get; set; } = null!;
         public LessonView? LessonView { get; set; }
-        public QuizAttempt? QuizAttempt { get; set; }
-        public ICollection<Enrollment> Enrollments { get; set; } = [];
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? UpdatedAt { get; set; }
         public DateTime? LevelUpdatedAt { get; set; }
+        public ICollection<Enrollment> Enrollments { get; set; } = [];
+        public ICollection<QuizAttempt> QuizAttempts { get; set; } = [];
         public ICollection<AssignmentSubmission> AssignmentSubmissions { get; set; } = [];
         public ICollection<SessionParticipant> SessionParticipants { get; set; } = [];
         public ICollection<Order> Orders { get; set; } = [];

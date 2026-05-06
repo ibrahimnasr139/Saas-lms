@@ -6,15 +6,18 @@ namespace Infrastructure.Persistence.Configurations
     {
         public void Configure(EntityTypeBuilder<QuizAttempt> builder)
         {
+            builder.HasIndex(x => new { x.StudentId, x.ModuleItemId })
+                   .IsUnique();
+
             builder.HasOne(qa => qa.Quiz)
                     .WithMany(q => q.Attempts)
                     .HasForeignKey(qa => qa.ModuleItemId)
                     .OnDelete(DeleteBehavior.Cascade);
 
             builder.HasOne(qa => qa.Student)
-                .WithOne(s => s.QuizAttempt)
-                .HasForeignKey<QuizAttempt>(qa => qa.StudentId)
-                .OnDelete(DeleteBehavior.Cascade);
+                   .WithMany(s => s.QuizAttempts)
+                   .HasForeignKey(qa => qa.StudentId)
+                   .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

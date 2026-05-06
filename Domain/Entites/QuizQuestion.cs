@@ -10,5 +10,6 @@
         public int Marks { get; set; }
         public int Order { get; set; }
         public bool RequiresManualGrading { get; set; }
+        public ICollection<Answer> Answers { get; set; } = [];
     }
 }

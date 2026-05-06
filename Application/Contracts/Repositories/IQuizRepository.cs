@@ -1,5 +1,6 @@
 ﻿using Application.Features.Attempts.Dtos;
 using Application.Features.Quizzes.Dtos;
+using Application.Features.StudentQuizes.Dtos;
 
 namespace Application.Contracts.Repositories
 {
@@ -10,5 +11,6 @@ namespace Application.Contracts.Repositories
         Task<List<AttemptDto>> GetAttempts(int courseId, int itemId, CancellationToken cancellationToken);
         Task<OverviewDto?> GetQuizOverview(int itemId, CancellationToken cancellationToken);
         Task<QuizMetadata?> GetQuizMetadata(int quizId, int courseId, int moduleId, string subdomain, CancellationToken cancellationToken);
+        Task<StudentQuizDto?> GetStudentQuizAsync(int studentId, int courseId, int itemId, CancellationToken cancellationToken);
     }
 }

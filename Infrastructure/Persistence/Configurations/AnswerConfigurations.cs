@@ -9,14 +9,14 @@ namespace Infrastructure.Persistence.Configurations
             builder.HasKey(a => new { a.QuizQuestionId, a.AttemptId });
 
             builder.HasOne(a => a.QuizQuestion)
-                .WithMany()
+                .WithMany(qq => qq.Answers)
                 .HasForeignKey(a => a.QuizQuestionId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             builder.HasOne(a => a.Attempt)
-                .WithMany()
-                .HasForeignKey(a => a.AttemptId)
-                .OnDelete(DeleteBehavior.Cascade);
+                   .WithMany(qa => qa.Answers)
+                   .HasForeignKey(a => a.AttemptId)
+                   .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

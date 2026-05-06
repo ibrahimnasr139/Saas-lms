@@ -1,5 +1,6 @@
 ﻿using Application.Features.Attempts.Dtos;
 using Application.Features.Quizzes.Dtos;
+using Application.Features.StudentQuizes.Dtos;
 using Domain.Enums;
 
 namespace Infrastructure.Repositories
@@ -11,7 +12,6 @@ namespace Infrastructure.Repositories
         {
             _dbContext = dbContext;
         }
-
         public async Task<List<AttemptDto>> GetAttempts(int courseId, int itemId, CancellationToken cancellationToken)
         {
             return await _dbContext.Students.Where(s => s.Enrollments.Any(c => c.CourseId == courseId))
@@ -72,6 +72,123 @@ namespace Infrastructure.Repositories
         {
             _dbContext.QuizQuestions.Remove(quizQuestion);
             await _dbContext.SaveChangesAsync(cancellationToken);
+        }
+        public async Task<StudentQuizDto?> GetStudentQuizAsync(int studentId, int courseId, int itemId, CancellationToken cancellationToken)
+        {
+            var quizData = await _dbContext.ModuleItems
+                .Where(mi => mi.Id == itemId && mi.CourseId == courseId)
+                .Select(mi => new
+                {
+                    Quiz = new QuizDto
+                    {
+                        Id = mi.Id,
+                        TotalMarks = mi.Quiz!.TotalMarks,
+                        HasStarted = mi.Quiz.Attempts.Any(a => a.StudentId == studentId),
+                        Duration = mi.Quiz.Duration,
+                        StartDate = mi.Quiz.StartDate,
+                        EndDate = mi.Quiz.EndDate,
+                        CreatedAt = mi.CreatedAt,
+                    },
+                    Questions = mi.Quiz.Questions
+                        .Select(q => new
+                        {
+                            q.Id,
+                            q.Order,
+                            q.Question.Type,
+                            q.Question.QuestionTitle,
+                            q.Marks,
+                            q.Question.Difficulty,
+                            q.Question.CorrectAnswer,
+                            q.Question.Explanation,
+                            q.Question.Options,
+                        }).ToList()
+                })
+                .FirstOrDefaultAsync(cancellationToken);
+
+            if (quizData is null)
+                return null;
+
+            var result = new StudentQuizDto
+            {
+                Quiz = quizData.Quiz,
+                Questions = quizData.Questions.Select(q => new StudentQuestionDto
+                {
+                    Id = q.Id,
+                    Order = q.Order,
+                    Type = q.Type,
+                    QuestionText = q.QuestionTitle,
+                    Marks = q.Marks,
+                    Difficulty = q.Difficulty,
+                    CorrectAnswer = q.CorrectAnswer,
+                    Explanation = q.Explanation,
+                    Options = q.Options?.Select(o => new QuestionOptionDto
+                    {
+                        Id = o.Id,
+                        Label = o.Label,
+                    }).ToList(),
+                    Answer = null
+                }).ToList()
+            };
+
+            var attemptData = await _dbContext.QuizAttempts
+                .Where(qa => qa.ModuleItemId == itemId && qa.StudentId == studentId)
+                .Select(qa => new
+                {
+                    qa.Id,
+                    qa.GradingStatus,
+                    qa.StartedAt,
+                    qa.SubmittedAt,
+                    qa.TimeSpent,
+                    qa.Score,
+                    qa.TotalMarks,
+                    TotalQuestions = qa.Quiz.Questions.Count(),
+                    Answers = qa.Answers.Select(a => new
+                    {
+                        a.QuizQuestionId,
+                        a.StudentAnswer,
+                        a.IsCorrect,
+                        a.AutoScore,
+                        a.Feedback
+                    }).ToList()
+                })
+                .FirstOrDefaultAsync(cancellationToken);
+
+            if (attemptData != null)
+            {
+                result.Attempt = new StudentAttemptDto
+                {
+                    Id = attemptData.Id,
+                    GradingStatus = attemptData.GradingStatus,
+                    StartedAt = attemptData.StartedAt,
+                    SubmittedAt = attemptData.SubmittedAt,
+                    TimeSpent = attemptData.TimeSpent,
+                    Score = attemptData.Score,
+                    MaxScore = attemptData.TotalMarks,
+                    IsPublished = attemptData.GradingStatus == GradingStatus.Published,
+                    Summary = new SummaryDto
+                    {
+                        Correct = attemptData.Answers.Count(a => a.IsCorrect),
+                        Wrong = attemptData.Answers.Count(a => !a.IsCorrect),
+                        Skipped = attemptData.TotalQuestions - attemptData.Answers.Count
+                    }
+                };
+
+                foreach (var question in result.Questions)
+                {
+                    var answer = attemptData.Answers.FirstOrDefault(a => a.QuizQuestionId == question.Id);
+                    if (answer != null)
+                    {
+                        question.Answer = new QuestionAnswerDto
+                        {
+                            Value = answer.StudentAnswer,
+                            IsCorrect = answer.IsCorrect,
+                            Score = answer.AutoScore,
+                            Feedback = answer.Feedback
+                        };
+                    }
+                }
+            }
+            return result;
         }
     }
 }

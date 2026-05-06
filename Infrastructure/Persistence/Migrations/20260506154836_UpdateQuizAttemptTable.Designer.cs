@@ -5,6 +5,7 @@ using System.Text.Json;
 using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -13,9 +14,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260506154836_UpdateQuizAttemptTable")]
+    partial class UpdateQuizAttemptTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -89,6 +92,9 @@ namespace Infrastructure.Persistence.Migrations
                     b.Property<bool>("IsCorrect")
                         .HasColumnType("boolean");
 
+                    b.Property<int?>("QuizAttemptId")
+                        .HasColumnType("integer");
+
                     b.Property<bool?>("Selected")
                         .HasColumnType("boolean");
 
@@ -101,6 +107,8 @@ namespace Infrastructure.Persistence.Migrations
                     b.HasKey("QuizQuestionId", "AttemptId");
 
                     b.HasIndex("AttemptId");
+
+                    b.HasIndex("QuizAttemptId");
 
                     b.ToTable("Answers");
                 });
@@ -3028,13 +3036,17 @@ namespace Infrastructure.Persistence.Migrations
             modelBuilder.Entity("Domain.Entites.Answer", b =>
                 {
                     b.HasOne("Domain.Entites.QuizAttempt", "Attempt")
-                        .WithMany("Answers")
+                        .WithMany()
                         .HasForeignKey("AttemptId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.Entites.QuizQuestion", "QuizQuestion")
+                    b.HasOne("Domain.Entites.QuizAttempt", null)
                         .WithMany("Answers")
+                        .HasForeignKey("QuizAttemptId");
+
+                    b.HasOne("Domain.Entites.QuizQuestion", "QuizQuestion")
+                        .WithMany()
                         .HasForeignKey("QuizQuestionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -4397,11 +4409,6 @@ namespace Infrastructure.Persistence.Migrations
                 });
 
             modelBuilder.Entity("Domain.Entites.QuizAttempt", b =>
-                {
-                    b.Navigation("Answers");
-                });
-
-            modelBuilder.Entity("Domain.Entites.QuizQuestion", b =>
                 {
                     b.Navigation("Answers");
                 });
