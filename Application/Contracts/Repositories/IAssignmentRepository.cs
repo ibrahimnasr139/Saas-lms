@@ -10,5 +10,6 @@ namespace Application.Contracts.Repositories
         Task CreateAssignmentSubmissionAsync(AssignmentSubmission assignmentSubmission, CancellationToken cancellationToken);
         Task<AssignmentDto?> GetAssignmentAsync(int itemId, int courseId, CancellationToken cancellationToken);
         Task<AssignmentSubmissionDto?> GetStudentSubmissionAsync(int studentId, int itemId, CancellationToken cancellationToken);
+        Task<bool> IsAssignmentSubmittedAsync(int studentId, int itemId, CancellationToken cancellationToken);
     }
 }

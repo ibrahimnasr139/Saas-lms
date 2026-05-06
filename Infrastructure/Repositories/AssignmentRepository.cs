@@ -109,5 +109,10 @@ namespace Infrastructure.Repositories
         {
             await _dbContext.AssignmentSubmissions.AddAsync(assignmentSubmission, cancellationToken);
         }
+        public async Task<bool> IsAssignmentSubmittedAsync(int studentId, int itemId, CancellationToken cancellationToken)
+        {
+            return await _dbContext.AssignmentSubmissions
+                .AnyAsync(s => s.AssignmentId == itemId && s.StudentId == studentId, cancellationToken);
+        }
     }
 }

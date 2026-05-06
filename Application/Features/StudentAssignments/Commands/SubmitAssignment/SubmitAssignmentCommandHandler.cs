@@ -50,6 +50,22 @@ namespace Application.Features.StudentAssignments.Commands.SubmitAssignment
             if (!moduleItemIsExist)
                 return ModuleItemErrors.ModuleItemNotFound;
 
+            var isCompleted = await _assignmentRepository.IsAssignmentSubmittedAsync(session.StudentId, request.ItemId, cancellationToken);
+            var conditions = await _moduleItemRepository.GetConditionsStatusAsync(session.StudentId, request.ItemId, cancellationToken);
+
+            ModuleItemStatus status;
+            if (isCompleted)
+                status = ModuleItemStatus.completed;
+            else if (conditions.Any())
+                status = conditions.All(x => x) ? ModuleItemStatus.avilable : ModuleItemStatus.locked;
+            else
+                status = ModuleItemStatus.avilable;
+
+            if (status == ModuleItemStatus.locked)
+                return ModuleItemErrors.ModuleItemLocked;
+            if (status == ModuleItemStatus.completed)
+                return ModuleItemErrors.ModuleItemAlreadyCompleted;
+
             var newAssignmentSubmission = new AssignmentSubmission()
             {
                 AssignmentId = request.ItemId,
