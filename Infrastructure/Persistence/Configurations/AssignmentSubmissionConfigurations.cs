@@ -11,8 +11,8 @@ namespace Infrastructure.Persistence.Configurations
                 .HasForeignKey(s => s.AssignmentId);
 
             builder.HasOne(s => s.Student)
-                .WithOne(s => s.AssignmentSubmission)
-                .HasForeignKey<AssignmentSubmission>(s => s.StudentId);
+                .WithMany(s => s.AssignmentSubmissions)
+                .HasForeignKey(s => s.StudentId);
 
             builder.HasOne(s => s.File)
                 .WithOne(f => f.AssignmentSubmission)
