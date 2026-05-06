@@ -169,9 +169,5 @@ namespace Infrastructure.Repositories
                 .Include(o => o.OrderTimeLines)
                 .FirstOrDefaultAsync(o => o.Id == orderId && o.StudentId == studentId && o.Tenant.SubDomain == subDomain, cancellationToken);
         }
-        public async Task CreateOrderTimeLineAsync(OrderTimeLine orderTimeLine, CancellationToken cancellationToken)
-        {
-            await _context.OrderTimeLines.AddAsync(orderTimeLine, cancellationToken);
-        }
     }
 }

@@ -72,19 +72,20 @@ namespace Application.Features.Public.Commands.CreateOrder
                 CourseId = course.Id,
                 TenantId = tenantId,
                 StudentId = session.StudentId,
-            };
-            var newOrderTimeLine = new OrderTimeLine
-            {
-                OrderId = newOrder.Id,
-                Description = " تم إنشاء الطلب.",
-                Type = OrderTimeLineType.created,
-                Actor = await _studentRepository.GetStuentNameByIdAsync(session.StudentId, cancellationToken)
+                OrderTimeLines = new List<OrderTimeLine>
+                {
+                    new OrderTimeLine
+                    {
+                        Description = "تم إنشاء الطلب.",
+                        Type = OrderTimeLineType.created,
+                        Actor = await _studentRepository.GetStuentNameByIdAsync(session.StudentId, cancellationToken)
+                    }
+                }
             };
             await _unitOfWork.BeginTransactionAsync(cancellationToken);
             try
             {
                 await _orderRepository.CreateOrderAsync(newOrder, cancellationToken);
-                await _orderRepository.CreateOrderTimeLineAsync(newOrderTimeLine, cancellationToken);
                 await _unitOfWork.CommitTransactionAsync(cancellationToken);
             }
             catch

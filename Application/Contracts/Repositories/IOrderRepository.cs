@@ -17,6 +17,5 @@ namespace Application.Contracts.Repositories
         Task<OrderDto?> GetStudentOrderAsync(int orderId, int studentId, string subDomain, CancellationToken cancellationToken);
         Task<OrderStatus> GetOrderStatusAsync(int orderId, CancellationToken cancellationToken);
         Task<Order?> GetOrderByIdAsync(int orderId, int studentId, string subDomain, CancellationToken cancellationToken);
-        Task CreateOrderTimeLineAsync(OrderTimeLine orderTimeLine, CancellationToken cancellationToken);
     }
 }
