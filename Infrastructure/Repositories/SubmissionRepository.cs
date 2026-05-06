@@ -1,4 +1,5 @@
 ﻿using Application.Features.Assignments.Dtos;
+using Domain.Enums;
 
 namespace Infrastructure.Repositories
 {
@@ -46,12 +47,14 @@ namespace Infrastructure.Repositories
         {
             await _context.AssignmentSubmissions.Where(s => s.Id == submissionId && s.Assignment.Marks >= grade)
                 .ExecuteUpdateAsync(s => s.SetProperty(sub => sub.EarnedMarks, grade)
-                    .SetProperty(sub => sub.Feedback, feedback), cancellationToken);
+                    .SetProperty(sub => sub.Feedback, feedback)
+                    .SetProperty(sub => sub.Status, AssignmentStatus.Graded), cancellationToken);
         }
-        public async Task<bool> IsSubmissionFound(int submissionId, int itemId, CancellationToken cancellationToken)
+        public async Task<AssignmentSubmission?> GetSubmissionAsync(int submissionId, int itemId, CancellationToken cancellationToken)
         {
             return await _context.AssignmentSubmissions
-                .AnyAsync(s => s.Id == submissionId && s.AssignmentId == itemId, cancellationToken);
+                .Include(s => s.Assignment)
+                .FirstOrDefaultAsync(s => s.Id == submissionId && s.AssignmentId == itemId, cancellationToken);
         }
     }
 }

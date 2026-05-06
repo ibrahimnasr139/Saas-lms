@@ -12,7 +12,6 @@ namespace Api.Controllers
     [Route("api/tenant/quizzes/{quizId}/[controller]")]
     [ApiController]
     [Authorize(AuthenticationSchemes = AuthConstants.ApiScheme)]
-
     public class AttemptsController : ControllerBase
     {
         private readonly IMediator _mediator;
@@ -30,6 +29,7 @@ namespace Api.Controllers
                 error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message }));
         }
         
+
         [HttpPost("{attemptId}/publish")]
         public async Task<IActionResult> PublishAttempt([FromRoute] PublishAttemptCommand command, CancellationToken cancellationToken)
         {
@@ -39,6 +39,7 @@ namespace Api.Controllers
                 error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message }));
         }
         
+
         [HttpGet("{attemptId}")]
         public async Task<IActionResult> GetAttempt([FromRoute] GetAttemptQuery query, CancellationToken cancellationToken)
         {

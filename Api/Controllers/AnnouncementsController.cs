@@ -21,14 +21,14 @@ namespace Api.Controllers
             _mediator = mediator;
         }
 
-        [HttpGet()]
+        [HttpGet]
         public async Task<IActionResult> GetAnnouncements([FromQuery] GetAnnouncementsQuery query, CancellationToken cancellationToken)
         {
             return Ok(await _mediator.Send(query, cancellationToken));
         }
 
 
-        [HttpPost()]
+        [HttpPost]
         public async Task<IActionResult> CreateAnnouncement([FromBody] CreateAnnouncementCommand command, CancellationToken cancellationToken)
         {
             return Ok(await _mediator.Send(command, cancellationToken));

@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Application.Features.Submissions.Commands.CreateSubmissionGrade
+﻿namespace Application.Features.Submissions.Commands.CreateSubmissionGrade
 {
-    public sealed record CreateSubmissionGradeCommand(int CourseId, int ModuleId, int ItemId, int SubmissionId, double Grade, string? Feedback)
-        : IRequest<OneOf<bool, Error>>;
+    public sealed record CreateSubmissionGradeCommand(int CourseId, int ModuleId, int ItemId, int SubmissionId, double Grade,
+        string? Feedback) : IRequest<OneOf<bool, Error>>;
 }

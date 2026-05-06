@@ -5,9 +5,9 @@ namespace Domain.Entites
     public sealed class StudentGrade
     {
         public int Id { get; set; }
-        public int Score { get; set; }
+        public double Score { get; set; }
         public int TotalMarks { get; set; }
-        public DateTime GradedAt { get; set; }
+        public DateTime GradedAt { get; set; } = DateTime.UtcNow;
         public StudentGradeType Type { get; set; }
         public int GraderId { get; set; }
         public TenantMember TenantMember { get; set; } = null!;
