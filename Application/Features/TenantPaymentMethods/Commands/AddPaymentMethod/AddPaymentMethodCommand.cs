@@ -4,6 +4,6 @@ using System.Text.Json;
 
 namespace Application.Features.TenantPaymentMethods.Commands.AddPaymentMethod
 {
-    public sealed record AddPaymentMethodCommand(PaymentMethodType Type, Dictionary<string, JsonElement> Details) 
+    public sealed record AddPaymentMethodCommand(PaymentMethodType Type, Dictionary<string, JsonElement> Details)
         : IRequest<OneOf<PaymentMethodResponse, Error>>;
 }

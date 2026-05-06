@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Application.Features.Assignments.Dtos
+﻿namespace Application.Features.Assignments.Dtos
 {
     public sealed class GradeDistribution
     {

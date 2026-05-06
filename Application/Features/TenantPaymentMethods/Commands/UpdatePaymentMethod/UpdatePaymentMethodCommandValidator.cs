@@ -11,7 +11,7 @@ namespace Application.Features.TenantPaymentMethods.Commands.UpdatePaymentMethod
         public UpdatePaymentMethodCommandValidator()
         {
             RuleFor(x => x.Details)
-                .NotNull() 
+                .NotNull()
                 .WithMessage("Details are required.")
                 .Must(d => d.Count > 0)
                 .WithMessage("Details cannot be empty.");

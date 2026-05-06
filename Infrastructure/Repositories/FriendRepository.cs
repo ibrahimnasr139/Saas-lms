@@ -27,7 +27,7 @@ namespace Infrastructure.Repositories
                 .Where(f => f.Status == FriendStatus.Accepted && (f.Student1Id == studentId || f.Student2Id == studentId))
                 .Select(f => new FriendsDto
                 {
-                    Id = f.Student1Id == studentId 
+                    Id = f.Student1Id == studentId
                         ? f.Student2Id : f.Student1Id,
 
                     Name = f.Student1Id == studentId

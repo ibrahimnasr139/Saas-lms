@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Application.Features.Attempts.Dtos
+﻿namespace Application.Features.Attempts.Dtos
 {
     public sealed class StudentDto
     {

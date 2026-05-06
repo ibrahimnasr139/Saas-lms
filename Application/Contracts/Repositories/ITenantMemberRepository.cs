@@ -1,6 +1,5 @@
 ﻿using Application.Features.TenantMembers.Commands.UpdateCurrentMember;
 using Application.Features.TenantMembers.Dtos;
-using Application.Features.Tenants.Dtos;
 
 namespace Application.Contracts.Repositories
 {

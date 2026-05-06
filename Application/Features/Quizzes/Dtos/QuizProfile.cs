@@ -2,7 +2,7 @@
 {
     public sealed class QuizProfile : Profile
     {
-        public QuizProfile() 
+        public QuizProfile()
         {
             CreateMap<AiResponse, QuizQuestion>()
                 .ForMember(dest => dest.Question, opt => opt.MapFrom(src => src));

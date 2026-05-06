@@ -2,7 +2,7 @@
 {
     public enum StudentGradeType
     {
-        Quiz ,
+        Quiz,
         Assignment
     }
 }

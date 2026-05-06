@@ -1,5 +1,4 @@
-﻿using Application.Constants;
-using Application.Contracts.Files;
+﻿using Application.Contracts.Files;
 using FluentValidation;
 
 namespace Application.Features.Files.Commands.UploadFile
@@ -18,11 +17,11 @@ namespace Application.Features.Files.Commands.UploadFile
 
             RuleFor(x => x.File)
                 .Must(file => file != null &&
-                    (file.ContentType.StartsWith(FileConstants.Image) || 
-                    file.ContentType.StartsWith(FileConstants.Video) || 
+                    (file.ContentType.StartsWith(FileConstants.Image) ||
+                    file.ContentType.StartsWith(FileConstants.Video) ||
                     file.ContentType == FileConstants.Pdf))
                 .WithMessage("Unsupported file type.");
-                
+
 
             RuleFor(x => x.File)
                 .Must((request, file) =>

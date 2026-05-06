@@ -61,7 +61,7 @@ namespace Application.Features.Public.Commands.CreateOrder
                 if (studentSubscriptionIsActive)
                     return StudentErrors.AlreadyEnrolled;
             }
-            
+
             var tenantId = await _tenantRepository.GetTenantIdAsync(subDomain, cancellationToken);
             var newOrder = new Order
             {

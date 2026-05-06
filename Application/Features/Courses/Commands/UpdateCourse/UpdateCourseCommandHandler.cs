@@ -1,6 +1,4 @@
-﻿using Application.Contracts.Repositories;
-using Application.Features.Courses.Dtos;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 
 namespace Application.Features.Courses.Commands.UpdateCourse
 {
@@ -15,9 +13,9 @@ namespace Application.Features.Courses.Commands.UpdateCourse
         private readonly HybridCache _hybridCache;
         private readonly IUnitOfWork _unitOfWork;
 
-        public UpdateCourseCommandHandler(ICourseRepository courseRepository,IMapper mapper,IUnitOfWork unitOfWork,
+        public UpdateCourseCommandHandler(ICourseRepository courseRepository, IMapper mapper, IUnitOfWork unitOfWork,
             ITenantMemberRepository tenantMemberRepository, ISubscriptionRepository subscriptionRepository,
-            ICurrentUserId currentUserId,IHttpContextAccessor httpContextAccessor,HybridCache hybridCache)
+            ICurrentUserId currentUserId, IHttpContextAccessor httpContextAccessor, HybridCache hybridCache)
         {
             _courseRepository = courseRepository;
             _mapper = mapper;
@@ -26,7 +24,7 @@ namespace Application.Features.Courses.Commands.UpdateCourse
             _currentUserId = currentUserId;
             _httpContextAccessor = httpContextAccessor;
             _hybridCache = hybridCache;
-            _unitOfWork = unitOfWork;   
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<OneOf<SuccessDto, Error>> Handle(UpdateCourseCommand request, CancellationToken cancellationToken)

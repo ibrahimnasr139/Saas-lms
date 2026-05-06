@@ -1,8 +1,4 @@
-﻿using Application.Contracts.Repositories;
-using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Microsoft.AspNetCore.Http;
 
 namespace Application.Features.Questions.Commands.UpdateQuestion
 {

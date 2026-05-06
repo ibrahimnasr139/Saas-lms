@@ -1,6 +1,4 @@
-﻿using Application.Constants;
-using Application.Contracts.Repositories;
-using Application.Features.Roles.Dtos;
+﻿using Application.Features.Roles.Dtos;
 using Microsoft.AspNetCore.Http;
 
 namespace Application.Features.Roles.Queries.GetTenantRole

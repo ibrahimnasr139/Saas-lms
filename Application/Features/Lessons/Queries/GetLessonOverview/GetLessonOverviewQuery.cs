@@ -1,7 +1,4 @@
 ﻿using Application.Features.Lessons.Dtos;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Application.Features.Lessons.Queries.GetLessonOverview
 {

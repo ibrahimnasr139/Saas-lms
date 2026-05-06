@@ -1,5 +1,4 @@
-﻿using Application.Contracts.Repositories;
-using Application.Features.Roles.Dtos;
+﻿using Application.Features.Roles.Dtos;
 
 namespace Application.Features.Roles.Commands.UpdateRole
 {
@@ -9,7 +8,7 @@ namespace Application.Features.Roles.Commands.UpdateRole
         private readonly ITenantMemberRepository _tenantMemberRepository;
         private readonly ICurrentUserId _currentUserId;
 
-        public UpdateRoleCommandHandler(ITenantRoleRepository tenantRoleRepository,ITenantMemberRepository tenantMemberRepository,
+        public UpdateRoleCommandHandler(ITenantRoleRepository tenantRoleRepository, ITenantMemberRepository tenantMemberRepository,
             ICurrentUserId currentUserId)
         {
             _tenantRoleRepository = tenantRoleRepository;

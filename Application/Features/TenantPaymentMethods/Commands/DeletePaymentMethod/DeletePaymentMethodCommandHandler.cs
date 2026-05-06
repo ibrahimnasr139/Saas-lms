@@ -1,9 +1,8 @@
-﻿using Application.Contracts.Repositories;
-using Application.Features.TenantPaymentMethods.Dtos;
+﻿using Application.Features.TenantPaymentMethods.Dtos;
 
 namespace Application.Features.TenantPaymentMethods.Commands.DeletePaymentMethod
 {
-    internal sealed class DeletePaymentMethodCommandHandler : IRequestHandler<DeletePaymentMethodCommand, OneOf<PaymentMethodResponseMessage,Error>>
+    internal sealed class DeletePaymentMethodCommandHandler : IRequestHandler<DeletePaymentMethodCommand, OneOf<PaymentMethodResponseMessage, Error>>
     {
         private readonly IPaymentMethodRepository _paymentMethodRepository;
         private readonly ITenantRepository _tenantRepository;

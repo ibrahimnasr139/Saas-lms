@@ -1,8 +1,5 @@
 ﻿using Application.Features.Assignments.Dtos;
 using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Application.Features.Assignments.Queries.GetOverview
 {
@@ -22,10 +19,9 @@ namespace Application.Features.Assignments.Queries.GetOverview
             var subdomain = _httpContextAccessor?.HttpContext?.Request.Cookies[AuthConstants.SubDomain];
             var assignment = await _moduleItemRepository.GetAssignmentAsync(request.ItemId, request.ModuleId, request.CourseId, subdomain!, cancellationToken);
             if (assignment is null)
-            {
                 return ModuleItemErrors.ModuleItemNotFound;
-            }
-            return await _assignmentRepository.GetOverviewAsync(request.ItemId, cancellationToken) ?? new OverviewDto();
+            return await _assignmentRepository.GetOverviewAsync(request.ItemId, request.CourseId, cancellationToken) 
+                ?? new OverviewDto();
         }
     }
 }

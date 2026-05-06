@@ -1,5 +1,4 @@
-﻿using Application.Contracts.Repositories;
-using Application.Features.TenantWebsite.Dtos;
+﻿using Application.Features.TenantWebsite.Dtos;
 using Microsoft.AspNetCore.Http;
 
 namespace Application.Features.TenantWebsite.Queries.GetTenantPage
@@ -22,7 +21,7 @@ namespace Application.Features.TenantWebsite.Queries.GetTenantPage
             var tenantId = await _tenantRepository.GetTenantIdAsync(subDomain!, cancellationToken);
 
             var result = await _tenantWebsiteRepository.GetTenantPageWithBlockTypeAsync(tenantId, request.PageId, cancellationToken);
-            if (result == null) 
+            if (result == null)
                 return TenantWebsiteErrors.TenantPageNotFound;
 
             return result;

@@ -1,5 +1,4 @@
-﻿using Application.Contracts.Repositories;
-using Application.Features.TenantPaymentMethods.Dtos;
+﻿using Application.Features.TenantPaymentMethods.Dtos;
 
 namespace Application.Features.TenantPaymentMethods.Commands.UpdatePaymentMethodStatus
 {

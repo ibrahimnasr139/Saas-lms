@@ -1,4 +1,7 @@
-﻿global using Application.Features.TenantAuth.Dtos;
+﻿global using Application.Common;
+global using Application.Constants;
+global using Application.Contracts.Repositories;
+global using Application.Features.TenantAuth.Dtos;
 global using AutoMapper;
 global using Domain.Entites;
 global using Domain.Errors;
@@ -7,7 +10,3 @@ global using Microsoft.AspNetCore.Identity;
 global using Microsoft.AspNetCore.Identity.UI.Services;
 global using Microsoft.Extensions.Caching.Hybrid;
 global using OneOf;
-global using Application.Common;
-global using Application.Constants;
-global using Application.Contracts.Repositories;
-global using Application.Constants;

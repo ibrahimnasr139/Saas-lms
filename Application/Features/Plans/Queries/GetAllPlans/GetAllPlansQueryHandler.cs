@@ -1,6 +1,4 @@
-﻿using Application.Constants;
-using Application.Contracts.Repositories;
-using Application.Features.Plans.Dtos;
+﻿using Application.Features.Plans.Dtos;
 
 namespace Application.Features.Plans.Queries.GetAllPlans
 {

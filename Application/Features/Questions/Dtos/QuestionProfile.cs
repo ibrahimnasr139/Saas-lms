@@ -1,7 +1,6 @@
 ﻿using Application.Features.Questions.Commands.CreateQuestion;
 using Application.Features.Questions.Commands.CreateQuizQuestion;
 using Application.Features.Questions.Commands.UpdateQuestion;
-using Application.Features.Questions.Commands.UpdateQuizQuestion;
 
 namespace Application.Features.Questions.Dtos
 {

@@ -1,5 +1,4 @@
-﻿using Application.Contracts.Repositories;
-using Application.Features.Quizzes.Dtos;
+﻿using Application.Features.Quizzes.Dtos;
 using Microsoft.AspNetCore.Http;
 
 namespace Application.Features.Quizzes.Queries.GetOverview

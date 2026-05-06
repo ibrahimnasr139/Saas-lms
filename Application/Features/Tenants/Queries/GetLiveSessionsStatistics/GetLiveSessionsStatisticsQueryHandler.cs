@@ -1,5 +1,4 @@
-﻿using Application.Contracts.Repositories;
-using Application.Features.Tenants.Dtos;
+﻿using Application.Features.Tenants.Dtos;
 using Microsoft.AspNetCore.Http;
 
 namespace Application.Features.Tenants.Queries.GetLiveSessionsStatistics
@@ -13,7 +12,7 @@ namespace Application.Features.Tenants.Queries.GetLiveSessionsStatistics
         private readonly IZoomIntegrationRepository _zoomIntegrationRepository;
 
         public GetLiveSessionsStatisticsQueryHandler(ICurrentUserId currentUserId, IHttpContextAccessor httpContextAccessor,
-           ITenantRepository tenantRepository ,ILiveSessionRepository liveSessionRepository, IZoomIntegrationRepository zoomIntegrationRepository)
+           ITenantRepository tenantRepository, ILiveSessionRepository liveSessionRepository, IZoomIntegrationRepository zoomIntegrationRepository)
         {
             _currentUserId = currentUserId;
             _httpContextAccessor = httpContextAccessor;

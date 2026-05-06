@@ -1,5 +1,4 @@
-﻿using Application.Contracts.Repositories;
-using Application.Features.Questions.Dtos;
+﻿using Application.Features.Questions.Dtos;
 using Microsoft.AspNetCore.Http;
 
 namespace Application.Features.Questions.Queries.GetAllQuestions

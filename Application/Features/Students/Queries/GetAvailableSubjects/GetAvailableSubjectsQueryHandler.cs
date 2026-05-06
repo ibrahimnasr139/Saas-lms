@@ -1,5 +1,4 @@
-﻿using Application.Contracts.Repositories;
-using Application.Features.Students.Dtos;
+﻿using Application.Features.Students.Dtos;
 
 namespace Application.Features.Students.Queries.GetAvailableSubjects
 {

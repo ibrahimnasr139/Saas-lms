@@ -1,5 +1,4 @@
-﻿using Application.Contracts.Repositories;
-using Application.Features.TenantOrders.Dtos;
+﻿using Application.Features.TenantOrders.Dtos;
 using Domain.Enums;
 using Microsoft.AspNetCore.Http;
 
@@ -31,7 +30,7 @@ namespace Application.Features.TenantOrders.Commands.BulkOrderAction
             var subDomain = _httpContextAccessor.HttpContext?.Request.Cookies[AuthConstants.SubDomain];
             var tenantId = await _tenantRepository.GetTenantIdAsync(subDomain!, cancellationToken);
 
-            if(request.Action == OrderStatus.approved)
+            if (request.Action == OrderStatus.approved)
             {
                 var isSubscribed = await _subscriptionRepository.HasActiveSubscriptionByTenantDomain(subDomain!, cancellationToken);
                 if (!isSubscribed)

@@ -1,5 +1,4 @@
-﻿using Application.Contracts.Repositories;
-using Application.Features.Friends.Dtos;
+﻿using Application.Features.Friends.Dtos;
 using Application.Helpers;
 using Hangfire;
 using Microsoft.AspNetCore.Http;
@@ -15,7 +14,7 @@ namespace Application.Features.Friends.Commands.SendRequest
         private readonly IEmailSender _emailSender;
         private readonly IUnitOfWork _unitOfWork;
 
-        public SendRequestCommandHandler(HybridCache hybridCache, IHttpContextAccessor httpContextAccessor,IUnitOfWork unitOfWork,
+        public SendRequestCommandHandler(HybridCache hybridCache, IHttpContextAccessor httpContextAccessor, IUnitOfWork unitOfWork,
             IFriendRepository friendRepository, IStudentRepository studentRepository, IEmailSender emailSender)
         {
             _hybridCache = hybridCache;

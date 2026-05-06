@@ -1,5 +1,4 @@
-﻿using Application.Contracts.Repositories;
-using Domain.Enums;
+﻿using Domain.Enums;
 
 namespace Application.Features.Files.Commands.CallBack
 {

@@ -29,7 +29,7 @@ namespace Application.Features.StudentAuth.Commands.ResendOtp
             }, cancellationToken: cancellationToken);
 
             var user = await _userManager.FindByEmailAsync(email);
-            if(user is null)
+            if (user is null)
                 return UserErrors.EmailNotFound;
 
             var otpCode = new Random().Next(100000, 999999).ToString();

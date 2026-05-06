@@ -1,5 +1,4 @@
-﻿using Application.Contracts.Repositories;
-using Application.Features.StudentUsers.Dtos;
+﻿using Application.Features.StudentUsers.Dtos;
 using Microsoft.AspNetCore.Http;
 
 namespace Application.Features.StudentUsers.Queries.GetProfile

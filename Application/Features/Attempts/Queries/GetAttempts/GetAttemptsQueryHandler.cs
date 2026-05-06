@@ -1,9 +1,5 @@
-﻿using Application.Contracts.Repositories;
-using Application.Features.Attempts.Dtos;
+﻿using Application.Features.Attempts.Dtos;
 using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Application.Features.Quizzes.Queries.GetAttempts
 {

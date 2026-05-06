@@ -11,7 +11,7 @@ namespace Domain.Errors
             new Error("Member.CannotRemoveOwner", "لا يمكن ازالة مالك المةصه", HttpStatusCode.Forbidden);
 
         public static Error CannotRemoveSelf =>
-            new Error("Member.CannotRemoveSelf", "لا يمكنك ازالة نفسك", HttpStatusCode.Forbidden); 
+            new Error("Member.CannotRemoveSelf", "لا يمكنك ازالة نفسك", HttpStatusCode.Forbidden);
 
         public static Error CannotChangeOwnerRole =>
             new Error("Member.CannotChangeOwnerRole", "لا يمكن تغيير دور مالك المنصة", HttpStatusCode.Forbidden);

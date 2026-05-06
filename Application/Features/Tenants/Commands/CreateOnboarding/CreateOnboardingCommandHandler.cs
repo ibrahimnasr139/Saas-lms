@@ -60,11 +60,11 @@ namespace Application.Features.Tenants.Commands.CreateOnboarding
 
                 user!.HasOnboarded = true;
                 await _userManager.UpdateAsync(user);
-               
+
                 var freePlanPricingId = await _planRepository.GetFreePlanPricingIdAsync(cancellationToken);
                 var subscriptionId = await _subscriptionRepository.CreateFreeSubcscription(createdTenantId, freePlanPricingId, cancellationToken);
                 var (ownerRoleId, assistantRoleId) = await _tenantRepository.AddTenantRoles(createdTenantId, cancellationToken);
-                
+
                 await _unitOfWork.SaveAsync(cancellationToken);
                 var tenantMember = _mapper.Map<TenantMember>(request, opt =>
                     opt.AfterMap((src, dest) =>
@@ -79,7 +79,7 @@ namespace Application.Features.Tenants.Commands.CreateOnboarding
 
                 var planId = await _planRepository.GetPlanIdAsync(freePlanPricingId, cancellationToken);
                 var planFeatureIds = await _planRepository.GetPlanFeatureIdsAsync(planId, cancellationToken);
-                
+
                 await _tenantRepository.InitializeTenantUsageAsync(planFeatureIds, subscriptionId, createdTenantId);
                 await _questionRepository.CreateQuestionCategory(new QuestionCategory
                 {

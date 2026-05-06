@@ -1,5 +1,4 @@
-﻿using Application.Contracts.Repositories;
-using Application.Features.Schedules.Dtos;
+﻿using Application.Features.Schedules.Dtos;
 using Microsoft.AspNetCore.Http;
 using TimeZoneConverter;
 

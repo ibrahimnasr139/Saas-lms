@@ -1,5 +1,4 @@
-﻿using Application.Contracts.Repositories;
-using Application.Features.TenantWebsite.Dtos;
+﻿using Application.Features.TenantWebsite.Dtos;
 using Microsoft.AspNetCore.Http;
 
 namespace Application.Features.TenantWebsite.Commands.DuplicateTenantPage
@@ -31,12 +30,12 @@ namespace Application.Features.TenantWebsite.Commands.DuplicateTenantPage
                 return TenantErrors.NotSubscribed;
 
             var tenantPage = await _tenantWebsiteRepository.GetTenantPageAsync(tenantId, request.PageId, cancellationToken);
-            if(tenantPage is null)
+            if (tenantPage is null)
                 return TenantWebsiteErrors.TenantPageNotFound;
 
             var duplicatedTenantPage = new TenantPage
             {
-                Title = tenantPage.Title ,
+                Title = tenantPage.Title,
                 MetaTitle = tenantPage.MetaTitle,
                 MetaDescription = tenantPage.MetaDescription,
                 Status = tenantPage.Status,
@@ -50,7 +49,7 @@ namespace Application.Features.TenantWebsite.Commands.DuplicateTenantPage
                     Props = pb.Props,
                 }).ToList()
             };
-            await _tenantWebsiteRepository.DuplicateTenantPageAsync(duplicatedTenantPage,cancellationToken);
+            await _tenantWebsiteRepository.DuplicateTenantPageAsync(duplicatedTenantPage, cancellationToken);
             await _unitOfWork.SaveAsync(cancellationToken);
             duplicatedTenantPage.Url = $"{tenantPage.Url}-{duplicatedTenantPage.Id}";
             await _unitOfWork.SaveAsync(cancellationToken);

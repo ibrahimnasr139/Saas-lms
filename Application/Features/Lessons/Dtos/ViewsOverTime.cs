@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Application.Features.Lessons.Dtos
+﻿namespace Application.Features.Lessons.Dtos
 {
     public sealed class ViewsOverTime
     {

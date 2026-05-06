@@ -1,5 +1,4 @@
-﻿using Application.Contracts.Repositories;
-using Application.Features.TenantStudents.Dtos;
+﻿using Application.Features.TenantStudents.Dtos;
 using Application.Helpers;
 using Hangfire;
 using Microsoft.AspNetCore.Http;
@@ -59,7 +58,7 @@ namespace Application.Features.TenantStudents.Commands.InviteStudent
             {
                 var studentId = await _studentRepository.GetStudentIdAsync(studentUser.Id, cancellationToken);
                 var isEnrolled = await _enrollmentRepository.StudentIsAlreadyEnrolledAsync(studentId, request.CourseId, cancellationToken);
-                if(isEnrolled)
+                if (isEnrolled)
                     return StudentErrors.AlreadyEnrolled;
             }
 
@@ -80,7 +79,7 @@ namespace Application.Features.TenantStudents.Commands.InviteStudent
             await _courseInviteRepository.CreateCourseInviteAsync(courseInvite, cancellationToken);
             await _unitOfWork.SaveAsync(cancellationToken);
             await _tenantRepository.IncreasePlanFeatureUsageByKeyAsync(subDomain!, FeatureConstants.STUDENT_LIMIT, cancellationToken);
-            
+
             var emailBody = EmailConfirmationHelper.GenerateEmailBodyHelper(
                 EmailConstants.CourseInviteTemplate,
                 new Dictionary<string, string>

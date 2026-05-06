@@ -8,7 +8,7 @@ namespace Infrastructure.Persistence.Configurations
         {
             builder.HasIndex(e => new { e.StudentId, e.CourseId, e.TenantId })
                     .IsUnique();
-            
+
             builder.HasOne(e => e.Student)
                    .WithMany(s => s.Enrollments)
                    .HasForeignKey(e => e.StudentId)

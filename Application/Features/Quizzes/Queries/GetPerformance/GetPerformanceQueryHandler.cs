@@ -1,8 +1,5 @@
 ﻿using Application.Features.Quizzes.Dtos;
 using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Application.Features.Quizzes.Queries.GetPerformance
 {

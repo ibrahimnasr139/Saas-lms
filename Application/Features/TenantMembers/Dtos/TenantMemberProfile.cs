@@ -29,7 +29,7 @@
                .ForMember(dest => dest.IsExpired, opt => opt.MapFrom(src => src.ExpiresAt <= DateTime.UtcNow))
                .ForMember(dest => dest.Subdomain, opt => opt.MapFrom(src => src.Tenant.SubDomain))
                .ForMember(dest => dest.RolePermissions, opt => opt.MapFrom(src => src.TenantRole.RolePermissions.Select(rp => rp.Permission.Name).ToList()));
-        
+
 
             CreateMap<TenantMember, MemberProfileDto>()
                 .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.User.FirstName))

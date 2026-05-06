@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Application.Features.Questions.Dtos
+﻿namespace Application.Features.Questions.Dtos
 {
     public sealed class CategoryDto
     {

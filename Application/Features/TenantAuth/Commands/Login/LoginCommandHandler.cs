@@ -1,5 +1,4 @@
 ﻿using Application.Contracts.Authentication;
-using Application.Contracts.Repositories;
 using Application.Helpers;
 using Hangfire;
 using Microsoft.AspNetCore.Http;

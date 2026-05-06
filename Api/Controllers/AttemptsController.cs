@@ -28,7 +28,7 @@ namespace Api.Controllers
                 success => Created(),
                 error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message }));
         }
-        
+
 
         [HttpPost("{attemptId}/publish")]
         public async Task<IActionResult> PublishAttempt([FromRoute] PublishAttemptCommand command, CancellationToken cancellationToken)
@@ -38,7 +38,7 @@ namespace Api.Controllers
                 success => Ok(success),
                 error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message }));
         }
-        
+
 
         [HttpGet("{attemptId}")]
         public async Task<IActionResult> GetAttempt([FromRoute] GetAttemptQuery query, CancellationToken cancellationToken)

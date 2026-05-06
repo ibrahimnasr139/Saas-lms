@@ -1,9 +1,5 @@
-﻿using Application.Contracts.Repositories;
-using Application.Features.ModuleItems.Dtos;
+﻿using Application.Features.ModuleItems.Dtos;
 using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Application.Features.Assignments.Queries.GetAssignment
 {
@@ -24,7 +20,7 @@ namespace Application.Features.Assignments.Queries.GetAssignment
         public async Task<OneOf<AssignmentDto, Error>> Handle(GetAssignmentQuery request, CancellationToken cancellationToken)
         {
             var subdomain = _httpContextAccessor?.HttpContext?.Request.Cookies[AuthConstants.SubDomain];
-            var assignment = await _moduleItemRepository.GetAssignmentAsync(request.ItemId, request.ModuleId , request.CourseId, subdomain!, cancellationToken);
+            var assignment = await _moduleItemRepository.GetAssignmentAsync(request.ItemId, request.ModuleId, request.CourseId, subdomain!, cancellationToken);
             if (assignment is null)
             {
                 return ModuleItemErrors.ModuleItemNotFound;

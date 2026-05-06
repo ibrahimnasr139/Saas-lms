@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Infrastructure.Constants
+﻿namespace Infrastructure.Constants
 {
     public static class SortBy
     {

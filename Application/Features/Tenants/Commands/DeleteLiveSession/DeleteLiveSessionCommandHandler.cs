@@ -1,5 +1,4 @@
-﻿using Application.Contracts.Repositories;
-using Application.Contracts.Zoom;
+﻿using Application.Contracts.Zoom;
 using Application.Features.Tenants.Dtos;
 using Application.Helpers;
 using Domain.Enums;

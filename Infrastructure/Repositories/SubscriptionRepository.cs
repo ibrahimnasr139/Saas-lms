@@ -21,17 +21,17 @@ namespace Infrastructure.Repositories
             };
             await _context.Subscriptions.AddAsync(subscription, cancellationToken);
             await _context.SaveChangesAsync(cancellationToken);
-            return  subscription.Id;
+            return subscription.Id;
         }
         public async Task<bool> HasActiveSubscriptionByTenantDomain(string subdomain, CancellationToken cancellationToken)
         {
             return await (from s in _context.Subscriptions
-                            join t in _context.Tenants on s.TenantId equals t.Id
-                            where t.SubDomain == subdomain &&
-                                    (s.Status == SubscriptionStatus.Active || 
-                                    s.Status == SubscriptionStatus.Trialed)
-                                    && s.EndsAt > DateTime.UtcNow
-                           select s).AnyAsync(cancellationToken);
+                          join t in _context.Tenants on s.TenantId equals t.Id
+                          where t.SubDomain == subdomain &&
+                                  (s.Status == SubscriptionStatus.Active ||
+                                  s.Status == SubscriptionStatus.Trialed)
+                                  && s.EndsAt > DateTime.UtcNow
+                          select s).AnyAsync(cancellationToken);
         }
         public Task<Guid> GetPlanPricingIdAsync(int tenantId, CancellationToken cancellationToken)
         {
@@ -48,8 +48,8 @@ namespace Infrastructure.Repositories
                     join pf in _context.PlanFeatures on pp.PlanId equals pf.PlanId
                     join f in _context.Features on pf.FeatureId equals f.Id
                     where s.TenantId == tenantId
-                      && (s.Status == SubscriptionStatus.Active || s.Status == SubscriptionStatus.Trialed) 
-                      && s.EndsAt > DateTime.UtcNow 
+                      && (s.Status == SubscriptionStatus.Active || s.Status == SubscriptionStatus.Trialed)
+                      && s.EndsAt > DateTime.UtcNow
                       && f.Key == featureKey
                     select s.Id).AnyAsync(cancellationToken);
         }

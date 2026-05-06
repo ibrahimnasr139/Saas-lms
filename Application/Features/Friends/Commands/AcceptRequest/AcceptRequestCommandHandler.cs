@@ -1,5 +1,4 @@
-﻿using Application.Contracts.Repositories;
-using Application.Features.Friends.Dtos;
+﻿using Application.Features.Friends.Dtos;
 using Application.Helpers;
 using Domain.Enums;
 using Hangfire;

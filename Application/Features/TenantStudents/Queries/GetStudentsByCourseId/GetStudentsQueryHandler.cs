@@ -1,5 +1,4 @@
-﻿using Application.Contracts.Repositories;
-using Application.Features.TenantStudents.Dtos;
+﻿using Application.Features.TenantStudents.Dtos;
 using Microsoft.AspNetCore.Http;
 
 namespace Application.Features.TenantStudents.Queries.GetStudentsByCourseId
@@ -10,7 +9,7 @@ namespace Application.Features.TenantStudents.Queries.GetStudentsByCourseId
         private readonly ICourseRepository _courseRepository;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public GetStudentsQueryHandler(IStudentRepository studentRepository, ICourseRepository courseRepository, 
+        public GetStudentsQueryHandler(IStudentRepository studentRepository, ICourseRepository courseRepository,
             IHttpContextAccessor httpContextAccessor)
         {
             _studentRepository = studentRepository;

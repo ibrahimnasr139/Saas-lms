@@ -1,7 +1,4 @@
-﻿using Application.Common;
-using Application.Constants;
-using Application.Contracts.Repositories;
-using Application.Features.TenantMembers.Dtos;
+﻿using Application.Features.TenantMembers.Dtos;
 using Microsoft.AspNetCore.Http;
 
 namespace Application.Features.TenantMembers.Commands.RemoveMember

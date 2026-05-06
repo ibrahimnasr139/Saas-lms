@@ -59,7 +59,7 @@ namespace Api.Controllers
         [HttpPatch("{paymentMethodId}/status")]
         public async Task<IActionResult> UpdatePaymentMethodStatus([FromRoute] int paymentMethodId, [FromBody] UpdatePaymentMethodStatusCommand command, CancellationToken cancellationToken)
         {
-            var result = await _mediator.Send(command with { PaymentMethodId = paymentMethodId}, cancellationToken);
+            var result = await _mediator.Send(command with { PaymentMethodId = paymentMethodId }, cancellationToken);
             return result.Match<IActionResult>(
                 success => Ok(success),
                 error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message })

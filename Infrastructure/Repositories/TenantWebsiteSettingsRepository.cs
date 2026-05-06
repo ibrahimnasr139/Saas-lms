@@ -17,7 +17,7 @@ namespace Infrastructure.Repositories
         }
         public async Task<TenantWebsiteSettingsDto> GetSettingsAsync(string subDomain, CancellationToken cancellationToken)
         {
-            var result =  await _context.Tenants
+            var result = await _context.Tenants
                 .AsNoTracking()
                 .Where(t => t.SubDomain == subDomain)
                 .ProjectTo<TenantWebsiteSettingsDto>(_mapper.ConfigurationProvider)
@@ -55,7 +55,7 @@ namespace Infrastructure.Repositories
                 _mapper.Map(update.Email, tenant.EmailSetting);
 
             if (update.Appearance is not null)
-            { 
+            {
                 _mapper.Map(update.Appearance, tenant.WebsiteAppearnceSetting);
                 if (!string.IsNullOrEmpty(update.Appearance.Logo))
                     tenant.Logo = update.Appearance.Logo;

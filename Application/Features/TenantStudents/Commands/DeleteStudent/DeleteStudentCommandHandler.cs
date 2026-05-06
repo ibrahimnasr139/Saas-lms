@@ -1,5 +1,4 @@
-﻿using Application.Contracts.Repositories;
-using Application.Features.TenantStudents.Dtos;
+﻿using Application.Features.TenantStudents.Dtos;
 using Microsoft.AspNetCore.Http;
 
 namespace Application.Features.TenantStudents.Commands.DeleteStudent
@@ -36,7 +35,7 @@ namespace Application.Features.TenantStudents.Commands.DeleteStudent
                 return TenantErrors.FeatureUsageEnded;
 
             var courseExists = await _courseRepository.GetCourseByIdAsync(request.CourseId, subDomain!, cancellationToken);
-            if(courseExists is null)
+            if (courseExists is null)
                 return CourseErrors.CourseNotFound;
 
             var result = await _studentRepository.DeleteStudentAsync(request.StudentId, request.CourseId, cancellationToken);

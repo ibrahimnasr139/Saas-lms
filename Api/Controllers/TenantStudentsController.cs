@@ -29,8 +29,8 @@ namespace Api.Controllers
             await _mediator.Send(command);
             return NoContent();
         }
-        
-        
+
+
         [HttpGet]
         public async Task<IActionResult> GetStudents([FromQuery] GetStudentsQuery query, CancellationToken cancellationToken)
         {

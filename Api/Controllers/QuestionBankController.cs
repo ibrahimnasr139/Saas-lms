@@ -32,8 +32,8 @@ namespace Api.Controllers
                 success => Created(),
                 error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message }));
         }
-       
-        
+
+
         [HttpDelete("questions/{questionId}")]
         public async Task<IActionResult> DeleteQuestion([FromRoute] DeleteQuestionCommand command, CancellationToken cancellationToken)
         {
@@ -42,8 +42,8 @@ namespace Api.Controllers
                 success => NoContent(),
                 error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message }));
         }
-        
-        
+
+
         [HttpPost("questions")]
         public async Task<IActionResult> CreateQuestion([FromBody] CreateQuestionCommand command, CancellationToken cancellationToken)
         {
@@ -52,8 +52,8 @@ namespace Api.Controllers
                success => Created(string.Empty, success),
                error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message }));
         }
-        
-        
+
+
         [HttpPut("questions/{questionId}")]
         public async Task<IActionResult> UpdateQuestion([FromRoute] int questionId, [FromBody] UpdateQuestionCommand command, CancellationToken cancellationToken)
         {
@@ -62,22 +62,22 @@ namespace Api.Controllers
                success => Ok(success),
                error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message }));
         }
-        
-        
+
+
         [HttpGet("categories")]
         public async Task<IActionResult> GetCategories(CancellationToken cancellationToken)
         {
             return Ok(await _mediator.Send(new GetCategoriesQuery(), cancellationToken));
         }
-        
-        
+
+
         [HttpGet("questions")]
         public async Task<IActionResult> GetQuestions(CancellationToken cancellationToken)
         {
             return Ok(await _mediator.Send(new GetAllQuestionsQuery(), cancellationToken));
         }
-        
-        
+
+
         [HttpGet("statistics")]
         public async Task<IActionResult> GetStatistics(CancellationToken cancellationToken)
         {

@@ -1,5 +1,4 @@
-﻿using Application.Contracts.Repositories;
-using Application.Features.TenantUsers.Dtos;
+﻿using Application.Features.TenantUsers.Dtos;
 
 namespace Application.Features.TenantUsers.Queries.GetTenants
 {

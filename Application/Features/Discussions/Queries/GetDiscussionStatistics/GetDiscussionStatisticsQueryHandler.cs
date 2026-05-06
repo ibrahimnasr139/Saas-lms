@@ -1,5 +1,4 @@
-﻿using Application.Contracts.Repositories;
-using Application.Features.Discussions.Dtos;
+﻿using Application.Features.Discussions.Dtos;
 using Microsoft.AspNetCore.Http;
 
 namespace Application.Features.Discussions.Queries.GetDiscussionStatistics

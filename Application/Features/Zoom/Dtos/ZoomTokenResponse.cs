@@ -1,6 +1,4 @@
-﻿using System.Text.Json.Serialization;
-
-namespace Application.Features.ZoomIntegration.Dtos
+﻿namespace Application.Features.ZoomIntegration.Dtos
 {
     public sealed class ZoomTokenResponse
     {

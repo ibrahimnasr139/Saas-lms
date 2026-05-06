@@ -2,5 +2,5 @@
 
 namespace Application.Features.TenantPaymentMethods.Queries.GetPaymentMethods
 {
-    public sealed record GetPaymentMethodsQuery : IRequest<OneOf<List<PaymentMethodDto>,Error>>;
+    public sealed record GetPaymentMethodsQuery : IRequest<OneOf<List<PaymentMethodDto>, Error>>;
 }

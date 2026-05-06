@@ -58,7 +58,7 @@ namespace Infrastructure.Repositories
         public async Task DeclineInviteAsync(string token, CancellationToken cancellationToken)
         {
             await _context.CourseInvites
-                .Where(ci => ci.Token == token && ci.Status == TenantInviteStatus.Pending 
+                .Where(ci => ci.Token == token && ci.Status == TenantInviteStatus.Pending
                     && ci.ExpiresAt > DateTime.UtcNow && ci.AcceptedAt == null)
                 .ExecuteUpdateAsync(setters => setters.SetProperty(ci => ci.Status, TenantInviteStatus.Declined), cancellationToken);
         }

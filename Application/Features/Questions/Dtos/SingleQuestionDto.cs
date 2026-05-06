@@ -1,7 +1,4 @@
 ﻿using Domain.Enums;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Application.Features.Questions.Dtos
 {
@@ -16,7 +13,7 @@ namespace Application.Features.Questions.Dtos
         public List<QuestionOption>? Options { get; set; }
         public CategoryDto Category { get; set; } = null!;
         public int Reuse { get; set; }
-        public DateTime CreatedAt { get; set; } 
+        public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
 
     }

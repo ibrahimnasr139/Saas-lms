@@ -1,7 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Infrastructure.Persistence.Configurations
 {
@@ -9,15 +6,15 @@ namespace Infrastructure.Persistence.Configurations
     {
         public void Configure(EntityTypeBuilder<QuizQuestion> builder)
         {
-                builder.HasOne(q => q.Quiz)
-                    .WithMany(q => q.Questions)
-                    .HasForeignKey(q => q.QuizId)
-                    .OnDelete(DeleteBehavior.Cascade);
-    
-                builder.HasOne(q => q.Question)
-                    .WithMany(q => q.QuizQuestions)
-                    .HasForeignKey(q => q.QuestionId)
-                    .OnDelete(DeleteBehavior.Cascade);
+            builder.HasOne(q => q.Quiz)
+                .WithMany(q => q.Questions)
+                .HasForeignKey(q => q.QuizId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.HasOne(q => q.Question)
+                .WithMany(q => q.QuizQuestions)
+                .HasForeignKey(q => q.QuestionId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

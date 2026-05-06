@@ -15,8 +15,8 @@ namespace Application.Contracts.Repositories
         Task<TenantPageBlocksDto?> GetBlocksTypeAsync(CancellationToken cancellationToken);
         Task<bool> UrlExistsAsync(int tenantId, string url, CancellationToken cancellationToken);
         Task<bool> UpdateTenantPageAsync(int pageId, int tenantId, UpdateTenantPageCommand update, CancellationToken cancellationToken);
-        Task<TenantPageDto?> GetTenantPageWithBlockTypeAsync(int tenantId, int pageId ,CancellationToken cancellationToken);
-        Task<List<TenantCourseDto>> GetTenantWebsiteCoursesAsync(string subDomain, List<int> courseIds,CancellationToken cancellationToken);
+        Task<TenantPageDto?> GetTenantPageWithBlockTypeAsync(int tenantId, int pageId, CancellationToken cancellationToken);
+        Task<List<TenantCourseDto>> GetTenantWebsiteCoursesAsync(string subDomain, List<int> courseIds, CancellationToken cancellationToken);
         Task<List<TenantNavigationLinkDto>> GetTenantNavigationLinksAsync(int tenantId, CancellationToken cancellationToken);
         Task<TenantPageDto?> GetPublishedTenantPagesAsync(string url, string subDomain, CancellationToken cancellationToken);
     }

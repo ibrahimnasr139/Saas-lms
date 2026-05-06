@@ -1,6 +1,4 @@
-﻿using Application.Constants;
-using Application.Contracts.Repositories;
-using Application.Features.Courses.Dtos;
+﻿using Application.Features.Courses.Dtos;
 using Microsoft.AspNetCore.Http;
 
 namespace Application.Features.Courses.Queries.GetAll
@@ -42,7 +40,7 @@ namespace Application.Features.Courses.Queries.GetAll
                 {
                     Expiration = TimeSpan.FromMinutes(30)
                 },
-                tags: new[] { $"{CacheKeysConstants.AllCoursesKey}_{subDomain}"},
+                tags: new[] { $"{CacheKeysConstants.AllCoursesKey}_{subDomain}" },
                 cancellationToken: cancellationToken
             );
             return courses;

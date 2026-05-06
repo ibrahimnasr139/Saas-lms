@@ -1,5 +1,4 @@
-﻿using Application.Contracts.Repositories;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 
 namespace Application.Features.Modules.Commands.DeleteModule
 {

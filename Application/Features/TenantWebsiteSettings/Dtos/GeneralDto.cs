@@ -4,7 +4,7 @@
     {
         public string PlatformName { get; set; } = string.Empty;
         public string? Tagline { get; set; }
-        public int HomepageId { get; set;}
+        public int HomepageId { get; set; }
         public bool IsMaintenanceMode { get; set; }
     }
 }

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Domain.Entites
+﻿namespace Domain.Entites
 {
     public sealed class Answer
     {

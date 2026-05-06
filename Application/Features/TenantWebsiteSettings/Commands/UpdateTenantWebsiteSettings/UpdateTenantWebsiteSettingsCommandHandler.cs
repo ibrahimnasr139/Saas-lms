@@ -1,5 +1,4 @@
-﻿using Application.Contracts.Repositories;
-using Application.Features.TenantWebsiteSettings.Dtos;
+﻿using Application.Features.TenantWebsiteSettings.Dtos;
 using Microsoft.AspNetCore.Http;
 
 namespace Application.Features.TenantWebsiteSettings.Commands.UpdateTenantWebsiteSettings

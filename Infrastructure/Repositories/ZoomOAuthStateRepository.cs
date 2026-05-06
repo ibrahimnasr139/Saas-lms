@@ -1,6 +1,4 @@
-﻿using Application.Contracts.Repositories;
-
-namespace Infrastructure.Repositories
+﻿namespace Infrastructure.Repositories
 {
     internal sealed class ZoomOAuthStateRepository : IZoomOAuthStateRepository
     {

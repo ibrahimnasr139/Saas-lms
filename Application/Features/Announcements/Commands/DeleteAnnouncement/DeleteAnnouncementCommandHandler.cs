@@ -1,5 +1,4 @@
-﻿using Application.Contracts.Repositories;
-using Application.Features.Announcements.Dtos;
+﻿using Application.Features.Announcements.Dtos;
 using Microsoft.AspNetCore.Http;
 
 namespace Application.Features.Announcements.Commands.DeleteAnnouncement

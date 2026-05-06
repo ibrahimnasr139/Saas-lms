@@ -1,8 +1,4 @@
-﻿using Application.Contracts.Repositories;
-using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Microsoft.AspNetCore.Http;
 
 namespace Application.Features.Questions.Commands.CreateQuestionCategory
 {
@@ -26,7 +22,7 @@ namespace Application.Features.Questions.Commands.CreateQuestionCategory
                 return QuestionErrors.CategoryAlreadyExists;
             }
             var tenantId = await _tenantRepository.GetTenantIdAsync(subDomain!, cancellationToken);
-            await _questionRepository.CreateQuestionCategory(new QuestionCategory { Title = request.Title , TenantId = tenantId}, cancellationToken);
+            await _questionRepository.CreateQuestionCategory(new QuestionCategory { Title = request.Title, TenantId = tenantId }, cancellationToken);
             return true;
         }
     }

@@ -1,10 +1,4 @@
-﻿using Application.Contracts.Repositories;
-using Application.Features.Courses.Dtos;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Caching.Hybrid;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Microsoft.AspNetCore.Http;
 
 namespace Application.Features.Courses.Commands.DeleteCourse
 {

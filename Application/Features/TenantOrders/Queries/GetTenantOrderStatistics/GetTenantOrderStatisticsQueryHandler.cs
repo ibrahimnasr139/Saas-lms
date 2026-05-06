@@ -1,5 +1,4 @@
-﻿using Application.Contracts.Repositories;
-using Application.Features.TenantOrders.Dtos;
+﻿using Application.Features.TenantOrders.Dtos;
 using Microsoft.AspNetCore.Http;
 
 namespace Application.Features.TenantOrders.Queries.GetTenantOrderStatistics

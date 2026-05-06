@@ -1,8 +1,4 @@
-﻿using Application.Features.Questions.Dtos;
-using Domain.Enums;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Domain.Enums;
 
 namespace Application.Features.Questions.Dtos
 {

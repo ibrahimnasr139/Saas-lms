@@ -12,15 +12,16 @@ namespace Infrastructure.Repositories
         {
             _dbContext = dbContext;
         }
-        public async Task<OverviewDto?> GetOverviewAsync(int itemId, CancellationToken cancellationToken)
+        public async Task<OverviewDto?> GetOverviewAsync(int itemId, int courseId, CancellationToken cancellationToken)
         {
             return await _dbContext.AssignmentSubmissions.Where(s => s.AssignmentId == itemId)
                 .GroupBy(s => 1)
                 .Select(g => new OverviewDto
                 {
                     TotalSubmissions = g.Count(),
+                    TotalStudents = _dbContext.Students.Count(s => s.Enrollments.Any(e => e.CourseId == courseId)),
                     AverageScore = g.Average(s => s.EarnedMarks),
-                    HeighestScore = g.Max(s => s.EarnedMarks),
+                    HighestScore = g.Max(s => s.EarnedMarks),
                     LowestScore = g.Min(s => s.EarnedMarks)
                 }).FirstOrDefaultAsync(cancellationToken);
         }

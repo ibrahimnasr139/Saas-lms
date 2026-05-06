@@ -1,5 +1,4 @@
-﻿using Application.Contracts.Repositories;
-using Application.Features.TenantMembers.Dtos;
+﻿using Application.Features.TenantMembers.Dtos;
 using Application.Helpers;
 using Hangfire;
 using Microsoft.AspNetCore.Http;
@@ -80,7 +79,7 @@ namespace Application.Features.TenantMembers.Commands.InviteTenantMember
 
             BackgroundJob.Enqueue(() => _emailSender.SendEmailAsync(request.email, EmailConstants.Subject, emailBody));
 
-            return new InviteTenantMemberDto { Message = $"{MessagesConstants.TenantInviteSent} {request.email}"};
+            return new InviteTenantMemberDto { Message = $"{MessagesConstants.TenantInviteSent} {request.email}" };
         }
     }
 }

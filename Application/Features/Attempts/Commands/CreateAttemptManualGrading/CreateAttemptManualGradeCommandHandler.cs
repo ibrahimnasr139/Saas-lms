@@ -1,7 +1,4 @@
 ﻿using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Application.Features.Attempts.Commands.CreateAttemptManualGrading
 {
@@ -40,7 +37,7 @@ namespace Application.Features.Attempts.Commands.CreateAttemptManualGrading
                 return TenantErrors.NotSubscribed;
             }
             var attempt = await _attemptRepository.GetAttemptByIdAsync(request.AttemptId, request.QuizId, subdomain!, cancellationToken);
-            if(attempt is null)
+            if (attempt is null)
             {
                 return AttemptErrors.AttemptNotFound;
             }
@@ -53,7 +50,7 @@ namespace Application.Features.Attempts.Commands.CreateAttemptManualGrading
                 await _unitOfWork.CommitTransactionAsync(cancellationToken);
                 return true;
             }
-            catch 
+            catch
             {
                 await _unitOfWork.RollbackTransactionAsync(cancellationToken);
                 throw;

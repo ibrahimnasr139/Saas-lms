@@ -1,8 +1,4 @@
-﻿using Application.Contracts.Repositories;
-using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Microsoft.AspNetCore.Http;
 
 namespace Application.Features.ModuleItems.Commands.DeleteModuleItem
 {
@@ -40,7 +36,7 @@ namespace Application.Features.ModuleItems.Commands.DeleteModuleItem
                 return TenantErrors.NotSubscribed;
             }
             var moduleItem = await _moduleItemRepository.GetAsync(request.ItemId, request.ModuleId, request.CourseId, subdomain!, cancellationToken);
-            if(moduleItem is null)
+            if (moduleItem is null)
             {
                 return ModuleItemErrors.ModuleItemNotFound;
             }

@@ -1,6 +1,4 @@
-﻿using Application.Constants;
-using Application.Contracts.Repositories;
-using Application.Features.TenantMembers.Dtos;
+﻿using Application.Features.TenantMembers.Dtos;
 
 namespace Application.Features.TenantMembers.Commands.DeclineTenanInvite
 {

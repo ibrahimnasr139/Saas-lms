@@ -1,5 +1,4 @@
-﻿using Application.Contracts.Repositories;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 
 namespace Application.Features.Questions.Commands.CreateQuestion
 {
@@ -23,7 +22,7 @@ namespace Application.Features.Questions.Commands.CreateQuestion
         {
             var subDomain = _httpContextAccessor?.HttpContext?.Request.Cookies[AuthConstants.SubDomain];
             var isSubscribed = await _subscriptionRepository.HasActiveSubscriptionByTenantDomain(subDomain!, cancellationToken);
-            if(!isSubscribed)
+            if (!isSubscribed)
             {
                 return TenantErrors.NotSubscribed;
             }

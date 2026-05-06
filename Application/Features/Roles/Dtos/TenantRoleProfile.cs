@@ -1,6 +1,4 @@
-﻿using Application.Constants;
-
-namespace Application.Features.Roles.Dtos
+﻿namespace Application.Features.Roles.Dtos
 {
     public sealed class TenantRoleProfile : Profile
     {

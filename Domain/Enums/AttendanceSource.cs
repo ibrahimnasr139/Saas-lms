@@ -4,7 +4,7 @@
     {
         Unknown,
         ZoomWebhook,
-        ManualByInstructor, 
+        ManualByInstructor,
         SelfCheckIn,
         ImportedFromZoom
     }

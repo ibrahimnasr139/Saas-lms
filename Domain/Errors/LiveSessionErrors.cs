@@ -7,7 +7,7 @@ namespace Domain.Errors
         public static Error SessionNotFound =>
             new("Session.NotFound", "تعذر العثور على الجلسة المطلوبة", HttpStatusCode.NotFound);
 
-        public static Error CannotUpdateSession => 
+        public static Error CannotUpdateSession =>
             new("Session.CannotUpdate", "ليس لديك صلاحية لتحديث هذه الجلسة", HttpStatusCode.Forbidden);
 
         public static Error CannotUpdateLiveSession =>

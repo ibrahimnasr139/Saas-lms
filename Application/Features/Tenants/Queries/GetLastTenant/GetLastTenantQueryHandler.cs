@@ -1,7 +1,4 @@
-﻿using Application.Common;
-using Application.Constants;
-using Application.Contracts.Repositories;
-using Application.Features.Tenants.Dtos;
+﻿using Application.Features.Tenants.Dtos;
 using Microsoft.AspNetCore.Http;
 
 namespace Application.Features.Tenants.Queries.GetLastTenant

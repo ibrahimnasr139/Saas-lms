@@ -3,9 +3,6 @@ using Application.Features.Quizzes.Dtos;
 using Infrastructure.Common.Options;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Application.Features.Quizzes.Commands.CreateAiQuizQuestions
 {
@@ -60,7 +57,7 @@ namespace Application.Features.Quizzes.Commands.CreateAiQuizQuestions
             var payload = new AiPayload(request.Prompt, metadata, request.Difficulty, request.Type, request.QuestionsNumber);
             var endpoint = _options.QuestionEndPoint;
             var result = await _externalService.CallExternalServiceAsync<AiPayload, IEnumerable<AiResponse>>(endpoint, payload, cancellationToken);
-            if(result is null)
+            if (result is null)
             {
                 throw new Exception();
             }

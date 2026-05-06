@@ -1,6 +1,4 @@
-﻿using Application.Constants;
-using Application.Contracts.Repositories;
-using Application.Features.TenantMembers.Dtos;
+﻿using Application.Features.TenantMembers.Dtos;
 using Microsoft.AspNetCore.Http;
 
 namespace Application.Features.TenantMembers.Queries.GetTenantMembers
@@ -21,7 +19,7 @@ namespace Application.Features.TenantMembers.Queries.GetTenantMembers
         public async Task<List<TenantMembersDto>> Handle(GetTenantMembersQuery request, CancellationToken cancellationToken)
         {
             var subDomain = _httpContextAccessor.HttpContext?.Request.Cookies[AuthConstants.SubDomain];
-            var tenantId = await _tenantRepository.GetTenantIdAsync(subDomain!,cancellationToken);
+            var tenantId = await _tenantRepository.GetTenantIdAsync(subDomain!, cancellationToken);
             return await _tenantMemberRepository.GetTenantMembersAsync(tenantId, cancellationToken);
         }
     }

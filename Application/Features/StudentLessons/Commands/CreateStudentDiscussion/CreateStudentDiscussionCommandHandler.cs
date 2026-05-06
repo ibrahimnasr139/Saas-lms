@@ -1,5 +1,4 @@
-﻿using Application.Contracts.Repositories;
-using Application.Features.StudentLessons.Dtos;
+﻿using Application.Features.StudentLessons.Dtos;
 using Domain.Enums;
 using Microsoft.AspNetCore.Http;
 
@@ -17,7 +16,7 @@ namespace Application.Features.StudentLessons.Commands.CreateStudentDiscussion
 
         public CreateStudentDiscussionCommandHandler(HybridCache hybridCache, IHttpContextAccessor httpContextAccessor,
             IEnrollmentRepository enrollmentRepository, IStudentSubscriptionRepository studentSubscriptionRepository,
-            IModuleItemRepository moduleItemRepository, IDiscussionRepository discussionRepository,IUnitOfWork unitOfWork)
+            IModuleItemRepository moduleItemRepository, IDiscussionRepository discussionRepository, IUnitOfWork unitOfWork)
         {
             _hybridCache = hybridCache;
             _httpContextAccessor = httpContextAccessor;

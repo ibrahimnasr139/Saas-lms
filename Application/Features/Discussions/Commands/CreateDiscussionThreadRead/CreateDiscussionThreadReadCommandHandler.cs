@@ -1,5 +1,4 @@
-﻿using Application.Contracts.Repositories;
-using Application.Features.Discussions.Commands.CreateDiscussionThreadRead;
+﻿using Application.Features.Discussions.Commands.CreateDiscussionThreadRead;
 using Microsoft.AspNetCore.Http;
 
 namespace Application.Features.Discussions.Commands.MarkThreadAsRead

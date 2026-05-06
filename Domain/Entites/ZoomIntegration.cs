@@ -12,10 +12,10 @@ namespace Domain.Entites
         public string ZoomAccountType { get; set; } = string.Empty;
         public string AccessToken { get; set; } = string.Empty;
         public string RefreshToken { get; set; } = string.Empty;
-        public bool IsActive { get; set; } = true; 
-        public DateTime TokenExpiresAt { get; set; } 
+        public bool IsActive { get; set; } = true;
+        public DateTime TokenExpiresAt { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-        public DateTime? UpdatedAt { get; set; } 
+        public DateTime? UpdatedAt { get; set; }
         public DateTime? LastSyncAt { get; set; }
 
         public int TenantId { get; set; }

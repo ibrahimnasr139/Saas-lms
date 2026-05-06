@@ -1,7 +1,5 @@
-﻿using Application.Contracts.Repositories;
-using Application.Contracts.Zoom;
+﻿using Application.Contracts.Zoom;
 using Application.Features.Zoom.Dtos;
-using Hangfire;
 using Microsoft.AspNetCore.Http;
 
 namespace Application.Features.Zoom.Queries.ConnectZoom
@@ -16,7 +14,7 @@ namespace Application.Features.Zoom.Queries.ConnectZoom
         private readonly ISubscriptionRepository _subscriptionRepository;
         private readonly IUnitOfWork _unitOfWork;
 
-        public ConnectZoomQueryHandler(IZoomService zoomService, ICurrentUserId currentUserId,IHttpContextAccessor httpContextAccessor,
+        public ConnectZoomQueryHandler(IZoomService zoomService, ICurrentUserId currentUserId, IHttpContextAccessor httpContextAccessor,
             ITenantRepository tenantRepository, IZoomOAuthStateRepository zoomOAuthStateRepository, ISubscriptionRepository subscriptionRepository,
             IPlanRepository planRepository, IUnitOfWork unitOfWork)
         {

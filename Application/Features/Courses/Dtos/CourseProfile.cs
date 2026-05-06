@@ -1,11 +1,5 @@
-﻿using Application.Features.Attempts.Dtos;
-using Application.Features.Courses.Commands.CreateCourse;
+﻿using Application.Features.Courses.Commands.CreateCourse;
 using Application.Features.Courses.Commands.UpdateCourse;
-using Domain.Enums;
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Text;
 
 namespace Application.Features.Courses.Dtos
 {

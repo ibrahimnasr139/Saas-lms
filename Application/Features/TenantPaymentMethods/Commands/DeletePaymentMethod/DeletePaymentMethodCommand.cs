@@ -2,5 +2,5 @@
 
 namespace Application.Features.TenantPaymentMethods.Commands.DeletePaymentMethod
 {
-    public sealed record DeletePaymentMethodCommand(int paymentMethodId) : IRequest<OneOf<PaymentMethodResponseMessage,Error>>;
+    public sealed record DeletePaymentMethodCommand(int paymentMethodId) : IRequest<OneOf<PaymentMethodResponseMessage, Error>>;
 }

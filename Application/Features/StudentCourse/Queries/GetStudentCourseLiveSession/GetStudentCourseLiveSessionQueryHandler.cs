@@ -1,7 +1,5 @@
-﻿using Application.Contracts.Repositories;
-using Application.Features.StudentCourse.Dtos;
+﻿using Application.Features.StudentCourse.Dtos;
 using Microsoft.AspNetCore.Http;
-using System.Text.Json;
 
 namespace Application.Features.StudentCourse.Queries.GetStudentCourseLiveSession
 {

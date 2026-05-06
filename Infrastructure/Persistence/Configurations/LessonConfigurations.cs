@@ -1,8 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore.ChangeTracking;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System.Text.Json;
 
 namespace Infrastructure.Persistence.Configurations
@@ -21,10 +17,10 @@ namespace Infrastructure.Persistence.Configurations
                         PropertyNameCaseInsensitive = true
                     })!
                 );
-                builder.HasOne(l => l.ModuleItem)
-                    .WithOne(mi => mi.Lesson)
-                    .HasForeignKey<Lesson>(l => l.ModuleItemId)
-                    .OnDelete(DeleteBehavior.Cascade);
+            builder.HasOne(l => l.ModuleItem)
+                .WithOne(mi => mi.Lesson)
+                .HasForeignKey<Lesson>(l => l.ModuleItemId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

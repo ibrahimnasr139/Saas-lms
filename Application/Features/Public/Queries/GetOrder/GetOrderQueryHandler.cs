@@ -1,5 +1,4 @@
-﻿using Application.Contracts.Repositories;
-using Application.Features.Public.Dtos;
+﻿using Application.Features.Public.Dtos;
 using Microsoft.AspNetCore.Http;
 
 namespace Application.Features.Public.Queries.GetOrder

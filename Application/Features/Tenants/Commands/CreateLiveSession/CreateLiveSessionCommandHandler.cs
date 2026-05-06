@@ -23,7 +23,7 @@ namespace Application.Features.Tenants.Commands.CreateLiveSession
 
         public CreateLiveSessionCommandHandler(IZoomService zoomService, IHttpContextAccessor httpContextAccessor,
             IZoomIntegrationRepository zoomIntegrationRepository, ILiveSessionRepository liveSessionRepository, IUnitOfWork unitOfWork,
-            ITenantRepository tenantRepository, ICourseRepository courseRepository, ICurrentUserId currentUserId, 
+            ITenantRepository tenantRepository, ICourseRepository courseRepository, ICurrentUserId currentUserId,
             ITenantMemberRepository tenantMemberRepository, IEmailSender emailSender, ISubscriptionRepository subscriptionRepository)
         {
             _zoomService = zoomService;

@@ -17,7 +17,7 @@ namespace Infrastructure.Persistence.Configurations
             builder.HasOne(x => x.AvailableSubject)
                 .WithMany(s => s.StudentSubjects)
                 .HasForeignKey(x => x.AvailableSubjectId)
-                .OnDelete(DeleteBehavior.Restrict); 
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

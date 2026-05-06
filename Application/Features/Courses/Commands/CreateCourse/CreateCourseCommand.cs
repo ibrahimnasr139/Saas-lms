@@ -1,5 +1,4 @@
-﻿using Application.Features.Courses.Dtos;
-using Domain.Enums;
+﻿using Domain.Enums;
 
 namespace Application.Features.Courses.Commands.CreateCourse
 {

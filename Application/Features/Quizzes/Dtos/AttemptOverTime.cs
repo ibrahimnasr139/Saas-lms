@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Application.Features.Quizzes.Dtos
+﻿namespace Application.Features.Quizzes.Dtos
 {
     public sealed class AttemptOverTime
     {

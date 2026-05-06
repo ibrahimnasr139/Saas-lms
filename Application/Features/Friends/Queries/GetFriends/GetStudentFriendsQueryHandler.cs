@@ -1,5 +1,4 @@
-﻿using Application.Contracts.Repositories;
-using Application.Features.Friends.Dtos;
+﻿using Application.Features.Friends.Dtos;
 using Microsoft.AspNetCore.Http;
 
 namespace Application.Features.Friends.Queries.GetFriends

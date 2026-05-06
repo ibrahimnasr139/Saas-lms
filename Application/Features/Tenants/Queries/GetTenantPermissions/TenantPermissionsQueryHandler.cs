@@ -1,5 +1,4 @@
-﻿using Application.Contracts.Repositories;
-using Application.Features.Tenants.Dtos;
+﻿using Application.Features.Tenants.Dtos;
 
 namespace Application.Features.Tenants.Queries.GetTenantPermissions
 {

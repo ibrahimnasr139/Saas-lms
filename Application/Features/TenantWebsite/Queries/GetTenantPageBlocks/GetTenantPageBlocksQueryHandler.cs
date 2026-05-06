@@ -1,5 +1,4 @@
-﻿using Application.Contracts.Repositories;
-using Application.Features.TenantWebsite.Dtos;
+﻿using Application.Features.TenantWebsite.Dtos;
 
 namespace Application.Features.TenantWebsite.Queries.GetTenantPageBlocks
 {

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Application.Features.Attempts.Dtos
+﻿namespace Application.Features.Attempts.Dtos
 {
     public sealed class AttemptProfile : Profile
     {
@@ -13,7 +9,7 @@ namespace Application.Features.Attempts.Dtos
                 .ForMember(dest => dest.Wrong, src => src.MapFrom(a => a.Answers.Count(ans => !ans.IsCorrect && ans.StudentAnswer != null)))
                 .ForMember(dest => dest.Skipped, src => src.MapFrom(a => a.Answers.Count(ans => ans.StudentAnswer == null)));
             CreateMap<Student, StudentDto>()
-                .ForMember(dest => dest.Id, src => src.MapFrom(s => s.Id))  
+                .ForMember(dest => dest.Id, src => src.MapFrom(s => s.Id))
                 .ForMember(dest => dest.Name, src => src.MapFrom(s => s.User.FirstName + " " + s.User.LastName))
                 .ForMember(dest => dest.ProfilePicture, src => src.MapFrom(s => s.User.ProfilePicture));
             CreateMap<QuizAttempt, AttemptResponse>()

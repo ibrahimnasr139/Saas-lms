@@ -1,5 +1,4 @@
-﻿using Application.Contracts.Repositories;
-using Application.Features.Discussions.Dtos;
+﻿using Application.Features.Discussions.Dtos;
 using Microsoft.AspNetCore.Http;
 
 namespace Application.Features.Discussions.Commands.DeleteDiscussionReply
@@ -18,7 +17,7 @@ namespace Application.Features.Discussions.Commands.DeleteDiscussionReply
         {
             var subDomain = _httpContextAccessor.HttpContext?.Request.Cookies[AuthConstants.SubDomain];
             var replyIsDeleted = await _discussionRepository.DeleteDiscussionThreadReplyAsync(request.ThreadId, request.ReplyId, subDomain!, cancellationToken);
-            if(!replyIsDeleted)
+            if (!replyIsDeleted)
                 return DiscussionErrors.DiscussionReplyNotFound;
             return new DiscussionResponse { Message = MessagesConstants.DiscussionReplyDeleted };
         }

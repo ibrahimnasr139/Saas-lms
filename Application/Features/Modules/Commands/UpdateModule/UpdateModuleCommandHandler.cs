@@ -1,9 +1,4 @@
-﻿using Application.Contracts.Repositories;
-using Application.Features.Modules.Commands.CreateModule;
-using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Microsoft.AspNetCore.Http;
 
 namespace Application.Features.Modules.Commands.UpdateModule
 {
@@ -56,11 +51,11 @@ namespace Application.Features.Modules.Commands.UpdateModule
             {
                 module.Order = maxSize;
             }
-            if(oldOrder > module.Order)
+            if (oldOrder > module.Order)
             {
                 await _moduleRepository.IncreaseOrder(module.Id, request.CourseId, module.Order, cancellationToken, oldOrder);
             }
-            else if(oldOrder < module.Order)
+            else if (oldOrder < module.Order)
             {
                 await _moduleRepository.DecreaseOrder(module.Id, request.CourseId, oldOrder, cancellationToken, module.Order);
             }

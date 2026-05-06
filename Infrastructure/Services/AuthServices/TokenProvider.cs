@@ -40,7 +40,7 @@ namespace Infrastructure.Services.AuthServices
                     SameSite = SameSiteMode.None,
                     IsEssential = true,
                     Expires = DateTimeOffset.Now.AddMinutes(_options.Value.ExpiryMinutes),
-                   // Domain = AuthConstants.CookieDomain
+                    // Domain = AuthConstants.CookieDomain
                 }
                 );
         }
@@ -57,7 +57,7 @@ namespace Infrastructure.Services.AuthServices
                     SameSite = SameSiteMode.None,
                     IsEssential = true,
                     Expires = expiresOn,
-                  //  Domain = AuthConstants.CookieDomain
+                    //  Domain = AuthConstants.CookieDomain
                 }
                 );
             return (refreshToken, expiresOn);

@@ -4,6 +4,6 @@
     {
         Daliy,
         Weekly,
-        Monthly 
+        Monthly
     }
 }

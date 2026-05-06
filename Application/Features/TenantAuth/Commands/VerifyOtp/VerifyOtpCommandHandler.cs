@@ -1,5 +1,4 @@
 ﻿using Application.Contracts.Authentication;
-using Application.Contracts.Repositories;
 using Microsoft.AspNetCore.Http;
 
 namespace Application.Features.TenantAuth.Commands.VerifyOtp

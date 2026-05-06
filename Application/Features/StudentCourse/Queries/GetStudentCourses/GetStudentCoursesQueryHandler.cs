@@ -1,5 +1,4 @@
-﻿using Application.Contracts.Repositories;
-using Application.Features.StudentCourse.Dtos;
+﻿using Application.Features.StudentCourse.Dtos;
 using Microsoft.AspNetCore.Http;
 
 namespace Application.Features.StudentCourse.Queries.GetStudentCourses

@@ -54,7 +54,7 @@ namespace Infrastructure.Repositories
                 .Where(ti => ti.Token == token)
                 .ExecuteUpdateAsync(updates => updates
                     .SetProperty(ti => ti.AcceptedAt, DateTime.UtcNow)
-                    .SetProperty(ti => ti.Status, TenantInviteStatus.Accepted),cancellationToken);
+                    .SetProperty(ti => ti.Status, TenantInviteStatus.Accepted), cancellationToken);
         }
         public Task DeclineInviteAsync(string token, CancellationToken cancellationToken)
         {

@@ -1,5 +1,4 @@
-﻿using Application.Contracts.Repositories;
-using Application.Features.TenantPaymentMethods.Dtos;
+﻿using Application.Features.TenantPaymentMethods.Dtos;
 using Microsoft.AspNetCore.Http;
 
 namespace Application.Features.TenantPaymentMethods.Commands.AddPaymentMethod
@@ -14,7 +13,7 @@ namespace Application.Features.TenantPaymentMethods.Commands.AddPaymentMethod
         private readonly ITenantRepository _tenantRepository;
 
         public AddPaymentMethodCommandHandler(IPaymentMethodRepository paymentMethodRepository, ICurrentUserId currentUserId,
-            ITenantMemberRepository tenantMemberRepository, IHttpContextAccessor httpContextAccessor,IUnitOfWork unitOfWork,
+            ITenantMemberRepository tenantMemberRepository, IHttpContextAccessor httpContextAccessor, IUnitOfWork unitOfWork,
             ITenantRepository tenantRepository)
         {
             _paymentMethodRepository = paymentMethodRepository;
@@ -32,9 +31,9 @@ namespace Application.Features.TenantPaymentMethods.Commands.AddPaymentMethod
             var tenantId = await _tenantRepository.GetTenantIdAsync(subDomain!, cancellationToken);
             if (!isPermitted)
                 return MemberErrors.NotAllowed;
-            
+
             var existingPaymentMethods = await _paymentMethodRepository.IsPaymentMethodTypeExistAsync(tenantId, request.Type, cancellationToken);
-            if(existingPaymentMethods)
+            if (existingPaymentMethods)
                 return TenantPaymentMethodErrors.AlreadyExists;
 
             var paymentMethod = new PaymentMethod

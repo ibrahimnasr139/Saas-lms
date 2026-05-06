@@ -1,6 +1,4 @@
-﻿using Domain.Enums;
-using FluentValidation;
-using Microsoft.EntityFrameworkCore;
+﻿using FluentValidation;
 
 namespace Application.Features.TenantWebsite.Commands.CreateTenantPage
 {

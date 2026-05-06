@@ -9,7 +9,7 @@ namespace Domain.Entites
         public string Content { get; set; } = string.Empty;
         public int RepliesCount { get; set; } = 0;
         public ModuleItemType ItemType { get; set; }
-        public DateTime CreatedAt { get; set;} = DateTime.UtcNow;
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? UpdatedAt { get; set; }
         public string CreatedBy { get; set; } = string.Empty;
         public ApplicationUser User { get; set; } = null!;

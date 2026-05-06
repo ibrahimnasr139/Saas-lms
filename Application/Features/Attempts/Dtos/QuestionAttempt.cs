@@ -1,7 +1,4 @@
 ﻿using Domain.Enums;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Application.Features.Attempts.Dtos
 {
@@ -12,7 +9,7 @@ namespace Application.Features.Attempts.Dtos
         public int Order { get; set; }
         public QuestionType Type { get; set; }
         public int Marks { get; set; }
-        public List<QuestionOption>? Options { get; set; } 
+        public List<QuestionOption>? Options { get; set; }
         public string? CorrectAnswer { get; set; }
         public string? Explanation { get; set; }
         public AnswerDto? Answer { get; set; }

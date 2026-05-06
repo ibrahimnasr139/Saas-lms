@@ -1,7 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Infrastructure.Persistence.Configurations
 {
@@ -18,6 +15,6 @@ namespace Infrastructure.Persistence.Configurations
                 .HasForeignKey(e => e.RequiredModuleItemId)
                 .OnDelete(DeleteBehavior.Cascade);
         }
-        
+
     }
 }

@@ -1,7 +1,5 @@
-﻿using Application.Contracts.Repositories;
-using Application.Features.StudentLessons.Dtos;
+﻿using Application.Features.StudentLessons.Dtos;
 using Microsoft.AspNetCore.Http;
-using System.Text.Json;
 
 namespace Application.Features.StudentLessons.Commands.DeleteStudentDiscussion
 {

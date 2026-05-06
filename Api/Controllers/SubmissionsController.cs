@@ -27,8 +27,8 @@ namespace Api.Controllers
                 success => Ok(success),
                 error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message }));
         }
-        
-        
+
+
         [HttpPost("{submissionId}/grade")]
         public async Task<IActionResult> GradeSubmission(int courseId, int moduleId, int itemId, int submissionId, [FromBody] CreateSubmissionGradeCommand command)
         {

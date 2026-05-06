@@ -1,5 +1,4 @@
-﻿using Application.Contracts.Repositories;
-using Application.Features.Assignments.Dtos;
+﻿using Application.Features.Assignments.Dtos;
 using Microsoft.AspNetCore.Http;
 
 namespace Application.Features.Assignments.Queries.GetSubmissions

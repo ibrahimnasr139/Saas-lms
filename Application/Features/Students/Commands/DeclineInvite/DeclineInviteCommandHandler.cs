@@ -1,5 +1,4 @@
-﻿using Application.Contracts.Repositories;
-using Application.Features.TenantStudents.Dtos;
+﻿using Application.Features.TenantStudents.Dtos;
 using Microsoft.AspNetCore.Http;
 
 namespace Application.Features.Students.Commands.DeclineInvite

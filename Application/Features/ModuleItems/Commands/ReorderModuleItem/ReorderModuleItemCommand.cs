@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Application.Features.ModuleItems.Commands.ReorderModuleItem
+﻿namespace Application.Features.ModuleItems.Commands.ReorderModuleItem
 {
     public sealed record ReorderModuleItemCommand(int CourseId, int ModuleId, IEnumerable<OrderDto> Orders) : IRequest<OneOf<bool, Error>>;
     public sealed class OrderDto

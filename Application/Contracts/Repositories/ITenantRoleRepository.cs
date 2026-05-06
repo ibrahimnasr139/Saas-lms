@@ -1,5 +1,4 @@
-﻿using Application.Features.Roles.Commands.CreateRole;
-using Application.Features.Roles.Dtos;
+﻿using Application.Features.Roles.Dtos;
 
 namespace Application.Contracts.Repositories
 {

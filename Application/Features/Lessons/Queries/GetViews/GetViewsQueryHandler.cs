@@ -1,9 +1,5 @@
-﻿using Application.Contracts.Repositories;
-using Application.Features.Lessons.Dtos;
+﻿using Application.Features.Lessons.Dtos;
 using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Application.Features.Lessons.Queries.GetViews
 {

@@ -1,5 +1,4 @@
-﻿using Application.Contracts.Repositories;
-using Application.Features.StudentLessons.Dtos;
+﻿using Application.Features.StudentLessons.Dtos;
 using Microsoft.AspNetCore.Http;
 
 namespace Application.Features.StudentLessons.Queries.GetStudentDiscussions

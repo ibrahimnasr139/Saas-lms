@@ -1,5 +1,4 @@
-﻿using Application.Contracts.Repositories;
-using Application.Contracts.Zoom;
+﻿using Application.Contracts.Zoom;
 using Application.Features.Tenants.Dtos;
 using Application.Helpers;
 using Domain.Enums;
@@ -21,7 +20,7 @@ namespace Application.Features.Tenants.Commands.UpdateLiveSession
         private readonly IUnitOfWork _unitOfWork;
 
         public UpdateLiveSessionCommandHandler(ICurrentUserId currentUserId, ILiveSessionRepository liveSessionRepository,
-            IZoomService zoomService, IEmailSender emailSender, ICourseRepository courseRepository,IUnitOfWork unitOfWork,
+            IZoomService zoomService, IEmailSender emailSender, ICourseRepository courseRepository, IUnitOfWork unitOfWork,
             IHttpContextAccessor httpContextAccessor, ITenantRepository tenantRepository, ITenantMemberRepository tenantMemberRepository)
         {
             _currentUserId = currentUserId;
