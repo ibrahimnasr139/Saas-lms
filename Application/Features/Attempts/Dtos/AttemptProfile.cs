@@ -13,9 +13,10 @@
                 .ForMember(dest => dest.Id, src => src.MapFrom(s => s.Id))
                 .ForMember(dest => dest.Name, src => src.MapFrom(s => s.User.FirstName + " " + s.User.LastName))
                 .ForMember(dest => dest.ProfilePicture, src => src.MapFrom(s => s.User.ProfilePicture));
-            
+
             CreateMap<QuizAttempt, AttemptResponse>()
-                .ForMember(dest => dest.QuestionCount, src => src.MapFrom(a => a.Answers.Count));
+                .ForMember(dest => dest.QuestionCount, src => src.MapFrom(a => a.Answers.Count))
+                .ForMember(dest => dest.Questions, src => src.MapFrom(a => a.Answers));
             
             CreateMap<Answer, QuestionAttempt>()
                 .ForMember(dest => dest.QuestionId, src => src.MapFrom(a => a.QuizQuestionId))
