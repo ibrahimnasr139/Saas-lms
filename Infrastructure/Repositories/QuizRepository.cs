@@ -148,6 +148,7 @@ namespace Infrastructure.Repositories
                         a.StudentAnswer,
                         a.IsCorrect,
                         a.AutoScore,
+                        a.TeacherScore,
                         a.Feedback
                     }).ToList()
                 })
@@ -182,7 +183,7 @@ namespace Infrastructure.Repositories
                         {
                             Value = answer.StudentAnswer,
                             IsCorrect = answer.IsCorrect,
-                            Score = answer.AutoScore,
+                            Score = answer.TeacherScore is not null ? answer.TeacherScore.Value : answer.AutoScore,
                             Feedback = answer.Feedback
                         };
                     }
