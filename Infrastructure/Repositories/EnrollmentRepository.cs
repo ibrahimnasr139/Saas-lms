@@ -83,7 +83,7 @@ namespace Infrastructure.Repositories
                                     DueDate = mi.Assignment != null ? (DateTime?)mi.Assignment.DueDate : null,
                                     IsCompleted =
                                         _context.LessonViews.Any(lv => lv.ModuleItemId == mi.Id && lv.StudentId == studentId && lv.Status == ViewStatus.Completed) ||
-                                        _context.QuizAttempts.Any(qa => qa.ModuleItemId == mi.Id && qa.StudentId == studentId) ||
+                                        _context.QuizAttempts.Any(qa => qa.ModuleItemId == mi.Id && qa.StudentId == studentId && qa.SubmissionStatus == SubmissionStatus.Submitted) ||
                                         _context.AssignmentSubmissions.Any(asub => asub.AssignmentId == mi.Id && asub.StudentId == studentId),
                                     Conditions = mi.Conditions
                                         .Where(c => c.Enabled)
