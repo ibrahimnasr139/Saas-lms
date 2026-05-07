@@ -8,12 +8,15 @@
                 .ForMember(dest => dest.Correct, src => src.MapFrom(a => a.Answers.Count(ans => ans.IsCorrect)))
                 .ForMember(dest => dest.Wrong, src => src.MapFrom(a => a.Answers.Count(ans => !ans.IsCorrect && ans.StudentAnswer != null)))
                 .ForMember(dest => dest.Skipped, src => src.MapFrom(a => a.Answers.Count(ans => ans.StudentAnswer == null)));
+            
             CreateMap<Student, StudentDto>()
                 .ForMember(dest => dest.Id, src => src.MapFrom(s => s.Id))
                 .ForMember(dest => dest.Name, src => src.MapFrom(s => s.User.FirstName + " " + s.User.LastName))
                 .ForMember(dest => dest.ProfilePicture, src => src.MapFrom(s => s.User.ProfilePicture));
+            
             CreateMap<QuizAttempt, AttemptResponse>()
-            .ForMember(dest => dest.QuestionCount, src => src.MapFrom(a => a.Answers.Count));
+                .ForMember(dest => dest.QuestionCount, src => src.MapFrom(a => a.Answers.Count));
+            
             CreateMap<Answer, QuestionAttempt>()
                 .ForMember(dest => dest.QuestionId, src => src.MapFrom(a => a.QuizQuestionId))
                 .ForMember(dest => dest.Question, src => src.MapFrom(a => a.QuizQuestion.Question.QuestionTitle))
@@ -31,7 +34,6 @@
                     TeacherScore = a.TeacherScore,
                     Feedback = a.Feedback,
                 }));
-
         }
     }
 }

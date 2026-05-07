@@ -70,6 +70,7 @@ namespace Application.Features.StudentQuizes.Commands.SubmitQuiz
                 attempt.GradingStatus = GradingStatus.NeedsGrading;
                 attempt.SubmissionStatus = SubmissionStatus.Submitted;
                 attempt.TimeSpent = request.TimeSpent;
+                attempt.SubmittedAt = DateTime.UtcNow;
                 await _quizRepository.UpdateQuizAttempt(attempt);
                 await _studentStreakRepository.UpdateStudentStreakAsync(session.StudentId, cancellationToken);
                 await _unitOfWork.CommitTransactionAsync(cancellationToken);

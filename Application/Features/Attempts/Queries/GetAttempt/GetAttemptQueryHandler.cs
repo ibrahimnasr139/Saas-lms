@@ -17,9 +17,7 @@ namespace Application.Features.Attempts.Queries.GetAttempt
             var subdomain = _httpContextAccessor?.HttpContext?.Request.Cookies[AuthConstants.SubDomain];
             var attempt = await _attemptRepository.GetAttemptResponseByIdAsync(request.AttemptId, request.QuizId, subdomain!, cancellationToken);
             if (attempt is null)
-            {
                 return AttemptErrors.AttemptNotFound;
-            }
             return attempt;
         }
     }
