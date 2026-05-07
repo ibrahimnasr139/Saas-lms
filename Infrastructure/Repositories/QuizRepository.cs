@@ -190,5 +190,93 @@ namespace Infrastructure.Repositories
             }
             return result;
         }
+        public async Task CreateQuizAttemptAsync(QuizAttempt quizAttempt, CancellationToken cancellationToken)
+        {
+            await _dbContext.QuizAttempts.AddAsync(quizAttempt, cancellationToken);
+        }
+        public async Task<Quiz> GetQuizAsync(int quizId, CancellationToken cancellationToken)
+        {
+            var quiz = await _dbContext.Quizzes.FirstOrDefaultAsync(q => q.ModuleItemId == quizId, cancellationToken);
+            return quiz!;
+        }
+        public async Task<bool> IsStudentAttemptedAsync(int studentId, int quizId, CancellationToken cancellationToken)
+        {
+            return await _dbContext.QuizAttempts
+                .AnyAsync(qa => qa.ModuleItemId == quizId && qa.StudentId == studentId, cancellationToken);
+        }
+        public async Task<QuizAttempt?> GetStudentAttemptedAsync(int studentId, int quizId, CancellationToken cancellationToken)
+        {
+            var attempt = await _dbContext.QuizAttempts
+                .FirstOrDefaultAsync(qa => qa.ModuleItemId == quizId && qa.StudentId == studentId
+                    && qa.GradingStatus == GradingStatus.NotGraded && qa.SubmissionStatus == SubmissionStatus.InProgress, cancellationToken);
+            return attempt;
+        }
+        public async Task<Dictionary<int, (int, string, int, int)>> GetQuestionIdsAsync(int quizId, List<int> quizQuestionIds, List<string> answerValues, int attemptId, CancellationToken cancellationToken)
+        {
+            var quizQuestions = await _dbContext.QuizQuestions
+                .Where(qq => quizQuestionIds.Contains(qq.Id) && qq.QuizId == quizId)
+                .Select(qq => new { qq.Id, qq.QuestionId, qq.Marks })
+                .ToListAsync(cancellationToken);
+
+            return quizQuestions.ToDictionary(
+                qq => qq.QuestionId,
+                qq => (qq.Marks, answerValues[quizQuestionIds.IndexOf(qq.Id)], attemptId, qq.Id)
+            );
+        }
+        public async Task<int> GradeQuizAttemptAsync(Dictionary<int, (int, string, int, int)> questionIdsWithAnswers, CancellationToken cancellationToken)
+        {
+            int score = 0;
+            var answers = new List<Answer>();
+            var questionIds = questionIdsWithAnswers.Keys.ToList();
+            for (int i = 0; i < questionIds.Count; i++)
+            {
+                var (marks, studentAnswer, attemptId, quizQuestionId) = questionIdsWithAnswers[questionIds[i]];
+
+                var question = await _dbContext.Questions
+                    .Where(q => q.Id == questionIds[i])
+                    .Select(q => new { q.Type, q.CorrectAnswer, q.Options })
+                    .FirstOrDefaultAsync(cancellationToken);
+
+                if (question is null) continue;
+
+                bool isCorrect = false;
+                int autoScore = 0;
+
+                if (question.Type == QuestionType.Mcq)
+                {
+                    var correctOptionId = question.Options!
+                        .Where(o => o.IsCorrect)
+                        .Select(o => o.Id)
+                        .FirstOrDefault();
+                    isCorrect = correctOptionId == studentAnswer;
+                    autoScore = isCorrect ? marks : 0;
+                    if (isCorrect)
+                        score += marks;
+                }
+                else if (question.Type == QuestionType.true_false)
+                {
+                    isCorrect = studentAnswer == question.CorrectAnswer;
+                    autoScore = isCorrect ? marks : 0;
+                    if (isCorrect)
+                        score += marks;
+                }
+                answers.Add(new Answer
+                {
+                    QuizQuestionId = quizQuestionId,
+                    AttemptId = attemptId,
+                    StudentAnswer = studentAnswer,
+                    IsCorrect = isCorrect,
+                    Selected = isCorrect,
+                    AutoScore = autoScore,
+                });
+            }
+            await _dbContext.Answers.AddRangeAsync(answers, cancellationToken);
+            return score;
+        }
+        public Task UpdateQuizAttempt(QuizAttempt quizAttempt)
+        {
+            _dbContext.QuizAttempts.Update(quizAttempt);
+            return Task.CompletedTask;
+        }
     }
 }

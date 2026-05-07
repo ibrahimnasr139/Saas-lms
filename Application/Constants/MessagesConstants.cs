@@ -64,5 +64,8 @@
         public const string RequestFriendSuccessfully = "تم ارسال طلب الصداقه إلى .";
         public const string AcceptRequestSuccessfully = "تم قبول طلب الصداقة الخاص بك بنجاح .";
         public const string RejectRequestSuccessfully = "تم رفض طلب الصداقة الخاص بك بنجاح .";
+
+        public const string StartQuizSuccessfully = "تم بدء الاختبار بنجاح .";
+        public const string SubmitQuizSuccessfully = "تم تسليم الاختبار بنجاح .";
     }
 }

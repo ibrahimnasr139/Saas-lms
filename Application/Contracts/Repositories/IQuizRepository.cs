@@ -12,5 +12,12 @@ namespace Application.Contracts.Repositories
         Task<OverviewDto?> GetQuizOverview(int itemId, CancellationToken cancellationToken);
         Task<QuizMetadata?> GetQuizMetadata(int quizId, int courseId, int moduleId, string subdomain, CancellationToken cancellationToken);
         Task<StudentQuizDto?> GetStudentQuizAsync(int studentId, int courseId, int itemId, CancellationToken cancellationToken);
+        Task CreateQuizAttemptAsync(QuizAttempt quizAttempt, CancellationToken cancellationToken);
+        Task<Quiz> GetQuizAsync(int quizId, CancellationToken cancellationToken);
+        Task<bool> IsStudentAttemptedAsync(int studentId, int quizId, CancellationToken cancellationToken);
+        Task<QuizAttempt?> GetStudentAttemptedAsync(int studentId, int quizId, CancellationToken cancellationToken);
+        Task<Dictionary<int, (int, string, int, int)>> GetQuestionIdsAsync(int quizId, List<int> quizQuestionIds, List<string> answerValues, int attemptId, CancellationToken cancellationToken);
+        Task<int> GradeQuizAttemptAsync(Dictionary<int, (int, string, int, int)> questionIdsWithAnswers, CancellationToken cancellationToken);
+        Task UpdateQuizAttempt(QuizAttempt quizAttempt);
     }
 }
