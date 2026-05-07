@@ -55,6 +55,7 @@ namespace Application.Features.Questions.Commands.UpdateQuizQuestion
             quizQuestion.Question.Type = request.Type;
             quizQuestion.Question.Options = request.Options;
             quizQuestion.Order = request.Order;
+            quizQuestion.Marks = request.Marks;
             quizQuestion.RequiresManualGrading = request.RequiresManualGrading;
             await _unitOfWork.SaveAsync(cancellationToken);
             return true;
