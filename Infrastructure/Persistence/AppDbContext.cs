@@ -69,6 +69,7 @@ namespace Infrastructure.Persistence
         internal DbSet<Level> Levels { get; set; }
         internal DbSet<VideoTimestamp> VideoTimestamps { get; set; }
         internal DbSet<Transcript> Transcripts { get; set; }
+        internal DbSet<Metadata> Metadata { get; set; }
 
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {

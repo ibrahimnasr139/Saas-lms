@@ -22,5 +22,6 @@ namespace Domain.Entites
         public DateTime? UpdatedAt { get; set; }
         public ICollection<VideoTimestamp> videoTimestamps { get; set; } = [];
         public Transcript Transcript { get; set; } = null!;
+        public ICollection<Metadata> Metadatas { get; set; } = null!;
     }
 }
