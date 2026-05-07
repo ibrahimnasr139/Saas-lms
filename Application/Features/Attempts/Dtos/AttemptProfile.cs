@@ -16,7 +16,8 @@
 
             CreateMap<QuizAttempt, AttemptResponse>()
                 .ForMember(dest => dest.QuestionCount, src => src.MapFrom(a => a.Answers.Count))
-                .ForMember(dest => dest.Questions, src => src.MapFrom(a => a.Answers));
+                .ForMember(dest => dest.Questions, src => src.MapFrom(a => a.Answers))
+                .ForMember(dest => dest.Summary, opt => opt.MapFrom(src => src));
             
             CreateMap<Answer, QuestionAttempt>()
                 .ForMember(dest => dest.QuestionId, src => src.MapFrom(a => a.QuizQuestionId))
