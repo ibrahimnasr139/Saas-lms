@@ -39,7 +39,7 @@ namespace Infrastructure.Repositories
             else
             {
                 var lastDate = streak.LastActivityAt.Value.Date;
-                var diff = (lastDate - today).Days;
+                var diff = (today - lastDate).Days;
                 if (diff == 0)
                     return false;
                 else if (diff == 1)
@@ -51,7 +51,6 @@ namespace Infrastructure.Repositories
                 streak.LongestStreak = streak.CurrentStreak;
 
             streak.LastActivityAt = today;
-            await _context.SaveChangesAsync(cancellationToken);
             return true;
         }
     }

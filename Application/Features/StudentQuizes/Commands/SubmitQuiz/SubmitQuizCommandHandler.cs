@@ -13,9 +13,12 @@ namespace Application.Features.StudentQuizes.Commands.SubmitQuiz
         private readonly IModuleItemRepository _moduleItemRepository;
         private readonly IQuizRepository _quizRepository;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IStudentStreakRepository _studentStreakRepository;
+
         public SubmitQuizCommandHandler(HybridCache hybridCache, IHttpContextAccessor httpContextAccessor,
             IStudentSubscriptionRepository studentSubscriptionRepository, IEnrollmentRepository enrollmentRepository,
-            IModuleItemRepository moduleItemRepository, IQuizRepository quizRepository, IUnitOfWork unitOfWork)
+            IModuleItemRepository moduleItemRepository, IQuizRepository quizRepository, IUnitOfWork unitOfWork,
+            IStudentStreakRepository studentStreakRepository)
         {
             _hybridCache = hybridCache;
             _httpContextAccessor = httpContextAccessor;
@@ -24,6 +27,7 @@ namespace Application.Features.StudentQuizes.Commands.SubmitQuiz
             _moduleItemRepository = moduleItemRepository;
             _quizRepository = quizRepository;
             _unitOfWork = unitOfWork;
+            _studentStreakRepository = studentStreakRepository;
         }
         public async Task<OneOf<StudentQuizResponse, Error>> Handle(SubmitQuizCommand request, CancellationToken cancellationToken)
         {
@@ -67,6 +71,7 @@ namespace Application.Features.StudentQuizes.Commands.SubmitQuiz
                 attempt.SubmissionStatus = SubmissionStatus.Submitted;
                 attempt.TimeSpent = request.TimeSpent;
                 await _quizRepository.UpdateQuizAttempt(attempt);
+                await _studentStreakRepository.UpdateStudentStreakAsync(session.StudentId, cancellationToken);
                 await _unitOfWork.CommitTransactionAsync(cancellationToken);
             }
             catch

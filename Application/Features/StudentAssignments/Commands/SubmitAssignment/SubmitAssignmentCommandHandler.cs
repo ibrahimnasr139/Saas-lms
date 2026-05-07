@@ -13,10 +13,12 @@ namespace Application.Features.StudentAssignments.Commands.SubmitAssignment
         private readonly IUnitOfWork _unitOfWork;
         private readonly IStudentSubscriptionRepository _studentSubscriptionRepository;
         private readonly IAssignmentRepository _assignmentRepository;
+        private readonly IStudentStreakRepository _studentStreakRepository;
 
         public SubmitAssignmentCommandHandler(HybridCache hybridCache, IHttpContextAccessor httpContextAccessor,
             IModuleItemRepository moduleItemRepository, IEnrollmentRepository enrollmentRepository, IUnitOfWork unitOfWork,
-            IStudentSubscriptionRepository studentSubscriptionRepository, IAssignmentRepository assignmentRepository)
+            IStudentSubscriptionRepository studentSubscriptionRepository, IAssignmentRepository assignmentRepository,
+            IStudentStreakRepository studentStreakRepository)
         {
             _hybridCache = hybridCache;
             _httpContextAccessor = httpContextAccessor;
@@ -25,6 +27,7 @@ namespace Application.Features.StudentAssignments.Commands.SubmitAssignment
             _unitOfWork = unitOfWork;
             _studentSubscriptionRepository = studentSubscriptionRepository;
             _assignmentRepository = assignmentRepository;
+            _studentStreakRepository = studentStreakRepository;
         }
         public async Task<OneOf<StudentAssignmentResponse, Error>> Handle(SubmitAssignmentCommand request, CancellationToken cancellationToken)
         {
@@ -80,6 +83,7 @@ namespace Application.Features.StudentAssignments.Commands.SubmitAssignment
                 newAssignmentSubmission.Link = request.Link;
 
             await _assignmentRepository.CreateAssignmentSubmissionAsync(newAssignmentSubmission, cancellationToken);
+            await _studentStreakRepository.UpdateStudentStreakAsync(session.StudentId, cancellationToken);
             await _unitOfWork.SaveAsync(cancellationToken);
             return new StudentAssignmentResponse { SubmissionId = newAssignmentSubmission.Id, Messsage = MessagesConstants.AssignmentSubmissionSuccessfully };
         }
