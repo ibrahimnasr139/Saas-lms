@@ -203,5 +203,12 @@ namespace Infrastructure.Repositories
                 .FirstOrDefaultAsync(cancellationToken);
             return course!;
         }
+        public Task<string> GetCourseNameAsync(int courseId, CancellationToken cancellationToken)
+        {
+            var result = _dbContext.Courses.Where(c => c.Id == courseId)
+                .Select(c => c.Title)
+                .FirstOrDefaultAsync(cancellationToken);
+            return result!;
+        }
     }
 }

@@ -11,5 +11,10 @@ namespace Application.Contracts.Repositories
         Task<DateTime> GetPeakActivityTimeAsync(int itemId, CancellationToken cancellationToken);
         Task<bool> IsFound(int id, int moduleId, int courseId, string subdomain, CancellationToken cancellationToken);
         Task<StudentLessonProgressDto> GetStudentLessonProgressAsync(int studentId, int courseId, int itemId, CancellationToken cancellationToken);
+        Task<string> GetVideoIdAsync(int itemId, int courseId, CancellationToken cancellationToken);
+        Task<StudentLessonTranscriptDto?> GetStudentLessonTranscriptAsync(string videoId, CancellationToken cancellationToken);
+        Task<string> GetLessonNameAsync(int itemId, CancellationToken cancellationToken);
+        Task CreateAiAssistantMessageAsync(List<AiAssistantMessage> messages, CancellationToken cancellationToken);
+        Task<AiChatMessage?> GetAiChatMessageAsync(int itemId, int studentId, CancellationToken cancellationToken);
     }
 }

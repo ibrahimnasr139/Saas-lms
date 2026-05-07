@@ -16,5 +16,6 @@ namespace Application.Contracts.Repositories
         Task RemoveCourseAsync(Course course, CancellationToken cancellationToken);
         Task<WebsiteCourseDetailsDto?> GetWebsiteCourseDetailsAsync(int courseId, string subDomain, string? studentUserId, CancellationToken cancellationToken);
         Task<Course> GetCourseAsync(int courseId, int tenantId, CancellationToken cancellationToken);
+        Task<string> GetCourseNameAsync(int courseId, CancellationToken cancellationToken);
     }
 }

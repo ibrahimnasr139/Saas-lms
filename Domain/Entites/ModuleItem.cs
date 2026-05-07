@@ -25,5 +25,6 @@ namespace Domain.Entites
         public ICollection<StudentGrade> StudentGrades { get; set; } = [];
         public ICollection<DicussionThread> DicussionThreads { get; set; } = [];
         public ICollection<Enrollment> Enrollments { get; set; } = [];
+        public ICollection<AiAssistantMessage> AiAssistantMessages { get; set; } = [];
     }
 }

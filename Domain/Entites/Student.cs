@@ -31,6 +31,7 @@ namespace Domain.Entites
         public ICollection<Friend> Students1 { get; set; } = [];
         public ICollection<Friend> Students2 { get; set; } = [];
         public ICollection<Friend> Actions { get; set; } = [];
+        public ICollection<AiAssistantMessage> AiAssistantMessages { get; set; } = [];
 
         public static Student Create(string userId, string parentEmail)
         {

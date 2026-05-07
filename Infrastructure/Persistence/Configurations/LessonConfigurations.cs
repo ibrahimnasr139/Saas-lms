@@ -21,6 +21,11 @@ namespace Infrastructure.Persistence.Configurations
                 .WithOne(mi => mi.Lesson)
                 .HasForeignKey<Lesson>(l => l.ModuleItemId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            builder.HasOne(l => l.File)
+                   .WithOne(f => f.Lesson)
+                   .HasForeignKey<Lesson>(l => l.VideoId)
+                   .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

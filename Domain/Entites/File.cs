@@ -23,5 +23,6 @@ namespace Domain.Entites
         public ICollection<VideoTimestamp> videoTimestamps { get; set; } = [];
         public Transcript Transcript { get; set; } = null!;
         public ICollection<Metadata> Metadatas { get; set; } = null!;
+        public Lesson Lesson { get; set; } = null!;
     }
 }

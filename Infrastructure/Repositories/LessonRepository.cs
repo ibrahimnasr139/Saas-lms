@@ -82,5 +82,56 @@ namespace Infrastructure.Repositories
                 .FirstOrDefaultAsync(cancellationToken);
             return result!;
         }
+        public async Task<string> GetVideoIdAsync(int itemId, int courseId, CancellationToken cancellationToken)
+        {
+            var result = await _dbContext.Lessons.Where(l => l.ModuleItemId == itemId && l.CourseId == courseId)
+                .Select(l => l.VideoId)
+                .FirstOrDefaultAsync(cancellationToken);
+            return result!;
+        }
+        public async Task<StudentLessonTranscriptDto?> GetStudentLessonTranscriptAsync(string videoId, CancellationToken cancellationToken)
+        {
+            var timestamps = await _dbContext.VideoTimestamps
+                .Where(vt => vt.FileId == videoId)
+                .ToListAsync(cancellationToken);
+
+            if (!timestamps.Any())
+                return null;
+
+            return new StudentLessonTranscriptDto
+            {
+                TotalSegments = timestamps.Count,
+                Transcript = timestamps.Select(vt => new TranscriptDto
+                {
+                    Id = vt.Id,
+                    Text = vt.Text,
+                    Start = vt.StartTime,
+                    End = vt.EndTime
+                }).ToList()
+            };
+        }
+        public async Task<string> GetLessonNameAsync(int itemId, CancellationToken cancellationToken)
+        {
+            var result = await _dbContext.Lessons.Where(l => l.ModuleItemId == itemId)
+                .Select(l => l.ModuleItem.Title)
+                .FirstOrDefaultAsync(cancellationToken);
+            return result!;
+        }
+        public async Task CreateAiAssistantMessageAsync(List<AiAssistantMessage> messages, CancellationToken cancellationToken)
+        {
+            await _dbContext.AiAssistantMessages.AddRangeAsync(messages, cancellationToken);
+        }
+        public async Task<AiChatMessage?> GetAiChatMessageAsync(int itemId, int studentId, CancellationToken cancellationToken)
+        {
+            return await _dbContext.AiAssistantMessages
+                .Where(ai => ai.LessonId == itemId && ai.StudentId == studentId)
+                .Select(ai => new AiChatMessage
+                {
+                    Id = ai.Id,
+                    Content = ai.Content,
+                    Role = ai.Role,
+                    CreatedAt = ai.CreatedAt
+                }).FirstOrDefaultAsync(cancellationToken);
+        }
     }
 }

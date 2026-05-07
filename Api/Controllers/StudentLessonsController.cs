@@ -1,4 +1,5 @@
 ﻿using Application.Common;
+using Application.Features.StudentLessons.Commands.AiChatMessage;
 using Application.Features.StudentLessons.Commands.CreateStudentDiscussion;
 using Application.Features.StudentLessons.Commands.CreateStudentDiscussionReply;
 using Application.Features.StudentLessons.Commands.DeleteStudentDiscussion;
@@ -6,9 +7,11 @@ using Application.Features.StudentLessons.Commands.DeleteStudentDiscussionReply;
 using Application.Features.StudentLessons.Commands.UpdateStudentDiscussion;
 using Application.Features.StudentLessons.Commands.UpdateStudentDiscussionReply;
 using Application.Features.StudentLessons.Commands.UpdateStudentLessonProgress;
+using Application.Features.StudentLessons.Queries.GetAiChatMessage;
 using Application.Features.StudentLessons.Queries.GetStudentDiscussions;
 using Application.Features.StudentLessons.Queries.GetStudentLessonItem;
 using Application.Features.StudentLessons.Queries.GetStudentLessonProgress;
+using Application.Features.StudentLessons.Queries.GetStudentLessonTranscript;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -132,6 +135,39 @@ namespace Api.Controllers
             var result = await _mediator.Send(new DeleteStudentDiscussionReplyCommand(courseId, itemId, discussionId, replyId), cancellationToken);
             return result.Match(
                discussionReply => Ok(discussionReply),
+                error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message })
+            );
+        }
+
+
+        [HttpGet("transcript")]
+        public async Task<IActionResult> GetStudentLessonTranscript([FromRoute] int courseId, [FromRoute] int itemId, CancellationToken cancellationToken)
+        {
+            var result = await _mediator.Send(new GetStudentLessonTranscriptQuery(courseId, itemId), cancellationToken);
+            return result.Match(
+               transcript => Ok(transcript),
+                error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message })
+            );
+        }
+
+
+        [HttpPost("ai-assistant/chat")]
+        public async Task<IActionResult> ChatWithAiAssistant([FromRoute] int courseId, [FromRoute] int itemId, [FromBody] AiChatMessageCommand command, CancellationToken cancellationToken)
+        {
+            var result = await _mediator.Send(command with { CourseId = courseId, ItemId = itemId }, cancellationToken);
+            return result.Match(
+               transcript => Ok(transcript),
+                error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message })
+            );
+        }
+
+
+        [HttpGet("ai-assistant/messages")]
+        public async Task<IActionResult> GetAiChatMessage([FromRoute] int courseId, [FromRoute] int itemId, CancellationToken cancellationToken)
+        {
+            var result = await _mediator.Send(new GetAiChatMessageQuery(courseId, itemId), cancellationToken);
+            return result.Match(
+               messages => Ok(messages),
                 error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message })
             );
         }

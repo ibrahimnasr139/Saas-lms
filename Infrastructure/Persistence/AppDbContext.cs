@@ -70,6 +70,7 @@ namespace Infrastructure.Persistence
         internal DbSet<VideoTimestamp> VideoTimestamps { get; set; }
         internal DbSet<Transcript> Transcripts { get; set; }
         internal DbSet<Metadata> Metadata { get; set; }
+        internal DbSet<AiAssistantMessage> AiAssistantMessages { get; set; }
 
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {

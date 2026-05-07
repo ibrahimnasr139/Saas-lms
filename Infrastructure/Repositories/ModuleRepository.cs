@@ -97,5 +97,13 @@ namespace Infrastructure.Repositories
                 .Select(m => (int?)m.Id)
                 .FirstOrDefaultAsync(cancellationToken);
         }
+        public async Task<string?> GetModuleNameAsync(int itemId, int courseId, CancellationToken cancellationToken)
+        {
+            var result = await _context.ModuleItems
+                .Where(mi => mi.Id == itemId && mi.CourseId == courseId)
+                .Select(mi => mi.Module!.Title)
+                .FirstOrDefaultAsync(cancellationToken);
+            return result;
+        }
     }
 }
