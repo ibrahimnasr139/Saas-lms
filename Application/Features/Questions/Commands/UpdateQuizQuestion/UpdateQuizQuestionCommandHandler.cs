@@ -45,8 +45,8 @@ namespace Application.Features.Questions.Commands.UpdateQuizQuestion
                 return QuestionErrors.CategoryNotFound;
 
             var quiz = await _quizRepository.GetQuizAsync(request.ItemId, cancellationToken);
-            var marks = request.Marks - quizQuestion.Marks;
-            quiz.TotalMarks += marks;
+            var diff = request.Marks - quizQuestion.Marks;
+            quiz.TotalMarks += diff;
 
             quizQuestion.Question.CorrectAnswer = request.CorrectAnswer;
             quizQuestion.Question.Difficulty = request.Difficulty;
