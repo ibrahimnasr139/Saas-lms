@@ -26,7 +26,6 @@ namespace Application.Features.Questions.Commands.UpdateQuizQuestion
         }
         public async Task<OneOf<bool, Error>> Handle(UpdateQuizQuestionCommand request, CancellationToken cancellationToken)
         {
-
             var userId = _currentUserId.GetUserId();
             var subdomain = _httpContextAccessor?.HttpContext?.Request.Cookies[AuthConstants.SubDomain];
             var isPermitted = await _tenantMemberRepository.IsPermittedMember(userId, PermissionConstants.MANAGE_MODULE_ITEMS, cancellationToken);
@@ -45,16 +44,18 @@ namespace Application.Features.Questions.Commands.UpdateQuizQuestion
             if (!isFound)
                 return QuestionErrors.CategoryNotFound;
 
+            var quiz = await _quizRepository.GetQuizAsync(request.ItemId, cancellationToken);
+            var marks = request.Marks - quizQuestion.Marks;
+            quiz.TotalMarks += marks;
+
             quizQuestion.Question.CorrectAnswer = request.CorrectAnswer;
             quizQuestion.Question.Difficulty = request.Difficulty;
             quizQuestion.Question.QuestionCategoryId = request.Category;
             quizQuestion.Question.QuestionTitle = request.Question;
             quizQuestion.Question.Type = request.Type;
             quizQuestion.Question.Options = request.Options;
-            quizQuestion.Marks = request.Marks;
             quizQuestion.Order = request.Order;
             quizQuestion.RequiresManualGrading = request.RequiresManualGrading;
-
             await _unitOfWork.SaveAsync(cancellationToken);
             return true;
         }
