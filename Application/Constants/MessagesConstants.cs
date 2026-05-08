@@ -67,5 +67,7 @@
 
         public const string StartQuizSuccessfully = "تم بدء الاختبار بنجاح .";
         public const string SubmitQuizSuccessfully = "تم تسليم الاختبار بنجاح .";
+
+        public const string FlashCardReviewedSuccessfully = "تم مراجعة البطاقة التعليمية بنجاح.";
     }
 }
