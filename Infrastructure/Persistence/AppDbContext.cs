@@ -71,6 +71,10 @@ namespace Infrastructure.Persistence
         internal DbSet<Transcript> Transcripts { get; set; }
         internal DbSet<Metadata> Metadata { get; set; }
         internal DbSet<AiAssistantMessage> AiAssistantMessages { get; set; }
+        internal DbSet<StudentChapter> StudentChapters { get; set; }
+        internal DbSet<FlashCard> FlashCards { get; set; }
+        internal DbSet<FlashCardDeck> FlashCardDecks { get; set; }
+        internal DbSet<FlashCardReview> FlashCardReviews { get; set; }
 
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {

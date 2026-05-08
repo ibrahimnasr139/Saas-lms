@@ -11,5 +11,7 @@
         public Student Student { get; set; } = null!;
         public int AvailableSubjectId { get; set; }
         public AvailableSubject AvailableSubject { get; set; } = null!;
+        public ICollection<StudentChapter> StudentChapters { get; set; } = [];
+        public ICollection<FlashCardDeck> FlashCardDecks { get; set; } = [];
     }
 }
