@@ -5,7 +5,7 @@
         public int Id { get; set; }
         public string Front { get; set; } = string.Empty;
         public string Back { get; set; } = string.Empty;
-        public uint Confidence { get; set; }
+        public uint Confidence { get; set; } = 0;
         public DateTime? LastReviewedAt { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public int DeckId { get; set; }

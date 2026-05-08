@@ -7,7 +7,7 @@ namespace Domain.Entites
         public int Id { get; set; }
         public string Topic { get; set; } = string.Empty;
         public string Title { get; set; } = string.Empty;
-        public string Goal { get; set; } = string.Empty;
+        public string? Goal { get; set; }
         public string Source { get; set; } = string.Empty;
         public DateTime? LastReviewedAt { get; set; }
         public DateTime? NextReviewAt { get; set; }
