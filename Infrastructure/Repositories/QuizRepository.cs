@@ -89,7 +89,9 @@ namespace Infrastructure.Repositories
                         EndDate = mi.Quiz.EndDate,
                         CreatedAt = mi.CreatedAt,
                     },
+                    shuffleQuestions = mi.Quiz!.ShuffleQuestions,
                     Questions = mi.Quiz.Questions
+                        .OrderBy(q => q.Order)
                         .Select(q => new
                         {
                             q.Id,
@@ -108,13 +110,17 @@ namespace Infrastructure.Repositories
             if (quizData is null)
                 return null;
 
+            var questions = quizData.shuffleQuestions
+                ? quizData.Questions.OrderBy(q => (uint)studentId * 2654435761u ^ (uint)q.Id).ToList()
+                : quizData.Questions.ToList();
+
             var result = new StudentQuizDto
             {
                 Quiz = quizData.Quiz,
-                Questions = quizData.Questions.Select(q => new StudentQuestionDto
+                Questions = questions.Select((q, index) => new StudentQuestionDto
                 {
                     Id = q.Id,
-                    Order = q.Order,
+                    Order = index + 1,
                     Type = q.Type,
                     QuestionText = q.QuestionTitle,
                     Marks = q.Marks,
@@ -151,8 +157,7 @@ namespace Infrastructure.Repositories
                         a.TeacherScore,
                         a.Feedback
                     }).ToList()
-                })
-                .FirstOrDefaultAsync(cancellationToken);
+                }).FirstOrDefaultAsync(cancellationToken);
 
             if (attemptData != null)
             {
