@@ -4,5 +4,6 @@
     {
         public string QuestionEndPoint { get; set; } = string.Empty;
         public string AiAssistantEndPoint { get; set; } = string.Empty;
+        public string AskAiEndPoint { get; set; } = string.Empty;
     }
 }
