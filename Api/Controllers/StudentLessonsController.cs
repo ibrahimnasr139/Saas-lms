@@ -7,7 +7,7 @@ using Application.Features.StudentLessons.Commands.DeleteStudentDiscussionReply;
 using Application.Features.StudentLessons.Commands.UpdateStudentDiscussion;
 using Application.Features.StudentLessons.Commands.UpdateStudentDiscussionReply;
 using Application.Features.StudentLessons.Commands.UpdateStudentLessonProgress;
-using Application.Features.StudentLessons.Queries.GetAiChatMessage;
+using Application.Features.StudentLessons.Queries.GetAiChatMessages;
 using Application.Features.StudentLessons.Queries.GetStudentDiscussions;
 using Application.Features.StudentLessons.Queries.GetStudentLessonItem;
 using Application.Features.StudentLessons.Queries.GetStudentLessonProgress;
@@ -163,11 +163,11 @@ namespace Api.Controllers
 
 
         [HttpGet("ai-assistant/messages")]
-        public async Task<IActionResult> GetAiChatMessage([FromRoute] int courseId, [FromRoute] int itemId, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetAiChatMessages([FromRoute] int courseId, [FromRoute] int itemId, CancellationToken cancellationToken)
         {
-            var result = await _mediator.Send(new GetAiChatMessageQuery(courseId, itemId), cancellationToken);
+            var result = await _mediator.Send(new GetAiChatMessagesQuery(courseId, itemId), cancellationToken);
             return result.Match(
-               messages => Ok(messages),
+                messages => Ok(messages),
                 error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message })
             );
         }

@@ -121,7 +121,7 @@ namespace Infrastructure.Repositories
         {
             await _dbContext.AiAssistantMessages.AddRangeAsync(messages, cancellationToken);
         }
-        public async Task<AiChatMessage?> GetAiChatMessageAsync(int itemId, int studentId, CancellationToken cancellationToken)
+        public async Task<List<AiChatMessage>?> GetAiChatMessagesAsync(int itemId, int studentId, CancellationToken cancellationToken)
         {
             return await _dbContext.AiAssistantMessages
                 .Where(ai => ai.LessonId == itemId && ai.StudentId == studentId)
@@ -131,7 +131,7 @@ namespace Infrastructure.Repositories
                     Content = ai.Content,
                     Role = ai.Role,
                     CreatedAt = ai.CreatedAt
-                }).FirstOrDefaultAsync(cancellationToken);
+                }).ToListAsync(cancellationToken);
         }
     }
 }

@@ -15,6 +15,6 @@ namespace Application.Contracts.Repositories
         Task<StudentLessonTranscriptDto?> GetStudentLessonTranscriptAsync(string videoId, CancellationToken cancellationToken);
         Task<string> GetLessonNameAsync(int itemId, CancellationToken cancellationToken);
         Task CreateAiAssistantMessageAsync(List<AiAssistantMessage> messages, CancellationToken cancellationToken);
-        Task<AiChatMessage?> GetAiChatMessageAsync(int itemId, int studentId, CancellationToken cancellationToken);
+        Task<List<AiChatMessage>?> GetAiChatMessagesAsync(int itemId, int studentId, CancellationToken cancellationToken);
     }
 }

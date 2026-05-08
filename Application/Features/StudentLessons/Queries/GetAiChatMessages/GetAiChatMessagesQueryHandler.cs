@@ -1,9 +1,9 @@
 ﻿using Application.Features.StudentLessons.Dtos;
 using Microsoft.AspNetCore.Http;
 
-namespace Application.Features.StudentLessons.Queries.GetAiChatMessage
+namespace Application.Features.StudentLessons.Queries.GetAiChatMessages
 {
-    internal sealed class GetAiChatMessageQueryHandler : IRequestHandler<GetAiChatMessageQuery, OneOf<AiChatMessage, Error>>
+    internal sealed class GetAiChatMessagesQueryHandler : IRequestHandler<GetAiChatMessagesQuery, OneOf<List<AiChatMessage>, Error>>
     {
         private readonly HybridCache _hybridCache;
         private readonly IHttpContextAccessor _httpContextAccessor;
@@ -11,7 +11,7 @@ namespace Application.Features.StudentLessons.Queries.GetAiChatMessage
         private readonly IStudentSubscriptionRepository _studentSubscriptionRepository;
         private readonly IModuleItemRepository _moduleItemRepository;
         private readonly ILessonRepository _lessonRepository;
-        public GetAiChatMessageQueryHandler(HybridCache hybridCache, IHttpContextAccessor httpContextAccessor,
+        public GetAiChatMessagesQueryHandler(HybridCache hybridCache, IHttpContextAccessor httpContextAccessor,
             IEnrollmentRepository enrollmentRepository, IStudentSubscriptionRepository studentSubscriptionRepository,
             IModuleItemRepository moduleItemRepository, ILessonRepository lessonRepository)
         {
@@ -22,7 +22,7 @@ namespace Application.Features.StudentLessons.Queries.GetAiChatMessage
             _moduleItemRepository = moduleItemRepository;
             _lessonRepository = lessonRepository;
         }
-        public async Task<OneOf<AiChatMessage, Error>> Handle(GetAiChatMessageQuery request, CancellationToken cancellationToken)
+        public async Task<OneOf<List<AiChatMessage>, Error>> Handle(GetAiChatMessagesQuery request, CancellationToken cancellationToken)
         {
             var sessionId = _httpContextAccessor.HttpContext?.Request.Cookies[AuthConstants.SessionId];
             var cachedSessionKey = $"{CacheKeysConstants.SessionKey}_{sessionId}";
@@ -46,8 +46,8 @@ namespace Application.Features.StudentLessons.Queries.GetAiChatMessage
             if (!moduleItemIsExist)
                 return ModuleItemErrors.ModuleItemNotFound;
 
-            return await _lessonRepository.GetAiChatMessageAsync(request.ItemId, session.StudentId, cancellationToken)
-                ?? new AiChatMessage();
+            return await _lessonRepository.GetAiChatMessagesAsync(request.ItemId, session.StudentId, cancellationToken)
+                ?? new List<AiChatMessage>();
         }
     }
 }
