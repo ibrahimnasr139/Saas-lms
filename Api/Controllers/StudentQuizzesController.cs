@@ -9,11 +9,11 @@ namespace Api.Controllers
 {
     [Route("api/student/courses/{courseId}/items/{itemId}/quiz")]
     [ApiController]
-    public class StudentQuizesController : ControllerBase
+    public class StudentQuizzesController : ControllerBase
     {
         private readonly IMediator _mediator;
 
-        public StudentQuizesController(IMediator mediator)
+        public StudentQuizzesController(IMediator mediator)
         {
             _mediator = mediator;
         }

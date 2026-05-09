@@ -12,8 +12,8 @@ namespace Domain.Entites
         public Student Student { get; set; } = null!;
         public int SubjectId { get; set; }
         public StudentSubject Subject { get; set; } = null!;
-        public int ChapterId { get; set; }
-        public StudentChapter Chapter { get;set; } = null!;
+        public int? ChapterId { get; set; }
+        public StudentChapter? Chapter { get;set; }
         public ICollection<StudentQuizAttempt> StudentQuizAttempts { get; set; } = [];
         public ICollection<StudentQuizQuestion> StudentQuizQuestions { get; set; } = [];
     }
