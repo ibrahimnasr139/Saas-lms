@@ -1,4 +1,5 @@
 ﻿using Application.Features.StudyTools.Dtos;
+using Domain.Enums;
 using Microsoft.AspNetCore.Http;
 
 namespace Application.Features.StudyTools.Commands.ReviewFlashCard
@@ -43,6 +44,26 @@ namespace Application.Features.StudyTools.Commands.ReviewFlashCard
                 StudentId = session.StudentId,
             };
 
+            var baseDelta = request.Difficulty switch
+            {
+                FlashCardDifficulty.Again => -25,
+                FlashCardDifficulty.Hard => 4,
+                FlashCardDifficulty.Good => 10,
+                FlashCardDifficulty.Easy => 18,
+                _ => 0
+            };
+
+            var timeMultiplier = request.ReviewTimeSeconds switch
+            {
+                <= 2 => 1.3,
+                <= 5 => 1.1,
+                <= 10 => 1.0,
+                <= 20 => 0.8,
+                _ => 0.6
+            };
+
+            var delta = baseDelta * timeMultiplier;
+            flashCard.Confidence = (byte)Math.Clamp(Math.Round(flashCard.Confidence + delta), 0, 100);
             flashCard.LastReviewedAt = DateTime.UtcNow;
             flashCard.FlashCardDeck.LastReviewedAt = DateTime.UtcNow;
             flashCard.FlashCardDeck.NextReviewAt = DateTime.UtcNow.AddDays(3);

@@ -5,7 +5,7 @@
         public int Id { get; set; }
         public string Front { get; set; } = string.Empty;
         public string Back { get; set; } = string.Empty;
-        public uint Confidence { get; set; }
+        public byte Confidence { get; set; }
         public DateTime? LastReviewedAt { get; set; }
     }
 }
