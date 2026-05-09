@@ -1,10 +1,12 @@
 ﻿using Application.Common;
+using Application.Features.Quizzes.Queries.GetQuiz;
 using Application.Features.StudyTools.Commands.AskAi;
 using Application.Features.StudyTools.Commands.CreateFlashCardDeck;
 using Application.Features.StudyTools.Commands.CreateQuiz;
 using Application.Features.StudyTools.Commands.ReviewFlashCard;
 using Application.Features.StudyTools.Queries.GetFlashCardDeckDetails;
 using Application.Features.StudyTools.Queries.GetFlashCardDecks;
+using Application.Features.StudyTools.Queries.GetStudentQuiz;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -81,6 +83,17 @@ namespace Api.Controllers
         public async Task<IActionResult> CreateQuiz([FromBody] CreateQuizCommand command, CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(command, cancellationToken);
+            return result.Match<IActionResult>(
+                response => Ok(response),
+                error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message })
+            );
+        }
+
+
+        [HttpGet("quizzes/{quizId}")]
+        public async Task<IActionResult> GetQuiz([FromRoute] GetStudentQuizQuery query, CancellationToken cancellationToken)
+        {
+            var result = await _mediator.Send(query, cancellationToken);
             return result.Match<IActionResult>(
                 response => Ok(response),
                 error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message })
