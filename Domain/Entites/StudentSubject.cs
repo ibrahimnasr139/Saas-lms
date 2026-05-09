@@ -13,5 +13,6 @@
         public AvailableSubject AvailableSubject { get; set; } = null!;
         public ICollection<StudentChapter> StudentChapters { get; set; } = [];
         public ICollection<FlashCardDeck> FlashCardDecks { get; set; } = [];
+        public ICollection<StudentQuiz> StudentQuizzes { get; set; } = [];
     }
 }

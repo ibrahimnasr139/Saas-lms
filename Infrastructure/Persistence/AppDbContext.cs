@@ -75,6 +75,10 @@ namespace Infrastructure.Persistence
         internal DbSet<FlashCard> FlashCards { get; set; }
         internal DbSet<FlashCardDeck> FlashCardDecks { get; set; }
         internal DbSet<FlashCardReview> FlashCardReviews { get; set; }
+        internal DbSet<StudentQuiz> StudentQuizzes { get; set; }
+        internal DbSet<StudentQuizAttempt> StudentQuizAttempts { get; set; }
+        internal DbSet<StudentQuizQuestion> StudentQuizQuestions { get; set; }
+        internal DbSet<StudentAnswer> StudentAnswers { get; set; }
 
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {

@@ -11,5 +11,6 @@
         public int SubjectId { get; set; }
         public StudentSubject StudentSubject { get; set; } = null!;
         public ICollection<FlashCardDeck> FlashCardDecks { get; set; } = [];
+        public ICollection<StudentQuiz> StudentQuizzes { get; set; } = [];
     }
 }
