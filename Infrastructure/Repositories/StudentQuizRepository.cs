@@ -14,6 +14,10 @@ namespace Infrastructure.Repositories
         {
             await _context.StudentQuizzes.AddAsync(studentQuiz, cancellationToken);
         }
+        public async Task CreateStudentQuizAttemptAsync(StudentQuizAttempt studentQuizAttempt, CancellationToken cancellationToken)
+        {
+            await _context.StudentQuizAttempts.AddAsync(studentQuizAttempt, cancellationToken);
+        }
         public async Task<StudentQuizDto?> GetStudentQuizAsync(int quizId, int studentId, CancellationToken cancellationToken)
         {
             var quiz = await _context.StudentQuizzes
@@ -56,6 +60,23 @@ namespace Infrastructure.Repositories
                     }).ToList()
                 }).ToList()
             };
+        }
+        public async Task<bool> StudentQuizIsExistAsync(int quizId, int studentId, CancellationToken cancellationToken)
+        {
+            return await _context.StudentQuizzes.AnyAsync(q => q.Id == quizId && q.StudentId == studentId, cancellationToken);
+        }
+        public async Task<List<string>> GetSelectedOptionsTextAsync(int quizId, int studentId, List<(int QuestionId, int OptionIndex)> answers, CancellationToken cancellationToken)
+        {
+            var questions = await _context.StudentQuizQuestions
+                .Where(qq => qq.StudentQuizId == quizId && qq.StudentQuiz.StudentId == studentId)
+                .Select(qq => new { qq.Id, qq.Options })
+                .ToListAsync(cancellationToken);
+
+            return answers.Select(a =>
+            {
+                var question = questions.First(q => q.Id == a.QuestionId);
+                return question.Options[a.OptionIndex].Text;
+            }).ToList();
         }
     }
 }

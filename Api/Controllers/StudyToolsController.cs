@@ -1,6 +1,6 @@
 ﻿using Application.Common;
-using Application.Features.Quizzes.Queries.GetQuiz;
 using Application.Features.StudyTools.Commands.AskAi;
+using Application.Features.StudyTools.Commands.AttemptQuiz;
 using Application.Features.StudyTools.Commands.CreateFlashCardDeck;
 using Application.Features.StudyTools.Commands.CreateQuiz;
 using Application.Features.StudyTools.Commands.ReviewFlashCard;
@@ -94,6 +94,17 @@ namespace Api.Controllers
         public async Task<IActionResult> GetQuiz([FromRoute] GetStudentQuizQuery query, CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(query, cancellationToken);
+            return result.Match<IActionResult>(
+                response => Ok(response),
+                error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message })
+            );
+        }
+
+
+        [HttpPost("quizzes/{quizId}/attempts")]
+        public async Task<IActionResult> AttemptQuiz([FromRoute] int quizId, [FromBody] AttemptQuizQuery query, CancellationToken cancellationToken)
+        {
+            var result = await _mediator.Send(query with { QuizId = quizId }, cancellationToken);
             return result.Match<IActionResult>(
                 response => Ok(response),
                 error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message })
