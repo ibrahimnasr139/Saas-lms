@@ -14,7 +14,8 @@ namespace Infrastructure.Repositories
         }
         public async Task<List<AttemptDto>> GetAttempts(int courseId, int itemId, CancellationToken cancellationToken)
         {
-            return await _dbContext.Students.Where(s => s.Enrollments.Any(c => c.CourseId == courseId))
+            return await _dbContext.Students
+                .Where(s => s.Enrollments.Any(c => c.CourseId == courseId))
                  .LeftJoin(_dbContext.QuizAttempts.Where(sv => sv.ModuleItemId == itemId),
                      student => student.Id,
                      quizAttempt => quizAttempt.StudentId,
@@ -22,7 +23,7 @@ namespace Infrastructure.Repositories
                      {
                          Id = quizAttempt != null ? quizAttempt.Id : 0,
                          StudentId = student.Id,
-                         StudentName = student.User.FirstName + " " + student.User.LastName,
+                         StudentName = $"{student.User.FirstName} {student.User.LastName}",
                          ProfilePicture = student.User.ProfilePicture,
                          SubmissionStatus = quizAttempt != null ? quizAttempt.SubmissionStatus : SubmissionStatus.NotStarted,
                          GradingStatus = quizAttempt != null ? quizAttempt.GradingStatus : GradingStatus.NotGraded,
@@ -31,7 +32,7 @@ namespace Infrastructure.Repositories
                          TimeSpent = quizAttempt != null ? quizAttempt.TimeSpent : null,
                          Score = quizAttempt != null ? quizAttempt.Score : null,
                          TotalMarks = quizAttempt != null ? quizAttempt.TotalMarks : 0,
-                         IsPassed = quizAttempt != null ? quizAttempt.Score >= quizAttempt.Quiz.PassingScore : null
+                         IsPassed = quizAttempt != null ? quizAttempt.Score >= (quizAttempt.TotalMarks * quizAttempt.Quiz.PassingScore / 100.0) : null
                      }).ToListAsync(cancellationToken);
         }
         public async Task<QuizMetadata?> GetQuizMetadata(int quizId, int courseId, int moduleId, string subdomain, CancellationToken cancellationToken)
