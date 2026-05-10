@@ -1,6 +1,4 @@
-﻿using Application.Helpers;
-using Domain.Enums;
-using Hangfire;
+﻿using Domain.Enums;
 using Microsoft.AspNetCore.Http;
 
 namespace Application.Features.ModuleItems.Commands.CreateModuleItem
@@ -13,16 +11,13 @@ namespace Application.Features.ModuleItems.Commands.CreateModuleItem
         private readonly IModuleRepository _moduleRepository;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IModuleItemRepository _moduleItemRepository;
-        private readonly IEmailSender _emailSender;
         private readonly IMapper _mapper;
         private readonly HybridCache _hybridCache;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IEnrollmentRepository _enrollmentRepository;
 
         public CreateModuleItemCommandHandler(ITenantMemberRepository tenantMemberRepository, ICurrentUserId currentUserId,
             ISubscriptionRepository subscriptionRepository, IHttpContextAccessor httpContextAccessor, IMapper mapper, IModuleRepository moduleRepository,
-            IModuleItemRepository moduleItemRepository, IEmailSender emailSender, HybridCache hybridCache, IUnitOfWork unitOfWork,
-            IEnrollmentRepository enrollmentRepository)
+            IModuleItemRepository moduleItemRepository, HybridCache hybridCache, IUnitOfWork unitOfWork)
         {
             _tenantMemberRepository = tenantMemberRepository;
             _currentUserId = currentUserId;
@@ -31,10 +26,8 @@ namespace Application.Features.ModuleItems.Commands.CreateModuleItem
             _mapper = mapper;
             _moduleRepository = moduleRepository;
             _moduleItemRepository = moduleItemRepository;
-            _emailSender = emailSender;
             _hybridCache = hybridCache;
             _unitOfWork = unitOfWork;
-            _enrollmentRepository = enrollmentRepository;
         }
         public async Task<OneOf<SuccessDto, Error>> Handle(CreateModuleItemCommand request, CancellationToken cancellationToken)
         {
@@ -97,39 +90,6 @@ namespace Application.Features.ModuleItems.Commands.CreateModuleItem
                 }
                 await _hybridCache.RemoveByTagAsync(tags: new[] { $"{CacheKeysConstants.AllCoursesKey}_{request.CourseId}" }, cancellationToken);
                 await _unitOfWork.CommitTransactionAsync(cancellationToken);
-
-                var itemType = request.Type switch
-                {
-                    ModuleItemType.Lesson => "درس",
-                    ModuleItemType.Assignment => "واجب",
-                    ModuleItemType.Quiz => "كويز",
-                    _ => "محتوى"
-                };
-                var template = request.Type switch
-                {
-                    ModuleItemType.Lesson => EmailConstants.NewLessonNotificationTemplate,
-                    ModuleItemType.Quiz => EmailConstants.NewQuizNotificationTemplate,
-                    ModuleItemType.Assignment => EmailConstants.NewAssignmentNotificationTemplate,
-                    _ => EmailConstants.NewLessonNotificationTemplate
-                };
-                var students = await _enrollmentRepository.GetEnrolledStudentsForNotificationAsync(request.CourseId, request.Title, itemType, request.DueDate, request.StartDate, request.EndDate, cancellationToken);
-                foreach (var student in students)
-                {
-                    var placeholders = new Dictionary<string, string>
-                    {
-                        { "{{StudentName}}", student.StudentName },
-                        { "{{ItemTitle}}", student.ItemTitle },
-                        { "{{CourseTitle}}", student.CourseTitle },
-                        { "{{DueDate}}", student.DueDate.HasValue ? student.DueDate.Value.ToString("yyyy-MM-dd HH:mm") + " UTC" : "-" },
-                        { "{{StartDate}}", student.StartDate.HasValue ? student.StartDate.Value.ToString("yyyy-MM-dd HH:mm") + " UTC" : "-" },
-                        { "{{EndDate}}", student.EndDate.HasValue ? student.EndDate.Value.ToString("yyyy-MM-dd HH:mm") + " UTC" : "-" },
-                        { "{{DashboardUrl}}", $"{EmailConstants.CourseLink}/{request.CourseId}" },
-                    };
-
-                    var emailBody = EmailConfirmationHelper.GenerateEmailBodyHelper(template, placeholders);
-                    var subject = $"تمت إضافة {itemType} جديد في {student.CourseTitle}";
-                    BackgroundJob.Enqueue<IEmailSender>(emailSender => emailSender.SendEmailAsync(student.StudentEmail, subject, emailBody));
-                }
                 return new SuccessDto
                 {
                     Id = moduleItemId.ToString(),
