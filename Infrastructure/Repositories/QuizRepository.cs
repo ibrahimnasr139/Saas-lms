@@ -291,7 +291,7 @@ namespace Infrastructure.Repositories
 
             return await _dbContext.Quizzes
                 .AsNoTracking()
-                .Where(q => q.EndDate > now && q.EndDate <= in24Hours)
+                .Where(q => q.EndDate > now && q.EndDate <= in24Hours && q.ModuleItem.Status == CourseStatus.Published)
                 .SelectMany(q => q.Course.Enrollments, (q, e) => new { Quiz = q, Enrollment = e })
                 .Where(x => !x.Quiz.Attempts.Any(a => a.StudentId == x.Enrollment.StudentId && a.SubmissionStatus == SubmissionStatus.Submitted))
                 .Select(x => new QuizDeadlineReminderDto

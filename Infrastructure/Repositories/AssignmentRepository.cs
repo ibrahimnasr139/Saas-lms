@@ -121,7 +121,7 @@ namespace Infrastructure.Repositories
 
             return await _dbContext.Assignments
                 .AsNoTracking()
-                .Where(a => a.DueDate > now && a.DueDate <= in24Hours)
+                .Where(a => a.DueDate > now && a.DueDate <= in24Hours && a.ModuleItem.Status == CourseStatus.Published)
                 .SelectMany(a => a.Course.Enrollments, (a, e) => new { Assignment = a, Enrollment = e })
                 .Where(x => !x.Assignment.Submissions.Any(s => s.StudentId == x.Enrollment.StudentId))
                 .Select(x => new AssignmentDeadlineReminderDto
