@@ -40,21 +40,20 @@ namespace Application.Features.Tenants.Commands.CreateLiveSession
         }
         public async Task<OneOf<CreateLiveSessionDto, Error>> Handle(CreateLiveSessionCommand request, CancellationToken cancellationToken)
         {
+            var subDomain = _httpContextAccessor.HttpContext?.Request.Cookies[AuthConstants.SubDomain];
             var userId = _currentUserId.GetUserId();
             var isPermitted = await _tenantMemberRepository.IsPermittedMember(userId, PermissionConstants.CREATE_SESSIONS, cancellationToken);
             if (!isPermitted)
                 return MemberErrors.NotAllowed;
 
-            var subDomain = _httpContextAccessor.HttpContext?.Request.Cookies[AuthConstants.SubDomain];
             var tenantId = await _tenantRepository.GetTenantIdAsync(subDomain!, cancellationToken);
             var tenant = await _tenantRepository.GetLastTenantAsync(subDomain, cancellationToken);
             var tenantMemberId = await _tenantMemberRepository.GetMemberIdByUserIdAsync(userId, tenantId, cancellationToken);
-
             var hasFeature = await _subscriptionRepository.TenantHasFeatureAsync(tenantId, LiveSessionConstants.LiveSessionFeatureKey, cancellationToken);
             if (!hasFeature)
                 return LiveSessionErrors.ZoomIntegrationNotAvailable;
 
-            var course = await _courseRepository.GetCourseByIdAsync(request.CourseId, subDomain!, cancellationToken);
+            var course = await _courseRepository.GetCourseWithEnrollmentsAsync(request.CourseId, subDomain!, cancellationToken);
             if (course == null)
                 return CourseErrors.CourseNotFound;
 

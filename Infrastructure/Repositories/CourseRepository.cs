@@ -210,5 +210,13 @@ namespace Infrastructure.Repositories
                 .FirstOrDefaultAsync(cancellationToken);
             return result!;
         }
+        public async Task<Course?> GetCourseWithEnrollmentsAsync(int courseId, string subdomain, CancellationToken cancellationToken)
+        {
+            return await _dbContext.Courses
+                .Include(c => c.Enrollments)
+                    .ThenInclude(e => e.Student)
+                        .ThenInclude(s => s.User)
+                .FirstOrDefaultAsync(c => c.Id == courseId && c.Tenant.SubDomain == subdomain, cancellationToken);
+        }
     }
 }
