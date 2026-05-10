@@ -103,7 +103,6 @@ namespace Application.Features.ModuleItems.Commands.UpdateSettings
 
                     var emailBody = EmailConfirmationHelper.GenerateEmailBodyHelper(template, placeholders);
                     var subject = $"تمت إضافة {itemType} جديد في {student.CourseTitle}";
-
                     BackgroundJob.Enqueue(() => _emailSender.SendEmailAsync(student.StudentEmail, subject, emailBody));
                 }
             }
