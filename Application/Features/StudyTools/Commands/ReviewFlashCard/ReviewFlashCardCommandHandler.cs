@@ -10,12 +10,14 @@ namespace Application.Features.StudyTools.Commands.ReviewFlashCard
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IFlashCardRepository _flashCardRepository;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IStudentRepository _studentRepository;
 
         public ReviewFlashCardCommandHandler(HybridCache hybridCache, IHttpContextAccessor httpContextAccessor,
-            IFlashCardRepository flashCardRepository, IUnitOfWork unitOfWork)
+            IFlashCardRepository flashCardRepository, IUnitOfWork unitOfWork, IStudentRepository studentRepository)
         {
             _flashCardRepository = flashCardRepository;
             _unitOfWork = unitOfWork;
+            _studentRepository = studentRepository;
             _httpContextAccessor = httpContextAccessor;
             _hybridCache = hybridCache;
         }
@@ -46,10 +48,10 @@ namespace Application.Features.StudyTools.Commands.ReviewFlashCard
 
             var baseDelta = request.Difficulty switch
             {
-                FlashCardDifficulty.Again => -25,
-                FlashCardDifficulty.Hard => 4,
+                FlashCardDifficulty.Again => -10,
+                FlashCardDifficulty.Hard => 5,
                 FlashCardDifficulty.Good => 10,
-                FlashCardDifficulty.Easy => 18,
+                FlashCardDifficulty.Easy => 15,
                 _ => 0
             };
 
@@ -63,7 +65,13 @@ namespace Application.Features.StudyTools.Commands.ReviewFlashCard
             };
 
             var delta = baseDelta * timeMultiplier;
-            flashCard.Confidence = (byte)Math.Clamp(Math.Round(flashCard.Confidence + delta), 0, 100);
+            var oldConfidence = flashCard.Confidence;
+            var newConfidence = (byte)Math.Clamp(Math.Round(oldConfidence + delta), 0, 100);
+            var xpGained = newConfidence - oldConfidence;
+            if (xpGained > 0)
+                await _studentRepository.UpdateStudentXPAsync(session.StudentId, xpGained, cancellationToken);
+
+            flashCard.Confidence = newConfidence;
             flashCard.LastReviewedAt = DateTime.UtcNow;
             flashCard.FlashCardDeck.LastReviewedAt = DateTime.UtcNow;
             flashCard.FlashCardDeck.NextReviewAt = DateTime.UtcNow.AddDays(3);

@@ -21,5 +21,6 @@ namespace Application.Contracts.Repositories
         Task<Student?> GetStudentByInviteCodeAsync(string inviteCode, CancellationToken cancellationToken);
         Task<Student> GetStudentByIdAsync(int studentId, CancellationToken cancellationToken);
         Task<CurrentStudentDto> GetCurrentStudentAsync(string userId, int studentId, CancellationToken cancellationToken);
+        Task UpdateStudentXPAsync(int studentId, int xpGained, CancellationToken cancellationToken);
     }
 }

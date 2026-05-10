@@ -9,13 +9,16 @@ namespace Application.Features.StudyTools.Commands.AttemptQuiz
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IStudentQuizRepository _studentQuizRepository;
+        private readonly IStudentRepository _studentRepository;
+
         public AttemptQuizQueryHandler(HybridCache hybridCache, IHttpContextAccessor httpContextAccessor, IUnitOfWork unitOfWork,
-            IStudentQuizRepository studentQuizRepository)
+            IStudentQuizRepository studentQuizRepository, IStudentRepository studentRepository)
         {
             _hybridCache = hybridCache;
             _httpContextAccessor = httpContextAccessor;
             _unitOfWork = unitOfWork;
             _studentQuizRepository = studentQuizRepository;
+            _studentRepository = studentRepository;
         }
         public async Task<OneOf<AttemptQuizDto, Error>> Handle(AttemptQuizQuery request, CancellationToken cancellationToken)
         {
@@ -50,6 +53,11 @@ namespace Application.Features.StudyTools.Commands.AttemptQuiz
                 }).ToList(),
             };
             await _studentQuizRepository.CreateStudentQuizAttemptAsync(newAttempt, cancellationToken);
+            if (request.Passed)
+            {
+                var xpGained = request.CorrectAnswers * 5;
+                await _studentRepository.UpdateStudentXPAsync(session.StudentId, xpGained, cancellationToken);  
+            }
             await _unitOfWork.SaveAsync(cancellationToken);
             return new AttemptQuizDto
             {

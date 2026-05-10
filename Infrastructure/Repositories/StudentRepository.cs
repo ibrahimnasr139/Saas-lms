@@ -173,5 +173,11 @@ namespace Infrastructure.Repositories
             result!.Gamification.NextLevelXp = requiredXp - result.Gamification.Xp;
             return result;
         }
+        public Task UpdateStudentXPAsync(int studentId, int xpGained, CancellationToken cancellationToken)
+        {
+            return _context.Students
+                .Where(s => s.Id == studentId)
+                .ExecuteUpdateAsync(s => s.SetProperty(p => p.XP, p => p.XP + xpGained), cancellationToken);
+        }
     }
 }
