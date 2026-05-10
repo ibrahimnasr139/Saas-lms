@@ -2,7 +2,6 @@
 using Domain.Enums;
 using Hangfire;
 using Microsoft.AspNetCore.Http;
-using Microsoft.VisualBasic;
 
 namespace Application.Features.ModuleItems.Commands.CreateModuleItem
 {
@@ -22,7 +21,7 @@ namespace Application.Features.ModuleItems.Commands.CreateModuleItem
 
         public CreateModuleItemCommandHandler(ITenantMemberRepository tenantMemberRepository, ICurrentUserId currentUserId,
             ISubscriptionRepository subscriptionRepository, IHttpContextAccessor httpContextAccessor, IMapper mapper, IModuleRepository moduleRepository,
-            IModuleItemRepository moduleItemRepository, IEmailSender emailSender,HybridCache hybridCache, IUnitOfWork unitOfWork,
+            IModuleItemRepository moduleItemRepository, IEmailSender emailSender, HybridCache hybridCache, IUnitOfWork unitOfWork,
             IEnrollmentRepository enrollmentRepository)
         {
             _tenantMemberRepository = tenantMemberRepository;
@@ -99,7 +98,15 @@ namespace Application.Features.ModuleItems.Commands.CreateModuleItem
                 await _hybridCache.RemoveByTagAsync(tags: new[] { $"{CacheKeysConstants.AllCoursesKey}_{request.CourseId}" }, cancellationToken);
                 await _unitOfWork.CommitTransactionAsync(cancellationToken);
 
-                var students = await _enrollmentRepository.GetEnrolledStudentsForNotificationAsync(request.CourseId, request.Title, request.Type, request.DueDate, request.StartDate, request.EndDate, CancellationToken.None);
+                var itemType = request.Type switch
+                {
+                    ModuleItemType.Lesson => "درس",
+                    ModuleItemType.Assignment => "واجب",
+                    ModuleItemType.Quiz => "كويز",
+                    _ => "محتوى"
+                };
+
+                var students = await _enrollmentRepository.GetEnrolledStudentsForNotificationAsync(request.CourseId, request.Title, itemType, request.DueDate, request.StartDate, request.EndDate, cancellationToken);
                 foreach (var student in students)
                 {
                     var placeholders = new Dictionary<string, string>
@@ -113,7 +120,6 @@ namespace Application.Features.ModuleItems.Commands.CreateModuleItem
                         { "{{EndDate}}", student.EndDate.HasValue ? student.EndDate.Value.ToString("yyyy-MM-dd HH:mm") + " UTC" : "-" },
                         { "{{DashboardUrl}}", $"{EmailConstants.CourseLink}/{request.CourseId}" },
                     };
-
                     var emailBody = EmailConfirmationHelper.GenerateEmailBodyHelper(EmailConstants.NewModuleItemNotificationTemplate, placeholders);
                     BackgroundJob.Enqueue(() => _emailSender.SendEmailAsync(student.StudentEmail, $"تمت إضافة {student.ModuleItemType} جديد في {student.CourseTitle}", emailBody));
                 }

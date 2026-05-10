@@ -158,7 +158,7 @@ namespace Infrastructure.Repositories
                 .Select(e => e.TenantId)
                 .FirstOrDefaultAsync(cancellationToken);
         }
-        public async Task<List<NewModuleItemNotificationDto>> GetEnrolledStudentsForNotificationAsync(int courseId, string itemTitle, ModuleItemType Type, DateTime? dueDate, DateTime? startDate, DateTime? endDate, CancellationToken cancellationToken)
+        public async Task<List<NewModuleItemNotificationDto>> GetEnrolledStudentsForNotificationAsync(int courseId, string itemTitle, string itemType, DateTime? dueDate, DateTime? startDate, DateTime? endDate, CancellationToken cancellationToken)
         {
             return await _context.Enrollments
                 .AsNoTracking()
@@ -169,7 +169,7 @@ namespace Infrastructure.Repositories
                     StudentName = $"{e.Student.User.FirstName} {e.Student.User.LastName}",
                     ItemTitle = itemTitle,
                     CourseTitle = e.Course.Title,
-                    ModuleItemType = Type,
+                    ModuleItemType = itemType,
                     DueDate = dueDate,
                     StartDate = startDate,
                     EndDate = endDate

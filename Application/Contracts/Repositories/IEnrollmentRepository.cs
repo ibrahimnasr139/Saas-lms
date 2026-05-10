@@ -14,6 +14,6 @@ namespace Application.Contracts.Repositories
         Task<StudentCourseDto?> GetStudentCourseAsync(int studentId, int courseId, CancellationToken cancellationToken);
         Task<List<StudentModuleDto>> GetStudentCourseModulesAsync(int studentId, int courseId, CancellationToken cancellationToken);
         Task<int> GetTenantIdAsync(int studentId, int courseId, CancellationToken cancellationToken);
-        Task<List<NewModuleItemNotificationDto>> GetEnrolledStudentsForNotificationAsync(int courseId, string itemTitle, ModuleItemType Type, DateTime? dueDate, DateTime? startDate, DateTime? endDate, CancellationToken cancellationToken);
+        Task<List<NewModuleItemNotificationDto>> GetEnrolledStudentsForNotificationAsync(int courseId, string itemTitle, string itemType, DateTime? dueDate, DateTime? startDate, DateTime? endDate, CancellationToken cancellationToken);
     }
 }
