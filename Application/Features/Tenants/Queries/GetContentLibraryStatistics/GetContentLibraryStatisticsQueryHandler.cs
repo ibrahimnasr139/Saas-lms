@@ -3,11 +3,11 @@ using Microsoft.AspNetCore.Http;
 
 namespace Application.Features.Tenants.Queries.GetContentLibraryStatistics
 {
-    internal class GetContentLibraryStatisticsHandler : IRequestHandler<GetContentLibraryStatisticsQuery, ContentLibraryStatisticsDto>
+    internal class GetContentLibraryStatisticsQueryHandler : IRequestHandler<GetContentLibraryStatisticsQuery, ContentLibraryStatisticsDto>
     {
         private readonly ITenantRepository _tenantRepository;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        public GetContentLibraryStatisticsHandler(ITenantRepository tenantRepository, IHttpContextAccessor httpContextAccessor)
+        public GetContentLibraryStatisticsQueryHandler(ITenantRepository tenantRepository, IHttpContextAccessor httpContextAccessor)
         {
             _tenantRepository = tenantRepository;
             _httpContextAccessor = httpContextAccessor;

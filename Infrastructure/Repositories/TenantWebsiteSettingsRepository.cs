@@ -24,10 +24,10 @@ namespace Infrastructure.Repositories
                 .FirstOrDefaultAsync(cancellationToken);
             return result!;
         }
-        public async Task<bool> UpdateSettingsAsync(int tenantId, UpdateTenantWebsiteSettingsCommand update, CancellationToken cancellationToken)
+        public async Task<bool> UpdateSettingsAsync(string subDomain, UpdateTenantWebsiteSettingsCommand update, CancellationToken cancellationToken)
         {
             var query = _context.Tenants
-                .Where(t => t.Id == tenantId);
+                .Where(t => t.SubDomain == subDomain);
 
             if (update.General is not null)
                 query = query.Include(t => t.WebsiteSetting);

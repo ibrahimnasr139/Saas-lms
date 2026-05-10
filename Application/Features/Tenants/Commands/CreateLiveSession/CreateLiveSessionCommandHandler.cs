@@ -58,7 +58,7 @@ namespace Application.Features.Tenants.Commands.CreateLiveSession
             if (course == null)
                 return CourseErrors.CourseNotFound;
 
-            var zoomIntegration = await _zoomIntegrationRepository.GetZoomIntegrationAsync(userId, tenantId, cancellationToken);
+            var zoomIntegration = await _zoomIntegrationRepository.GetZoomIntegrationAsync(userId, subDomain!, cancellationToken);
             if (zoomIntegration == null || !zoomIntegration.IsActive)
                 return ZoomError.ZoomAccountNotConnected;
 

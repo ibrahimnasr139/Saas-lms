@@ -3,12 +3,12 @@ using Microsoft.AspNetCore.Http;
 
 namespace Application.Features.Tenants.Queries.GetTenantUsage
 {
-    internal sealed class GetTenantUsageHandler : IRequestHandler<GetTenantUsageQuery, TenantUsageDto>
+    internal sealed class GetTenantUsageQueryHandler : IRequestHandler<GetTenantUsageQuery, TenantUsageDto>
     {
         private readonly ITenantRepository _tenantRepository;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public GetTenantUsageHandler(ITenantRepository tenantRepository, IHttpContextAccessor httpContextAccessor)
+        public GetTenantUsageQueryHandler(ITenantRepository tenantRepository, IHttpContextAccessor httpContextAccessor)
         {
             _tenantRepository = tenantRepository;
             _httpContextAccessor = httpContextAccessor;

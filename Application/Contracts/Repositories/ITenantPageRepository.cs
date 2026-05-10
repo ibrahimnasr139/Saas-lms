@@ -8,6 +8,7 @@ namespace Application.Contracts.Repositories
     public interface ITenantPageRepository
     {
         Task CreateTenantPageAsync(CreateTenantPageCommand request, int tenantId, CancellationToken cancellationToken);
+        Task CreateTenantPagesAsync(List<TenantPage> tenantPages , CancellationToken cancellationToken);
         Task<int> DeleteTenantPageAsync(int tenantId, int pageId, CancellationToken cancellationToken);
         Task DuplicateTenantPageAsync(TenantPage tenantPage, CancellationToken cancellationToken);
         Task<List<TenantPagesDto>> GetTenantPagesAsync(string subDomain, CancellationToken cancellationToken);

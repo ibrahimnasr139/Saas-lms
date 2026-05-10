@@ -53,10 +53,10 @@ namespace Infrastructure.Repositories
                 await _context.ZoomIntegrations.AddAsync(newIntegration);
             }
         }
-        public async Task<ZoomIntegration?> GetZoomIntegrationAsync(string userId, int tenantId, CancellationToken cancellationToken)
+        public async Task<ZoomIntegration?> GetZoomIntegrationAsync(string userId, string subDomain, CancellationToken cancellationToken)
         {
             return await _context.ZoomIntegrations
-                .FirstOrDefaultAsync(zi => zi.UserId == userId && zi.TenantId == tenantId && zi.IsActive, cancellationToken);
+                    .FirstOrDefaultAsync(zi => zi.UserId == userId && zi.Tenant.SubDomain == subDomain && zi.IsActive, cancellationToken);
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Application.Features.Tenants.Dtos;
 using Microsoft.AspNetCore.Http;
+using System.Text.Json;
 
 namespace Application.Features.Tenants.Commands.CreateOnboarding
 {
@@ -14,11 +15,12 @@ namespace Application.Features.Tenants.Commands.CreateOnboarding
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ICurrentUserId _currentUserId;
         private readonly HybridCache _hybridCache;
+        private readonly ITenantPageRepository _tenantPageRepository;
         private readonly IUnitOfWork _unitOfWork;
 
         public CreateOnboardingCommandHandler(ITenantRepository tenantRepository, IMapper mapper, IHttpContextAccessor httpContextAccessor
             , UserManager<ApplicationUser> userManager, ICurrentUserId currentUserId, HybridCache hybridCache,
-            IPlanRepository planRepository, ISubscriptionRepository subscriptionRepository, IUnitOfWork unitOfWork,
+            ITenantPageRepository tenantPageRepository,IPlanRepository planRepository, ISubscriptionRepository subscriptionRepository, IUnitOfWork unitOfWork,
             IQuestionRepository questionRepository)
         {
             _tenantRepository = tenantRepository;
@@ -27,6 +29,7 @@ namespace Application.Features.Tenants.Commands.CreateOnboarding
             _userManager = userManager;
             _currentUserId = currentUserId;
             _hybridCache = hybridCache;
+            _tenantPageRepository = tenantPageRepository;
             _planRepository = planRepository;
             _subscriptionRepository = subscriptionRepository;
             _unitOfWork = unitOfWork;
@@ -87,6 +90,8 @@ namespace Application.Features.Tenants.Commands.CreateOnboarding
                     Title = TenantMemberConstants.GeneralQuestionCategory
                 }, cancellationToken);
 
+                await _tenantPageRepository.CreateTenantPagesAsync(SeedDefaultPages(createdTenantId, user!), cancellationToken);
+
                 await _unitOfWork.CommitTransactionAsync(cancellationToken);
                 await _hybridCache.RemoveAsync($"{CacheKeysConstants.LastTenantKey}_{ownerId}", cancellationToken);
                 await _hybridCache.RemoveAsync($"{CacheKeysConstants.UserTenantsKey}_{ownerId}", cancellationToken);
@@ -106,6 +111,40 @@ namespace Application.Features.Tenants.Commands.CreateOnboarding
                 await _unitOfWork.RollbackTransactionAsync(cancellationToken);
                 throw;
             }
+        }
+        private List<TenantPage> SeedDefaultPages(int tenantId, ApplicationUser user)
+        {
+            return new List<TenantPage>
+            {
+                new TenantPage
+                {
+                    TenantId = tenantId,
+                    Title = "الصفحة الرئيسية",
+                    Url = "/",
+                    IsHomePage = true,
+                    PageBlocks = new List<PageBlock>
+                    {
+                        new PageBlock { BlockTypeId = "hero", Order = 0, Visible = true, Props = JsonSerializer.Deserialize<Dictionary<string, object>>("""{"cta":{"url":"/courses","label":"تصفح الكورسات"},"label":"منصه معتمده","title":"ابدأ رحلتك التعليمية اليوم","subtitle":"منصه تعليميه متكامله","secondaryCta":{},"backgroundImage":""}""")! },
+                        new PageBlock { BlockTypeId = "featured_courses", Order = 1, Visible = true, Props = JsonSerializer.Deserialize<Dictionary<string, object>>("""{"limit":5,"title":"الدورات المميزة","subtitle":"اكتشف افضل الدورات"}""")! },
+                        new PageBlock { BlockTypeId = "cta", Order = 2, Visible = true, Props = JsonSerializer.Deserialize<Dictionary<string, object>>("""{"theme":"gradient","title":"هل أنت مستعد لتطوير مهاراتك؟","ctaUrl":"/courses","ctaLabel":"تصفح الكورسات الان","description":"انضم الي الاف من الطلاب و تصفح دوراتنا"}""")! },
+                        new PageBlock { BlockTypeId = "text", Order = 3, Visible = true, Props = JsonSerializer.Deserialize<Dictionary<string, object>>("""{"title":"ابدأ رحلتك التعليمية معنا","content":"<p>مرحبًا بك 👋</p>","subtitle":"تعلم • تطور • حقق أهدافك","alignment":"center"}""")! },
+                        new PageBlock { BlockTypeId = "footer", Order = 4, Visible = true, Props = JsonSerializer.Deserialize<Dictionary<string, object>>($$$"""{"logo":"","email":"{{{user!.Email}}}","phone":"{{{user!.PhoneNumber}}}","address":"","companyName":"منصتنا","socialLinks":[],"copyrightText":"© 2026 جميع الحقوق محفوظة","footerSections":[],"companyDescription":"منصه تعليميه متكامله"}""")! }
+                    }
+                },
+                new TenantPage
+                {
+                    TenantId = tenantId,
+                    Title = "صفحة الكورسات",
+                    Url = "/courses",
+                    IsHomePage = false,
+                    PageBlocks = new List<PageBlock>
+                    {
+                        new PageBlock { BlockTypeId = "text", Order = 0, Visible = true, Props = JsonSerializer.Deserialize<Dictionary<string, object>>("""{"title":"استكشف الدورات التعليمية","content":"<p></p>","subtitle":"تعلم بمرونة • طور مهاراتك • ابدأ الآن","alignment":"center"}""")! },
+                        new PageBlock { BlockTypeId = "featured_courses", Order = 1, Visible = true, Props = JsonSerializer.Deserialize<Dictionary<string, object>>("""{"limit":5,"title":"الدورات المميزة","subtitle":"اكتشف افضل الدورات"}""")! },
+                        new PageBlock { BlockTypeId = "footer", Order = 2, Visible = true, Props = JsonSerializer.Deserialize<Dictionary<string, object>>($$$"""{"logo":"","email":"{{{user!.Email}}}","phone":"{{{user!.PhoneNumber}}}","address":"","companyName":"منصتنا","socialLinks":[],"copyrightText":"© 2026 جميع الحقوق محفوظة","footerSections":[],"companyDescription":"منصه تعليميه متكامله"}""")! }
+                    }
+                }
+            };
         }
     }
 }

@@ -164,5 +164,9 @@ namespace Infrastructure.Repositories
                 Blocks = _mapper.Map<List<TenantBlockTypeDto>>(tenantPage.PageBlocks)
             };
         }
+        public async Task CreateTenantPagesAsync(List<TenantPage> tenantPages, CancellationToken cancellationToken)
+        {
+            await _context.TenantPages.AddRangeAsync(tenantPages, cancellationToken);
+        }
     }
 }

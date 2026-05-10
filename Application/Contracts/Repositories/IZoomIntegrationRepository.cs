@@ -6,6 +6,6 @@ namespace Application.Contracts.Repositories
     {
         Task CreateAsync(ZoomIntegration zoomIntegration, CancellationToken cancellationToken);
         Task SaveOrUpdateIntegrationAsync(string userId, int tenantId, ZoomTokenResponse zoomToken, ZoomUserResponse zoomUser, CancellationToken cancellationToken);
-        Task<ZoomIntegration?> GetZoomIntegrationAsync(string userId, int tenantId, CancellationToken cancellationToken);
+        Task<ZoomIntegration?> GetZoomIntegrationAsync(string userId, string subDomain, CancellationToken cancellationToken);
     }
 }

@@ -2,5 +2,5 @@
 
 namespace Application.Features.Tenants.Queries.GetContentLibraryResources
 {
-    public record GetContentLibraryResourcesQuery(string? q, string type) : IRequest<ContentLibraryResourceDto> { }
+    public sealed record GetContentLibraryResourcesQuery(string? q, string type) : IRequest<ContentLibraryResourceDto>;
 }

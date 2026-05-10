@@ -25,7 +25,7 @@ namespace Application.Features.Zoom.Queries.GetZoomStatus
             var subDomain = _httpContextAccessor.HttpContext?.Request.Cookies[AuthConstants.SubDomain];
             var tenantId = await _tenantRepository.GetTenantIdAsync(subDomain!, cancellationToken);
 
-            var zoomIntegration = await _zoomIntegrationRepository.GetZoomIntegrationAsync(userId, tenantId, cancellationToken);
+            var zoomIntegration = await _zoomIntegrationRepository.GetZoomIntegrationAsync(userId, subDomain!, cancellationToken);
 
             if (zoomIntegration == null)
             {
@@ -51,7 +51,6 @@ namespace Application.Features.Zoom.Queries.GetZoomStatus
                 }
             };
         }
-
         private static string GetAccountTypeName(string accountType)
         {
             return accountType switch

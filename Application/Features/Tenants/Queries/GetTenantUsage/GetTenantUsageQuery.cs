@@ -2,7 +2,5 @@
 
 namespace Application.Features.Tenants.Queries.GetTenantUsage
 {
-    public record GetTenantUsageQuery : IRequest<TenantUsageDto>
-    {
-    }
+    public sealed record GetTenantUsageQuery : IRequest<TenantUsageDto>;
 }
