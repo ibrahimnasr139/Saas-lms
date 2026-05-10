@@ -114,5 +114,25 @@ namespace Infrastructure.Repositories
             return await _dbContext.AssignmentSubmissions
                 .AnyAsync(s => s.AssignmentId == itemId && s.StudentId == studentId, cancellationToken);
         }
+        public async Task<List<AssignmentDeadlineReminderDto>> GetAssignmentsEndingWithin24HoursAsync(CancellationToken cancellationToken)
+        {
+            var now = DateTime.UtcNow;
+            var in24Hours = now.AddHours(24);
+
+            return await _dbContext.Assignments
+                .AsNoTracking()
+                .Where(a => a.DueDate > now && a.DueDate <= in24Hours)
+                .SelectMany(a => a.Course.Enrollments, (a, e) => new { Assignment = a, Enrollment = e })
+                .Where(x => !x.Assignment.Submissions.Any(s => s.StudentId == x.Enrollment.StudentId))
+                .Select(x => new AssignmentDeadlineReminderDto
+                {
+                    StudentEmail = x.Enrollment.Student.User.Email!,
+                    StudentName = $"{x.Enrollment.Student.User.FirstName} {x.Enrollment.Student.User.LastName}",
+                    AssignmentTitle = x.Assignment.ModuleItem.Title,
+                    CourseTitle = x.Assignment.Course.Title,
+                    DueDate = x.Assignment.DueDate,
+                    CourseId = x.Assignment.CourseId
+                }).ToListAsync(cancellationToken);
+        }
     }
 }

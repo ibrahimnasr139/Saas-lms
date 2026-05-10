@@ -284,5 +284,25 @@ namespace Infrastructure.Repositories
             _dbContext.QuizAttempts.Update(quizAttempt);
             return Task.CompletedTask;
         }
+        public async Task<List<QuizDeadlineReminderDto>> GetQuizzesEndingWithin24HoursAsync(CancellationToken cancellationToken)
+        {
+            var now = DateTime.UtcNow;
+            var in24Hours = now.AddHours(24);
+
+            return await _dbContext.Quizzes
+                .AsNoTracking()
+                .Where(q => q.EndDate > now && q.EndDate <= in24Hours)
+                .SelectMany(q => q.Course.Enrollments, (q, e) => new { Quiz = q, Enrollment = e })
+                .Where(x => !x.Quiz.Attempts.Any(a => a.StudentId == x.Enrollment.StudentId && a.SubmissionStatus == SubmissionStatus.Submitted))
+                .Select(x => new QuizDeadlineReminderDto
+                {
+                    StudentEmail = x.Enrollment.Student.User.Email!,
+                    StudentName = $"{x.Enrollment.Student.User.FirstName} {x.Enrollment.Student.User.LastName}",
+                    QuizTitle = x.Quiz.ModuleItem.Title,
+                    CourseTitle = x.Quiz.Course.Title,
+                    EndDate = x.Quiz.EndDate,
+                    CourseId = x.Quiz.Course.Id,
+                }).ToListAsync(cancellationToken);
+        }
     }
 }

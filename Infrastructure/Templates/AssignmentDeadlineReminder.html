@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <title>تذكير بموعد تسليم الواجب</title>
+</head>
+
+<body style="margin:0; padding:0; background-color:#f4f6f9; font-family:Arial, sans-serif;">
+
+    <table width="100%" cellpadding="0" cellspacing="0" style="padding:30px 0;">
+        <tr>
+            <td align="center">
+
+                <table width="600" cellpadding="0" cellspacing="0"
+                       style="background:#ffffff; border-radius:12px; overflow:hidden;">
+
+                    <!-- Header -->
+                    <tr>
+                        <td style="background:#e53e3e; padding:25px; text-align:center;">
+                            <h1 style="margin:0; color:#ffffff; font-size:28px;">
+                                ⏰ تذكير بموعد تسليم الواجب
+                            </h1>
+                        </td>
+                    </tr>
+
+                    <!-- Body -->
+                    <tr>
+                        <td style="padding:35px; color:#333333; line-height:1.8;">
+
+                            <p style="margin-top:0; font-size:18px;">
+                                مرحباً <strong>{{StudentName}}</strong> 👋
+                            </p>
+
+                            <p style="font-size:16px;">
+                                نود تذكيرك بأن موعد تسليم الواجب التالي سينتهي خلال
+                                <strong style="color:#e53e3e;">24 ساعة</strong>.
+                            </p>
+
+                            <!-- Assignment Info -->
+                            <table width="100%" cellpadding="12" cellspacing="0"
+                                   style="background:#f9fafb; border:1px solid #e5e7eb; border-radius:8px; margin:20px 0;">
+
+                                <tr>
+                                    <td style="font-weight:bold; width:35%;">📝 الواجب:</td>
+                                    <td>{{AssignmentTitle}}</td>
+                                </tr>
+
+                                <tr>
+                                    <td style="font-weight:bold;">🎓 الكورس:</td>
+                                    <td>{{CourseTitle}}</td>
+                                </tr>
+
+                                <tr>
+                                    <td style="font-weight:bold;">📅 موعد التسليم:</td>
+                                    <td>{{DueDate}}</td>
+                                </tr>
+                            </table>
+
+                            <p style="font-size:16px;">
+                                يرجى تسليم الواجب قبل انتهاء الموعد.
+                            </p>
+
+                            <!-- Button -->
+                            <div style="text-align:center; margin-top:30px;">
+                                <a href="{{DashboardUrl}}"
+                                   style="background:#e53e3e;
+                                          color:#ffffff;
+                                          text-decoration:none;
+                                          padding:14px 28px;
+                                          border-radius:8px;
+                                          display:inline-block;
+                                          font-size:16px;
+                                          font-weight:bold;">
+                                    الذهاب إلى لوحة التحكم
+                                </a>
+                            </div>
+
+                        </td>
+                    </tr>
+
+                </table>
+
+            </td>
+        </tr>
+    </table>
+
+</body>
+
+</html>

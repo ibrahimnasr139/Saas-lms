@@ -4,6 +4,7 @@ using Application.Contracts.Zoom;
 using Hangfire;
 using Hangfire.PostgreSql;
 using Infrastructure.Health;
+using Infrastructure.Jobs;
 using Infrastructure.Repositories;
 using Infrastructure.Seeders;
 using Infrastructure.Services;
@@ -158,6 +159,8 @@ namespace Infrastructure.Extensions
             builder.Services.AddScoped<IStudentGradeRepository, StudentGradeRepository>();
             builder.Services.AddScoped<IFlashCardRepository, FlashCardRepository>();
             builder.Services.AddScoped<IStudentQuizRepository, StudentQuizRepository>();
+            builder.Services.AddScoped<QuizDeadlineReminderJob>();
+            builder.Services.AddScoped<AssignmentDeadlineReminderJob>();
         }
         public static string BuildPostgresConnectionString(IConfiguration configuration)
         {

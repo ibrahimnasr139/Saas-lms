@@ -11,5 +11,6 @@ namespace Application.Contracts.Repositories
         Task<AssignmentDto?> GetAssignmentAsync(int itemId, int courseId, CancellationToken cancellationToken);
         Task<AssignmentSubmissionDto?> GetStudentSubmissionAsync(int studentId, int itemId, CancellationToken cancellationToken);
         Task<bool> IsAssignmentSubmittedAsync(int studentId, int itemId, CancellationToken cancellationToken);
+        Task<List<AssignmentDeadlineReminderDto>> GetAssignmentsEndingWithin24HoursAsync(CancellationToken cancellationToken);
     }
 }

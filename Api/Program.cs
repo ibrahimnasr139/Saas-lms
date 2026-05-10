@@ -4,6 +4,7 @@ using Application.Contracts.Repositories;
 using Application.Extensions;
 using Hangfire;
 using Infrastructure.Extensions;
+using Infrastructure.Jobs;
 using Infrastructure.Persistence;
 using Infrastructure.Seeders;
 using Microsoft.EntityFrameworkCore;
@@ -41,8 +42,18 @@ using (var scope = app.Services.CreateScope())
 }
 
 var recurringJobManager = app.Services.GetRequiredService<IRecurringJobManager>();
+
 recurringJobManager.AddOrUpdate<IZoomOAuthStateRepository>("cleanup-zoom-oauth-states",
-    repo => repo.DeleteAllExpiredAndUsedStatesAsync(), Cron.Hourly);
+    repo => repo.DeleteAllExpiredAndUsedStatesAsync(),
+    Cron.Hourly);
+
+recurringJobManager.AddOrUpdate<QuizDeadlineReminderJob>("quiz-deadline-reminders",
+    job => job.SendQuizDeadlineRemindersAsync(),
+    Cron.Daily);
+
+recurringJobManager.AddOrUpdate<AssignmentDeadlineReminderJob>("assignment-deadline-reminders",
+    job => job.SendAssignmentDeadlineRemindersAsync(),
+    Cron.Daily);
 
 
 // Configure the HTTP request pipeline.

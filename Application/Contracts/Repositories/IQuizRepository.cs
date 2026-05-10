@@ -19,5 +19,6 @@ namespace Application.Contracts.Repositories
         Task<Dictionary<int, (int, string, int, int)>> GetQuestionIdsAsync(int quizId, List<int> quizQuestionIds, List<string> answerValues, int attemptId, CancellationToken cancellationToken);
         Task<int> GradeQuizAttemptAsync(Dictionary<int, (int, string, int, int)> questionIdsWithAnswers, CancellationToken cancellationToken);
         Task UpdateQuizAttempt(QuizAttempt quizAttempt);
+        Task<List<QuizDeadlineReminderDto>> GetQuizzesEndingWithin24HoursAsync(CancellationToken cancellationToken);
     }
 }
