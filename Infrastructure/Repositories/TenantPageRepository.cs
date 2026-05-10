@@ -47,11 +47,11 @@ namespace Infrastructure.Repositories
         {
             await _context.AddAsync(tenantPage, cancellationToken);
         }
-        public Task<List<TenantPagesDto>> GetTenantPagesAsync(int tenantId, CancellationToken cancellationToken)
+        public Task<List<TenantPagesDto>> GetTenantPagesAsync(string subDomain, CancellationToken cancellationToken)
         {
             return _context.TenantPages
                 .AsNoTracking()
-                .Where(tp => tp.TenantId == tenantId)
+                .Where(tp => tp.Tenant.SubDomain == subDomain)
                 .ProjectTo<TenantPagesDto>(_mapper.ConfigurationProvider)
                 .ToListAsync(cancellationToken);
         }
@@ -79,10 +79,10 @@ namespace Infrastructure.Repositories
                 Footer = blockTypes.FirstOrDefault(b => b.Id == TenantWebsiteConstants.FooterId) ?? new(),
             };
         }
-        public async Task<bool> UrlExistsAsync(int tenantId, string url, CancellationToken cancellationToken)
+        public async Task<bool> UrlExistsAsync(string subDomain, string url, CancellationToken cancellationToken)
         {
             return await _context.TenantPages
-                .AnyAsync(p => p.TenantId == tenantId && p.Url == url, cancellationToken);
+                .AnyAsync(p => p.Tenant.SubDomain == subDomain && p.Url == url, cancellationToken);
         }
         public async Task<bool> UpdateTenantPageAsync(int pageId, int tenantId, UpdateTenantPageCommand update, CancellationToken cancellationToken)
         {
@@ -111,13 +111,13 @@ namespace Infrastructure.Repositories
             await _context.SaveChangesAsync(cancellationToken);
             return true;
         }
-        public async Task<TenantPageDto?> GetTenantPageWithBlockTypeAsync(int tenantId, int pageId, CancellationToken cancellationToken)
+        public async Task<TenantPageDto?> GetTenantPageWithBlockTypeAsync(string subDomain, int pageId, CancellationToken cancellationToken)
         {
             var tenantPage = await _context.TenantPages
                 .AsNoTracking()
                 .Include(p => p.PageBlocks)
                     .ThenInclude(pb => pb.BlockType)
-                .FirstOrDefaultAsync(p => p.Id == pageId && p.TenantId == tenantId, cancellationToken);
+                .FirstOrDefaultAsync(p => p.Id == pageId && p.Tenant.SubDomain == subDomain, cancellationToken);
 
             if (tenantPage == null) return null;
 

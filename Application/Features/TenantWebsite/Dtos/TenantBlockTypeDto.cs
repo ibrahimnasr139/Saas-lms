@@ -1,4 +1,6 @@
-﻿namespace Application.Features.TenantWebsite.Dtos
+﻿using System.Text.Json;
+
+namespace Application.Features.TenantWebsite.Dtos
 {
     public sealed class TenantBlockTypeDto
     {
@@ -8,7 +10,7 @@
         public string Description { get; set; } = string.Empty;
         public int Order { get; set; }
         public bool Visible { get; set; }
-        public Dictionary<string, object> Schema { get; set; } = new Dictionary<string, object>();
+        public JsonElement Schema { get; set; }
         public Dictionary<string, object> Props { get; set; } = new Dictionary<string, object>();
     }
 }

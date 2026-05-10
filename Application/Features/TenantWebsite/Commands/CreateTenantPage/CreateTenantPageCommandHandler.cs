@@ -29,7 +29,7 @@ namespace Application.Features.TenantWebsite.Commands.CreateTenantPage
             if (!isSubscribed)
                 return TenantErrors.NotSubscribed;
 
-            var urlExists = await _tenantWebsiteRepository.UrlExistsAsync(tenantId, request.Url, cancellationToken);
+            var urlExists = await _tenantWebsiteRepository.UrlExistsAsync(subDomain!, request.Url, cancellationToken);
             if (urlExists)
                 return TenantWebsiteErrors.PageUrlAlreadyExists;
 

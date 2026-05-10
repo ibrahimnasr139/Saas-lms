@@ -9,7 +9,6 @@ namespace Domain.Entites
         public string Description { get; set; } = string.Empty;
         public string Icon { get; set; } = string.Empty;
         public JsonDocument Schema { get; set; } = JsonDocument.Parse("{}");
-
         public ICollection<PageBlock> PageBlocks { get; set; } = [];
     }
 }

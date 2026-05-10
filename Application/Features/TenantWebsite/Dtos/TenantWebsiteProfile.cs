@@ -13,7 +13,7 @@ namespace Application.Features.TenantWebsite.Dtos
 
             CreateMap<PageBlock, TenantBlockTypeDto>()
                 .ForMember(dest => dest.BlockType, opt => opt.MapFrom(src => src.BlockTypeId))
-                .ForMember(dest => dest.Schema, opt => opt.MapFrom(src => src.BlockType.Schema))
+                .ForMember(dest => dest.Schema, opt => opt.MapFrom(src => src.BlockType.Schema.RootElement))
                 .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.BlockType.Description))
                 .ForMember(dest => dest.DisplayName, opt => opt.MapFrom(src => src.BlockType.DisplayName));
 

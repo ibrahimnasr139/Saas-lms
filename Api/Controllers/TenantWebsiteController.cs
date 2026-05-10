@@ -14,7 +14,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers
 {
-    [Route("api/tenant/website")]
+    [Route("api/tenant/website/pages")]
     [ApiController]
     [Authorize(AuthenticationSchemes = AuthConstants.ApiScheme)]
 
@@ -27,14 +27,14 @@ namespace Api.Controllers
             _mediator = mediator;
         }
 
-        [HttpGet("pages")]
+        [HttpGet]
         public async Task<IActionResult> GetTenantPages(CancellationToken cancellationToken)
         {
             return Ok(await _mediator.Send(new GetTenantPagesQuery(), cancellationToken));
         }
 
 
-        [HttpPost("pages")]
+        [HttpPost]
         public async Task<IActionResult> CreateTenantPage([FromBody] CreateTenantPageCommand command, CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(command, cancellationToken);
@@ -45,7 +45,7 @@ namespace Api.Controllers
         }
 
 
-        [HttpDelete("pages/{pageId}")]
+        [HttpDelete("{pageId}")]
         public async Task<IActionResult> DeleteTenantPage([FromRoute] int pageId, CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(new DeleteTenantPageCommand(pageId), cancellationToken);
@@ -56,7 +56,7 @@ namespace Api.Controllers
         }
 
 
-        [HttpPost("pages/{pageId}/duplicate")]
+        [HttpPost("{pageId}/duplicate")]
         public async Task<IActionResult> DuplicateTenantPage([FromRoute] int pageId, CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(new DuplicateTenantPageCommand(pageId), cancellationToken);
@@ -67,21 +67,21 @@ namespace Api.Controllers
         }
 
 
-        [HttpGet("pages/blocks")]
+        [HttpGet("blocks")]
         public async Task<IActionResult> GetTenantPageBlocks(CancellationToken cancellationToken)
         {
             return Ok(await _mediator.Send(new GetTenantPageBlocksQuery(), cancellationToken));
         }
 
 
-        [HttpGet("pages/validate-url")]
+        [HttpGet("validate-url")]
         public async Task<IActionResult> ValidateUrl([FromQuery] string url, CancellationToken cancellationToken)
         {
             return Ok(await _mediator.Send(new ValidateUrlQuery(url), cancellationToken));
         }
 
 
-        [HttpPatch("pages/{pageId}")]
+        [HttpPatch("{pageId}")]
         public async Task<IActionResult> UpdateTenantPage([FromRoute] int pageId, [FromBody] UpdateTenantPageCommand command, CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(new UpdateTenantPageCommand(pageId, command.Title, command.Url, command.Status,
@@ -94,7 +94,7 @@ namespace Api.Controllers
         }
 
 
-        [HttpGet("pages/{pageId}")]
+        [HttpGet("{pageId}")]
         public async Task<IActionResult> GetTenantPage([FromRoute] int pageId, CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(new GetTenantPageQuery(pageId), cancellationToken);
