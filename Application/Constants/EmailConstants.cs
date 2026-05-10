@@ -43,7 +43,9 @@
         public const string RejectRequestTemplate = "RejectRequestTemplate";
         public const string RejectRequestSubject = "تم رفض طلب الصداقة الخاص بك";
 
-        public const string NewModuleItemNotificationTemplate = "NewModuleItemNotification";
+        public const string NewLessonNotificationTemplate = "NewLessonNotification";
+        public const string NewAssignmentNotificationTemplate = "NewAssignmentNotification";
+        public const string NewQuizNotificationTemplate = "NewQuizNotification";
         public const string QuizDeadlineReminderTemplate = "QuizDeadlineReminder";
         public const string AssignmentDeadlineReminderTemplate = "AssignmentDeadlineReminder";
     }

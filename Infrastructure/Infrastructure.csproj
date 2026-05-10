@@ -56,10 +56,13 @@
 	  <Content Include="Templates\QuizDeadlineReminder.html">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </Content>
-	  <Content Include="Templates\AssignmentDeadlineReminder.html">
+	  <Content Include="Templates\NewLessonNotification.html">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </Content>
-	  <Content Include="Templates\NewModuleItemNotification.html">
+	  <Content Include="Templates\NewAssignmentNotification.html">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	  <Content Include="Templates\NewQuizNotification.html">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </Content>
   </ItemGroup>

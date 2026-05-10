@@ -105,7 +105,13 @@ namespace Application.Features.ModuleItems.Commands.CreateModuleItem
                     ModuleItemType.Quiz => "كويز",
                     _ => "محتوى"
                 };
-
+                var template = request.Type switch
+                {
+                    ModuleItemType.Lesson => EmailConstants.NewLessonNotificationTemplate,
+                    ModuleItemType.Quiz => EmailConstants.NewQuizNotificationTemplate,
+                    ModuleItemType.Assignment => EmailConstants.NewAssignmentNotificationTemplate,
+                    _ => EmailConstants.NewLessonNotificationTemplate
+                };
                 var students = await _enrollmentRepository.GetEnrolledStudentsForNotificationAsync(request.CourseId, request.Title, itemType, request.DueDate, request.StartDate, request.EndDate, cancellationToken);
                 foreach (var student in students)
                 {
@@ -114,14 +120,15 @@ namespace Application.Features.ModuleItems.Commands.CreateModuleItem
                         { "{{StudentName}}", student.StudentName },
                         { "{{ItemTitle}}", student.ItemTitle },
                         { "{{CourseTitle}}", student.CourseTitle },
-                        { "{{ItemType}}", student.ModuleItemType.ToString() },
                         { "{{DueDate}}", student.DueDate.HasValue ? student.DueDate.Value.ToString("yyyy-MM-dd HH:mm") + " UTC" : "-" },
                         { "{{StartDate}}", student.StartDate.HasValue ? student.StartDate.Value.ToString("yyyy-MM-dd HH:mm") + " UTC" : "-" },
                         { "{{EndDate}}", student.EndDate.HasValue ? student.EndDate.Value.ToString("yyyy-MM-dd HH:mm") + " UTC" : "-" },
                         { "{{DashboardUrl}}", $"{EmailConstants.CourseLink}/{request.CourseId}" },
                     };
-                    var emailBody = EmailConfirmationHelper.GenerateEmailBodyHelper(EmailConstants.NewModuleItemNotificationTemplate, placeholders);
-                    BackgroundJob.Enqueue(() => _emailSender.SendEmailAsync(student.StudentEmail, $"تمت إضافة {student.ModuleItemType} جديد في {student.CourseTitle}", emailBody));
+
+                    var emailBody = EmailConfirmationHelper.GenerateEmailBodyHelper(template, placeholders);
+                    var subject = $"تمت إضافة {itemType} جديد في {student.CourseTitle}";
+                    BackgroundJob.Enqueue<IEmailSender>(emailSender => emailSender.SendEmailAsync(student.StudentEmail, subject, emailBody));
                 }
                 return new SuccessDto
                 {
