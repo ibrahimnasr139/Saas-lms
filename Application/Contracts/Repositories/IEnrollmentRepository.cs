@@ -1,4 +1,6 @@
-﻿using Application.Features.StudentCourse.Dtos;
+﻿using Application.Features.ModuleItems.Dtos;
+using Application.Features.StudentCourse.Dtos;
+using Domain.Enums;
 
 namespace Application.Contracts.Repositories
 {
@@ -12,5 +14,6 @@ namespace Application.Contracts.Repositories
         Task<StudentCourseDto?> GetStudentCourseAsync(int studentId, int courseId, CancellationToken cancellationToken);
         Task<List<StudentModuleDto>> GetStudentCourseModulesAsync(int studentId, int courseId, CancellationToken cancellationToken);
         Task<int> GetTenantIdAsync(int studentId, int courseId, CancellationToken cancellationToken);
+        Task<List<NewModuleItemNotificationDto>> GetEnrolledStudentsForNotificationAsync(int courseId, string itemTitle, ModuleItemType Type, DateTime? dueDate, DateTime? startDate, DateTime? endDate, CancellationToken cancellationToken);
     }
 }

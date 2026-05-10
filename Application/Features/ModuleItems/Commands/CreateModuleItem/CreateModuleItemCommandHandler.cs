@@ -1,5 +1,8 @@
-﻿using Domain.Enums;
+﻿using Application.Helpers;
+using Domain.Enums;
+using Hangfire;
 using Microsoft.AspNetCore.Http;
+using Microsoft.VisualBasic;
 
 namespace Application.Features.ModuleItems.Commands.CreateModuleItem
 {
@@ -11,13 +14,16 @@ namespace Application.Features.ModuleItems.Commands.CreateModuleItem
         private readonly IModuleRepository _moduleRepository;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IModuleItemRepository _moduleItemRepository;
+        private readonly IEmailSender _emailSender;
         private readonly IMapper _mapper;
         private readonly HybridCache _hybridCache;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IEnrollmentRepository _enrollmentRepository;
+
         public CreateModuleItemCommandHandler(ITenantMemberRepository tenantMemberRepository, ICurrentUserId currentUserId,
             ISubscriptionRepository subscriptionRepository, IHttpContextAccessor httpContextAccessor, IMapper mapper, IModuleRepository moduleRepository,
-            IModuleItemRepository moduleItemRepository,
-            HybridCache hybridCache, IUnitOfWork unitOfWork)
+            IModuleItemRepository moduleItemRepository, IEmailSender emailSender,HybridCache hybridCache, IUnitOfWork unitOfWork,
+            IEnrollmentRepository enrollmentRepository)
         {
             _tenantMemberRepository = tenantMemberRepository;
             _currentUserId = currentUserId;
@@ -26,8 +32,10 @@ namespace Application.Features.ModuleItems.Commands.CreateModuleItem
             _mapper = mapper;
             _moduleRepository = moduleRepository;
             _moduleItemRepository = moduleItemRepository;
+            _emailSender = emailSender;
             _hybridCache = hybridCache;
             _unitOfWork = unitOfWork;
+            _enrollmentRepository = enrollmentRepository;
         }
         public async Task<OneOf<SuccessDto, Error>> Handle(CreateModuleItemCommand request, CancellationToken cancellationToken)
         {
@@ -90,6 +98,25 @@ namespace Application.Features.ModuleItems.Commands.CreateModuleItem
                 }
                 await _hybridCache.RemoveByTagAsync(tags: new[] { $"{CacheKeysConstants.AllCoursesKey}_{request.CourseId}" }, cancellationToken);
                 await _unitOfWork.CommitTransactionAsync(cancellationToken);
+
+                var students = await _enrollmentRepository.GetEnrolledStudentsForNotificationAsync(request.CourseId, request.Title, request.Type, request.DueDate, request.StartDate, request.EndDate, CancellationToken.None);
+                foreach (var student in students)
+                {
+                    var placeholders = new Dictionary<string, string>
+                    {
+                        { "{{StudentName}}", student.StudentName },
+                        { "{{ItemTitle}}", student.ItemTitle },
+                        { "{{CourseTitle}}", student.CourseTitle },
+                        { "{{ItemType}}", student.ModuleItemType.ToString() },
+                        { "{{DueDate}}", student.DueDate.HasValue ? student.DueDate.Value.ToString("yyyy-MM-dd HH:mm") + " UTC" : "-" },
+                        { "{{StartDate}}", student.StartDate.HasValue ? student.StartDate.Value.ToString("yyyy-MM-dd HH:mm") + " UTC" : "-" },
+                        { "{{EndDate}}", student.EndDate.HasValue ? student.EndDate.Value.ToString("yyyy-MM-dd HH:mm") + " UTC" : "-" },
+                        { "{{DashboardUrl}}", $"{EmailConstants.CourseLink}/{request.CourseId}" },
+                    };
+
+                    var body = EmailConfirmationHelper.GenerateEmailBodyHelper(EmailConstants.NewModuleItemNotificationTemplate, placeholders);
+                    await _emailSender.SendEmailAsync(student.StudentEmail, $"تمت إضافة {student.ModuleItemType} جديد في {student.CourseTitle}", body);
+                }
                 return new SuccessDto
                 {
                     Id = moduleItemId.ToString(),

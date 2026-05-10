@@ -1,4 +1,5 @@
-﻿using Application.Features.StudentCourse.Dtos;
+﻿using Application.Features.ModuleItems.Dtos;
+using Application.Features.StudentCourse.Dtos;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Domain.Enums;
@@ -156,6 +157,23 @@ namespace Infrastructure.Repositories
                 .Where(e => e.StudentId == studentId && e.CourseId == courseId)
                 .Select(e => e.TenantId)
                 .FirstOrDefaultAsync(cancellationToken);
+        }
+        public async Task<List<NewModuleItemNotificationDto>> GetEnrolledStudentsForNotificationAsync(int courseId, string itemTitle, ModuleItemType Type, DateTime? dueDate, DateTime? startDate, DateTime? endDate, CancellationToken cancellationToken)
+        {
+            return await _context.Enrollments
+                .AsNoTracking()
+                .Where(e => e.CourseId == courseId)
+                .Select(e => new NewModuleItemNotificationDto
+                {
+                    StudentEmail = e.Student.User.Email!,
+                    StudentName = $"{e.Student.User.FirstName} {e.Student.User.LastName}",
+                    ItemTitle = itemTitle,
+                    CourseTitle = e.Course.Title,
+                    ModuleItemType = Type,
+                    DueDate = dueDate,
+                    StartDate = startDate,
+                    EndDate = endDate
+                }).ToListAsync(cancellationToken);
         }
     }
 }
