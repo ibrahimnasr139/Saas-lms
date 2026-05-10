@@ -2,6 +2,7 @@
 using Domain.Enums;
 using Hangfire;
 using Microsoft.AspNetCore.Http;
+using System.Runtime.InteropServices;
 
 namespace Application.Features.ModuleItems.Commands.UpdateSettings
 {
@@ -88,6 +89,8 @@ namespace Application.Features.ModuleItems.Commands.UpdateSettings
                     moduleItem.Quiz?.EndDate,
                     cancellationToken);
 
+                var egyptTimeZone = TimeZoneInfo.FindSystemTimeZoneById(RuntimeInformation.IsOSPlatform(OSPlatform.Windows) 
+                    ? "Egypt Standard Time" : "Africa/Cairo");
                 foreach (var student in students)
                 {
                     var placeholders = new Dictionary<string, string>
@@ -95,9 +98,9 @@ namespace Application.Features.ModuleItems.Commands.UpdateSettings
                         { "{{StudentName}}", student.StudentName },
                         { "{{ItemTitle}}", student.ItemTitle },
                         { "{{CourseTitle}}", student.CourseTitle },
-                        { "{{DueDate}}", student.DueDate.HasValue ? student.DueDate.Value.ToString("yyyy-MM-dd HH:mm") + " UTC" : "-" },
-                        { "{{StartDate}}", student.StartDate.HasValue ? student.StartDate.Value.ToString("yyyy-MM-dd HH:mm") + " UTC" : "-" },
-                        { "{{EndDate}}", student.EndDate.HasValue ? student.EndDate.Value.ToString("yyyy-MM-dd HH:mm") + " UTC" : "-" },
+                        { "{{DueDate}}", student.DueDate.HasValue ? TimeZoneInfo.ConvertTimeFromUtc(student.DueDate.Value, egyptTimeZone).ToString("yyyy-MM-dd hh:mm tt") : "-" },
+                        { "{{StartDate}}", student.StartDate.HasValue ? TimeZoneInfo.ConvertTimeFromUtc(student.StartDate.Value, egyptTimeZone).ToString("yyyy-MM-dd hh:mm tt") : "-" },
+                        { "{{EndDate}}", student.EndDate.HasValue ? TimeZoneInfo.ConvertTimeFromUtc(student.EndDate.Value, egyptTimeZone).ToString("yyyy-MM-dd hh:mm tt") : "-" },
                         { "{{DashboardUrl}}", $"{EmailConstants.CourseLink}/{request.CourseId}" },
                     };
 
