@@ -114,8 +114,8 @@ namespace Application.Features.ModuleItems.Commands.CreateModuleItem
                         { "{{DashboardUrl}}", $"{EmailConstants.CourseLink}/{request.CourseId}" },
                     };
 
-                    var body = EmailConfirmationHelper.GenerateEmailBodyHelper(EmailConstants.NewModuleItemNotificationTemplate, placeholders);
-                    await _emailSender.SendEmailAsync(student.StudentEmail, $"تمت إضافة {student.ModuleItemType} جديد في {student.CourseTitle}", body);
+                    var emailBody = EmailConfirmationHelper.GenerateEmailBodyHelper(EmailConstants.NewModuleItemNotificationTemplate, placeholders);
+                    BackgroundJob.Enqueue(() => _emailSender.SendEmailAsync(student.StudentEmail, $"تمت إضافة {student.ModuleItemType} جديد في {student.CourseTitle}", emailBody));
                 }
                 return new SuccessDto
                 {
