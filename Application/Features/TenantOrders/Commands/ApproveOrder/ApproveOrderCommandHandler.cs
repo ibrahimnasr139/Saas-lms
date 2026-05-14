@@ -98,7 +98,7 @@ namespace Application.Features.TenantOrders.Commands.ApproveOrder
                     await _unitOfWork.RollbackTransactionAsync(cancellationToken);
                     return OrderErrors.OrderApproveFailed;
                 }
-                await _tenantRepository.IncreasePlanFeatureUsageByKeyAsync(subDomain!, "student_limit", cancellationToken);
+                await _tenantRepository.IncreasePlanFeatureUsageByKeyAsync(subDomain!, FeatureConstants.STUDENT_LIMIT, cancellationToken);
                 await _unitOfWork.CommitTransactionAsync(cancellationToken);
             }
             catch
