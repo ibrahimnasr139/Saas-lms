@@ -66,7 +66,7 @@ namespace Infrastructure.Repositories
             var averageGrade = await _context.StudentGrades
                 .AsNoTracking()
                 .Where(sg => sg.Tenant.SubDomain == subDomain)
-                .AverageAsync(sg => (double?)sg.Score, cancellationToken) ?? 0;
+                .AverageAsync(sg => (double?)sg.Score / sg.TotalMarks * 100, cancellationToken) ?? 0;
 
             return new StudentStatisticsDto
             {
