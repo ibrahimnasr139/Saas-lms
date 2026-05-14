@@ -2,8 +2,8 @@
 
 public enum PricingType
 {
-    oneTime,
-    subscription,
-    free,
-    perSemester
+    OneTime,
+    Subscription,
+    Free,
+    PerSemester
 }
