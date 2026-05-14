@@ -45,35 +45,26 @@ namespace Infrastructure.Repositories
         }
         public async Task<bool> ApproveOrderWithEnrollmentAsync(int orderId, int tenantId, string actor, Enrollment enrollment, StudentSubscription subscription, CancellationToken cancellationToken)
         {
-            await using var transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
-            try
-            {
-                var order = await _context.Orders
-                    .FirstOrDefaultAsync(o => o.Id == orderId && o.TenantId == tenantId, cancellationToken);
-                if (order is null || order.Status != OrderStatus.pending)
-                    return false;
+            var order = await _context.Orders
+                .FirstOrDefaultAsync(o => o.Id == orderId && o.TenantId == tenantId, cancellationToken);
 
-                order.Status = OrderStatus.approved;
-                order.ApprovedAt = DateTime.UtcNow;
-                order.OrderTimeLines.Add(new OrderTimeLine
-                {
-                    Description = OrderTimeLineConstants.OrderTimeLineApproved,
-                    Actor = actor,
-                    Type = OrderTimeLineType.approved,
-                    OrderId = order.Id
-                });
-
-                await _context.Enrollments.AddAsync(enrollment, cancellationToken);
-                await _context.StudentSubscriptions.AddAsync(subscription, cancellationToken);
-                await _context.SaveChangesAsync(cancellationToken);
-                await transaction.CommitAsync(cancellationToken);
-                return true;
-            }
-            catch
-            {
-                await transaction.RollbackAsync(cancellationToken);
+            if (order is null || order.Status != OrderStatus.pending)
                 return false;
-            }
+
+            order.Status = OrderStatus.approved;
+            order.ApprovedAt = DateTime.UtcNow;
+
+            await _context.OrderTimeLines.AddAsync(new OrderTimeLine
+            {
+                Description = OrderTimeLineConstants.OrderTimeLineApproved,
+                Actor = actor,
+                Type = OrderTimeLineType.approved,
+                OrderId = order.Id
+            }, cancellationToken);
+
+            await _context.Enrollments.AddAsync(enrollment, cancellationToken);
+            await _context.StudentSubscriptions.AddAsync(subscription, cancellationToken);
+            return true;
         }
         public async Task<bool> DeclineOrderAsync(int orderId, int tenantId, string actor, string? reason, CancellationToken cancellationToken)
         {

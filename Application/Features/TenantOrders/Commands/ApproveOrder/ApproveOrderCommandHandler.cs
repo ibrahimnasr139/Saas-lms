@@ -18,12 +18,13 @@ namespace Application.Features.TenantOrders.Commands.ApproveOrder
         private readonly IStudentRepository _studentRepository;
         private readonly IModuleRepository _moduleRepository;
         private readonly IModuleItemRepository _moduleItemRepository;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IEmailSender _emailSender;
 
         public ApproveOrderCommandHandler(IOrderRepository orderRepository, ITenantRepository tenantRepository, IEmailSender emailSender,
             IHttpContextAccessor httpContextAccessor, ICurrentUserId currentUserId, ITenantMemberRepository tenantMemberRepository,
             ISubscriptionRepository subscriptionRepository, HybridCache hybridCache, IStudentRepository studentRepository,
-            IModuleRepository moduleRepository, IModuleItemRepository moduleItemRepository)
+            IModuleRepository moduleRepository, IModuleItemRepository moduleItemRepository, IUnitOfWork unitOfWork)
         {
             _orderRepository = orderRepository;
             _tenantRepository = tenantRepository;
@@ -35,6 +36,7 @@ namespace Application.Features.TenantOrders.Commands.ApproveOrder
             _studentRepository = studentRepository;
             _moduleRepository = moduleRepository;
             _moduleItemRepository = moduleItemRepository;
+            _unitOfWork = unitOfWork;
             _emailSender = emailSender;
         }
         public async Task<OneOf<TenantOrderResponse, Error>> Handle(ApproveOrderCommand request, CancellationToken cancellationToken)
@@ -82,13 +84,28 @@ namespace Application.Features.TenantOrders.Commands.ApproveOrder
                 TenantId = tenantId
             };
 
-            var result = await _orderRepository.ApproveOrderWithEnrollmentAsync(
-                request.OrderId, tenantId,
-                actor, newEnrollment,
-                newSubscription, cancellationToken
-            );
-            if (!result)
-                return OrderErrors.OrderApproveFailed;
+            await _unitOfWork.BeginTransactionAsync(cancellationToken);
+            try
+            {
+                var result = await _orderRepository.ApproveOrderWithEnrollmentAsync(
+                     request.OrderId, tenantId,
+                     actor, newEnrollment,
+                     newSubscription, cancellationToken
+                );
+
+                if (!result)
+                {
+                    await _unitOfWork.RollbackTransactionAsync(cancellationToken);
+                    return OrderErrors.OrderApproveFailed;
+                }
+                await _tenantRepository.IncreasePlanFeatureUsageByKeyAsync(subDomain!, "student_limit", cancellationToken);
+                await _unitOfWork.CommitTransactionAsync(cancellationToken);
+            }
+            catch
+            {
+                await _unitOfWork.RollbackTransactionAsync(cancellationToken);
+                throw;
+            }
 
             var student = await _studentRepository.GetStudentAsync(order.StudentId, cancellationToken);
             var studentEmail = await _studentRepository.GetStudentEmailAsync(student!.UserId, cancellationToken);
