@@ -32,20 +32,18 @@ namespace Application.Features.Courses.Commands.UpdateCourse
             var userId = _currentUserId.GetUserId();
             var isPermitted = await _tenantMemberRepository.IsPermittedMember(userId, PermissionConstants.EDIT_COURSES, cancellationToken);
             if (!isPermitted)
-            {
+
                 return MemberErrors.NotAllowed;
-            }
+
             var subDomain = _httpContextAccessor?.HttpContext?.Request.Cookies[AuthConstants.SubDomain];
             var isSubscribed = await _subscriptionRepository.HasActiveSubscriptionByTenantDomain(subDomain!, cancellationToken);
             if (!isSubscribed)
-            {
                 return TenantErrors.NotSubscribed;
-            }
+
             var course = await _courseRepository.GetCourseByIdAsync(request.CourseId, subDomain!, cancellationToken);
             if (course == null)
-            {
                 return CourseErrors.CourseNotFound;
-            }
+
             _mapper.Map(request, course);
             await _unitOfWork.SaveAsync(cancellationToken);
             await _hybridCache.RemoveByTagAsync(tags: new[] { $"{CacheKeysConstants.AllCoursesKey}_{subDomain}" }, cancellationToken);
