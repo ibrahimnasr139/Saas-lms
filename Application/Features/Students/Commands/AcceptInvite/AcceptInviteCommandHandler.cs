@@ -110,8 +110,8 @@ namespace Application.Features.Students.Commands.AcceptInvite
         {
             return course.PricingType switch
             {
-                PricingType.perSemester => now.AddMonths(3),
-                PricingType.subscription => course.BillingCycle switch
+                PricingType.PerSemester => now.AddMonths(3),
+                PricingType.Subscription => course.BillingCycle switch
                 {
                     BillingCycle.monthly => now.AddMonths(1),
                     BillingCycle.annually => now.AddMonths(8),
