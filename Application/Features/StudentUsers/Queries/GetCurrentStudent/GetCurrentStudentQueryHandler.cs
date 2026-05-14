@@ -7,14 +7,18 @@ namespace Application.Features.StudentUsers.Queries.GetCurrentStudent
     {
         private readonly HybridCache _hybridCache;
         private readonly IStudentRepository _studentRepository;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IStudentStreakRepository _studentStreakRepository;
 
-        public GetCurrentStudentQueryHandler(HybridCache hybridCache, IStudentRepository studentRepository,
-            IHttpContextAccessor httpContextAccessor)
+        public GetCurrentStudentQueryHandler(HybridCache hybridCache, IStudentRepository studentRepository,IUnitOfWork unitOfWork,
+            IHttpContextAccessor httpContextAccessor, IStudentStreakRepository studentStreakRepository)
         {
             _hybridCache = hybridCache;
             _studentRepository = studentRepository;
+            _unitOfWork = unitOfWork;
             _httpContextAccessor = httpContextAccessor;
+            _studentStreakRepository = studentStreakRepository;
         }
         public async Task<OneOf<CurrentStudentDto, Error>> Handle(GetCurrentStudentQuery request, CancellationToken cancellationToken)
         {
@@ -27,6 +31,10 @@ namespace Application.Features.StudentUsers.Queries.GetCurrentStudent
             );
             if (session is null)
                 return UserErrors.Unauthorized;
+
+            var streakUpdated = await _studentStreakRepository.UpdateStudentStreakAsync(session.StudentId, cancellationToken);
+            if (streakUpdated)
+                await _unitOfWork.SaveAsync(cancellationToken);
             return await _studentRepository.GetCurrentStudentAsync(session.UserId, session.StudentId, cancellationToken);
         }
     }

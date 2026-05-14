@@ -33,13 +33,12 @@ namespace Infrastructure.Repositories
             if (streak is null)
                 return false;
 
-            var today = DateTime.UtcNow.Date;
             if (streak.LastActivityAt is null)
                 streak.CurrentStreak = 1;
             else
             {
                 var lastDate = streak.LastActivityAt.Value.Date;
-                var diff = (today - lastDate).Days;
+                var diff = (DateTime.UtcNow.Date - lastDate).Days;
                 if (diff == 0)
                     return false;
                 else if (diff == 1)
@@ -50,7 +49,7 @@ namespace Infrastructure.Repositories
             if (streak.CurrentStreak > streak.LongestStreak)
                 streak.LongestStreak = streak.CurrentStreak;
 
-            streak.LastActivityAt = today;
+            streak.LastActivityAt = DateTime.UtcNow.Date;
             return true;
         }
     }
