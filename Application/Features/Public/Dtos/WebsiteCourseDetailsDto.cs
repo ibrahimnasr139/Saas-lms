@@ -27,5 +27,7 @@ namespace Application.Features.Public.Dtos
         public bool HasPendingOrder { get; set; }
         public CourseInstructorDto Instructor { get; set; } = new();
         public List<CourseModuleDto> Modules { get; set; } = [];
+        public bool CanEnroll { get; set; }
+        public string? Reason { get; set; } 
     }
 }

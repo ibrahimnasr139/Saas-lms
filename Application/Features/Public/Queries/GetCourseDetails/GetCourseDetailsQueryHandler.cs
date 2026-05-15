@@ -36,14 +36,13 @@ namespace Application.Features.Public.Queries.GetCourseDetails
             else
                 subDomain = httpRequest.Host.Host.Split(".")[0];
 
-            var isFeatureEnded = await _tenantRepository.IsFeatureUsingEnded(subDomain!, FeatureConstants.STUDENT_LIMIT, cancellationToken);
-            if (isFeatureEnded)
-                return TenantErrors.FeatureUsageEnded;
-
             var websiteCourseDetails = await _courseRepository.GetWebsiteCourseDetailsAsync(request.CourseId, subDomain, session?.UserId, cancellationToken);
             if (websiteCourseDetails is null)
                 return CourseErrors.CourseNotFound;
 
+            var isFeatureEnded = await _tenantRepository.IsFeatureUsingEnded(subDomain!, FeatureConstants.STUDENT_LIMIT, cancellationToken);
+            websiteCourseDetails.CanEnroll = !isFeatureEnded;
+            websiteCourseDetails.Reason = isFeatureEnded ? "لا يمكن الانضمام لهذا الكورس" : null;
             return websiteCourseDetails;
         }
     }
