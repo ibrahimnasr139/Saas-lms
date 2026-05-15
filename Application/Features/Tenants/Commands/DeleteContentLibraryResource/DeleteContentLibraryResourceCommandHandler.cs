@@ -39,7 +39,7 @@ namespace Application.Features.Tenants.Commands.DeleteContentLibraryResource
             var tenantId = await _tenantRepository.GetTenantIdAsync(subDomain!, cancellationToken);
             var planPricingId = await _subscriptionRepository.GetPlanPricingIdAsync(tenantId, cancellationToken);
             var planId = await _planRepository.GetPlanIdAsync(planPricingId, cancellationToken);
-            var featureId = await _planRepository.GetVideoStorageFeatureIdAsync(cancellationToken);
+            var featureId = await _planRepository.GetFeatureIdAsync(FeatureConstants.VIDEO_STORAGE_GB, cancellationToken);
             var planFeatureId = await _planRepository.GetPlanFeatureIdByFeatureIdAsync(planId, featureId, cancellationToken);
 
             await _tenantRepository.DeCreasePlanFeatureUsageAsync(tenantId, planFeatureId, size, cancellationToken);

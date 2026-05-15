@@ -65,34 +65,6 @@ namespace Infrastructure.Repositories
             });
             await _dbContext.RolePermissions.AddRangeAsync(rolePermissions, cancellationToken);
         }
-        private List<string> GetAssistantPermissions()
-        {
-            return new List<string>
-            {
-                PermissionConstants.CREATE_ASSIGNMENTS,
-                PermissionConstants.VIEW_ASSIGNMENTS,
-                PermissionConstants.MANAGE_ASSIGNMENTS,
-                PermissionConstants.GRADE_ASSIGNMENTS,
-                PermissionConstants.VIEW_COURSES,
-                PermissionConstants.EDIT_COURSES,
-                PermissionConstants.MANAGE_LESSONS,
-                PermissionConstants.MANAGE_MEMBERS,
-                PermissionConstants.MANAGE_VIDEOS,
-                PermissionConstants.MANAGE_MODULE_ITEMS,
-                PermissionConstants.VIEW_MEMBERS,
-                PermissionConstants.VIEW_MEMBER_PROFILE,
-                PermissionConstants.VIEW_DASHBOARD,
-                PermissionConstants.VIEW_ANALYTICS,
-                PermissionConstants.VIEW_PERFORMANCE_CHART,
-                PermissionConstants.VIEW_RECORDINGS,
-                PermissionConstants.INVITE_STUDENTS,
-                PermissionConstants.MANAGE_QUIZZES,
-                PermissionConstants.CREATE_QUIZZES,
-                PermissionConstants.VIEW_QUIZZES,
-                PermissionConstants.VIEW_QUESTION_BANK,
-                PermissionConstants.GRADE_QUIZZES,
-            };
-        }
         public Task<int> GetTenantIdAsync(string subDomain, CancellationToken cancellationToken)
         {
             return _dbContext.Tenants
@@ -192,11 +164,11 @@ namespace Infrastructure.Repositories
                 TotalImages = files.Count(f => f.Type == FileType.Image),
             };
         }
-        public Task<int> GetPlanFeatureUsageAsync(Guid PlanFeatureId, CancellationToken cancellationToken)
+        public Task<int> GetPlanFeatureUsageAsync(Guid PlanFeatureId, int tenantId, CancellationToken cancellationToken)
         {
             return _dbContext.TenantUsage
                 .AsNoTracking()
-                .Where(tu => tu.PlanFeatureId == PlanFeatureId)
+                .Where(tu => tu.PlanFeatureId == PlanFeatureId && tu.TenantId == tenantId)
                 .Select(tu => tu.Used)
                 .FirstOrDefaultAsync(cancellationToken);
         }
@@ -242,6 +214,34 @@ namespace Infrastructure.Repositories
             await _dbContext.TenantUsage
                 .Where(tu => tu.Tenant.SubDomain == subDomain && tu.PlanFeature.Feature.Key == featureName)
                 .ExecuteUpdateAsync(s => s.SetProperty(tu => tu.Used, tu => tu.Used - Size), cancellationToken);
+        }
+        private List<string> GetAssistantPermissions()
+        {
+            return new List<string>
+            {
+                PermissionConstants.CREATE_ASSIGNMENTS,
+                PermissionConstants.VIEW_ASSIGNMENTS,
+                PermissionConstants.MANAGE_ASSIGNMENTS,
+                PermissionConstants.GRADE_ASSIGNMENTS,
+                PermissionConstants.VIEW_COURSES,
+                PermissionConstants.EDIT_COURSES,
+                PermissionConstants.MANAGE_LESSONS,
+                PermissionConstants.MANAGE_MEMBERS,
+                PermissionConstants.MANAGE_VIDEOS,
+                PermissionConstants.MANAGE_MODULE_ITEMS,
+                PermissionConstants.VIEW_MEMBERS,
+                PermissionConstants.VIEW_MEMBER_PROFILE,
+                PermissionConstants.VIEW_DASHBOARD,
+                PermissionConstants.VIEW_ANALYTICS,
+                PermissionConstants.VIEW_PERFORMANCE_CHART,
+                PermissionConstants.VIEW_RECORDINGS,
+                PermissionConstants.INVITE_STUDENTS,
+                PermissionConstants.MANAGE_QUIZZES,
+                PermissionConstants.CREATE_QUIZZES,
+                PermissionConstants.VIEW_QUIZZES,
+                PermissionConstants.VIEW_QUESTION_BANK,
+                PermissionConstants.GRADE_QUIZZES,
+            };
         }
     }
 }

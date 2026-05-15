@@ -53,6 +53,10 @@ namespace Application.Features.TenantOrders.Commands.ApproveOrder
             if (!isPermitted)
                 return MemberErrors.NotAllowed;
 
+            var isFeatureEnded = await _tenantRepository.IsFeatureUsingEnded(subDomain!, FeatureConstants.STUDENT_LIMIT, cancellationToken);
+            if (isFeatureEnded)
+                return TenantErrors.FeatureUsageEnded;
+
             var order = await _orderRepository.GetOrderAsync(tenantId, request.OrderId, cancellationToken);
             if (order is null)
                 return OrderErrors.OrderApproveFailed;

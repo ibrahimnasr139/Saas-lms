@@ -38,13 +38,13 @@ namespace Application.Features.Files.Commands.CreateUpload
             var tenantId = await _tenantRepository.GetTenantIdAsync(subDomain!, cancellationToken);
             var planPricingId = await _subscriptionRepository.GetPlanPricingIdAsync(tenantId, cancellationToken);
             var planId = await _planRepository.GetPlanIdAsync(planPricingId, cancellationToken);
-            var featureId = await _planRepository.GetVideoStorageFeatureIdAsync(cancellationToken);
+            var featureId = await _planRepository.GetFeatureIdAsync(FeatureConstants.VIDEO_STORAGE_GB, cancellationToken);
             var planFeatureId = await _planRepository.GetPlanFeatureIdByFeatureIdAsync(planId, featureId, cancellationToken);
 
-            var limitValueGB = await _planRepository.GetVideoStorageLimitAsync(cancellationToken);
+            var limitValueGB = await _planRepository.GetFeatureLimitAsync(planFeatureId, cancellationToken);
             var limitMB = limitValueGB * 1024;
 
-            var usedBytes = await _tenantRepository.GetPlanFeatureUsageAsync(planFeatureId, cancellationToken);
+            var usedBytes = await _tenantRepository.GetPlanFeatureUsageAsync(planFeatureId, tenantId, cancellationToken);
             var usedMB = Math.Max(0, usedBytes / (1024 * 1024));
             var requestMB = request.Size / (1024 * 1024);
             var totalAfterUpload = usedMB + requestMB - OverFlowSizeMB;

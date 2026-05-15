@@ -42,10 +42,10 @@ namespace Infrastructure.Repositories
                     .Select(pf => pf.Id)
                     .ToListAsync(cancellationToken);
         }
-        public Task<Guid> GetVideoStorageFeatureIdAsync(CancellationToken cancellationToken)
+        public Task<Guid> GetFeatureIdAsync(string featureName, CancellationToken cancellationToken)
         {
             return _context.Features
-                    .Where(f => f.Key == "video_storage_gb")
+                    .Where(f => f.Key == featureName)
                     .Select(f => f.Id)
                     .FirstOrDefaultAsync(cancellationToken);
         }
@@ -56,13 +56,24 @@ namespace Infrastructure.Repositories
                     .Select(pf => pf.Id)
                     .FirstOrDefaultAsync(cancellationToken);
         }
-        public async Task<int?> GetVideoStorageLimitAsync(CancellationToken cancellationToken)
+        public async Task<int> GetFeatureLimitAsync(Guid planFeatureId, CancellationToken cancellationToken)
         {
-            var featureId = await GetVideoStorageFeatureIdAsync(cancellationToken);
-            return await _context.PlanFeatures
-                    .Where(pf => pf.FeatureId == featureId)
+            var limit = await _context.PlanFeatures
+                    .Where(pf => pf.Id == planFeatureId)
                     .Select(pf => pf.LimitValue)
                     .FirstOrDefaultAsync(cancellationToken);
+            return limit.Value;
+        }
+        public Task<(int Used, int Limit)?> GetFeatureUsageInfoAsync(int tenantId, string featureName, CancellationToken cancellationToken)
+        {
+            return _context.TenantUsage
+                .Where(tu => tu.TenantId == tenantId && tu.PlanFeature.Feature.Key == featureName)
+                .Select(tu => new ValueTuple<int, int>(
+                    tu.Used,
+                    tu.PlanFeature.LimitValue!.Value
+                ))
+                .Cast<(int Used, int Limit)?>()
+                .FirstOrDefaultAsync(cancellationToken);
         }
     }
 }

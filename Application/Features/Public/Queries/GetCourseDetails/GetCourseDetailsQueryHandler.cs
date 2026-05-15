@@ -8,13 +8,15 @@ namespace Application.Features.Public.Queries.GetCourseDetails
         private readonly ICourseRepository _courseRepository;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly HybridCache _hybridCache;
+        private readonly ITenantRepository _tenantRepository;
 
         public GetCourseDetailsQueryHandler(ICourseRepository courseRepository, IHttpContextAccessor httpContextAccessor,
-            HybridCache hybridCache)
+            HybridCache hybridCache, ITenantRepository tenantRepository)
         {
             _courseRepository = courseRepository;
             _httpContextAccessor = httpContextAccessor;
             _hybridCache = hybridCache;
+            _tenantRepository = tenantRepository;
         }
         public async Task<OneOf<WebsiteCourseDetailsDto, Error>> Handle(GetCourseDetailsQuery request, CancellationToken cancellationToken)
         {
@@ -25,6 +27,7 @@ namespace Application.Features.Public.Queries.GetCourseDetails
                 _ => ValueTask.FromResult<UserSession?>(null),
                 cancellationToken: cancellationToken
             );
+
             string subDomain = string.Empty;
             var httpRequest = _httpContextAccessor.HttpContext!.Request;
             var origin = httpRequest.Headers["Origin"].ToString();
@@ -32,6 +35,10 @@ namespace Application.Features.Public.Queries.GetCourseDetails
                 subDomain = uri.Host.Split('.')[0];
             else
                 subDomain = httpRequest.Host.Host.Split(".")[0];
+
+            var isFeatureEnded = await _tenantRepository.IsFeatureUsingEnded(subDomain!, FeatureConstants.STUDENT_LIMIT, cancellationToken);
+            if (isFeatureEnded)
+                return TenantErrors.FeatureUsageEnded;
 
             var websiteCourseDetails = await _courseRepository.GetWebsiteCourseDetailsAsync(request.CourseId, subDomain, session?.UserId, cancellationToken);
             if (websiteCourseDetails is null)

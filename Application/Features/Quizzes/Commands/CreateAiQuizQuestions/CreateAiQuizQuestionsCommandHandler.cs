@@ -18,10 +18,12 @@ namespace Application.Features.Quizzes.Commands.CreateAiQuizQuestions
         private readonly ITenantRepository _tenantRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly IPlanRepository _planRepository;
         private readonly AiOptions _options;
         public CreateAiQuizQuestionsCommandHandler(ITenantMemberRepository tenantMemberRepository, ICurrentUserId currentUserId,
             ISubscriptionRepository subscriptionRepository, IHttpContextAccessor httpContextAccessor, IExternalService externalService,
-            IQuizRepository quizRepository, IQuestionRepository questionRepository, ITenantRepository tenantRepository, IUnitOfWork unitOfWork, IMapper mapper, IOptions<AiOptions> options)
+            IQuizRepository quizRepository, IQuestionRepository questionRepository, ITenantRepository tenantRepository, IUnitOfWork unitOfWork, 
+            IMapper mapper, IOptions<AiOptions> options, IPlanRepository planRepository)
         {
             _tenantMemberRepository = tenantMemberRepository;
             _currentUserId = currentUserId;
@@ -33,36 +35,41 @@ namespace Application.Features.Quizzes.Commands.CreateAiQuizQuestions
             _tenantRepository = tenantRepository;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _planRepository = planRepository;
             _options = options.Value;
         }
         public async Task<OneOf<bool, Error>> Handle(CreateAiQuizQuestionsCommand request, CancellationToken cancellationToken)
         {
             var userId = _currentUserId.GetUserId();
-            var subdomain = _httpContextAccessor?.HttpContext?.Request.Cookies[AuthConstants.SubDomain];
+            var subDomain = _httpContextAccessor?.HttpContext?.Request.Cookies[AuthConstants.SubDomain];
+            var tenantId = await _tenantRepository.GetTenantIdAsync(subDomain!, cancellationToken);
+            
             var isPermitted = await _tenantMemberRepository.IsPermittedMember(userId, PermissionConstants.MANAGE_QUIZZES, cancellationToken);
             if (!isPermitted)
-            {
                 return MemberErrors.NotAllowed;
-            }
-            var isSubscribed = await _subscriptionRepository.HasActiveSubscriptionByTenantDomain(subdomain!, cancellationToken);
+            
+            var isSubscribed = await _subscriptionRepository.HasActiveSubscriptionByTenantDomain(subDomain!, cancellationToken);
             if (!isSubscribed)
-            {
                 return TenantErrors.NotSubscribed;
-            }
-            var metadata = await _quizRepository.GetQuizMetadata(request.ItemId, request.CourseId, request.ModuleId, subdomain!, cancellationToken);
+
+            var featureUsage = await _planRepository.GetFeatureUsageInfoAsync(tenantId, FeatureConstants.AI_CREDITS, cancellationToken);
+            if (featureUsage is null)
+                return TenantErrors.FeatureUsageEnded;
+
+            if (featureUsage.Value.Used + request.QuestionsNumber > featureUsage.Value.Limit)
+                return TenantErrors.FeatureUsageEnded;
+
+            var metadata = await _quizRepository.GetQuizMetadata(request.ItemId, request.CourseId, request.ModuleId, subDomain!, cancellationToken);
             if (metadata is null)
-            {
                 return ModuleItemErrors.ModuleItemNotFound;
-            }
+
             var payload = new AiPayload(request.Prompt, metadata, request.Difficulty, request.Type, request.QuestionsNumber);
             var endpoint = _options.QuestionEndPoint;
             var result = await _externalService.CallExternalServiceAsync<AiPayload, IEnumerable<AiResponse>>(endpoint, payload, cancellationToken);
             if (result is null)
-            {
                 throw new Exception();
-            }
-            var category = await _questionRepository.GetQuestionCategory(TenantMemberConstants.GeneralQuestionCategory, subdomain!, cancellationToken);
-            var tenantId = await _tenantRepository.GetTenantIdAsync(subdomain!, cancellationToken);
+            
+            var category = await _questionRepository.GetQuestionCategory(TenantMemberConstants.GeneralQuestionCategory, subDomain!, cancellationToken);
             await _unitOfWork.BeginTransactionAsync(cancellationToken);
             try
             {
@@ -74,6 +81,7 @@ namespace Application.Features.Quizzes.Commands.CreateAiQuizQuestions
                     quizQuestion.Question.TenantId = tenantId;
                 }
                 await _questionRepository.AddQuestionsToQuiz(quizQuestions, cancellationToken);
+                await _tenantRepository.IncreasePlanFeatureUsageByKeyAsync(subDomain!, FeatureConstants.AI_CREDITS, cancellationToken, request.QuestionsNumber);
                 await _unitOfWork.CommitTransactionAsync(cancellationToken);
                 return true;
             }
@@ -82,9 +90,6 @@ namespace Application.Features.Quizzes.Commands.CreateAiQuizQuestions
                 await _unitOfWork.RollbackTransactionAsync(cancellationToken);
                 throw;
             }
-
-
-
         }
     }
 }
