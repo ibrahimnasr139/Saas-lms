@@ -64,7 +64,7 @@ namespace Infrastructure.Repositories
                     && (f.Student1Id == studentId || f.Student2Id == studentId))
                 .Select(f => new FriendRequestDto
                 {
-                    Id = f.Student1Id == studentId ? f.Student2Id : f.Student1Id,
+                    Id = f.Id,
                     Name = f.Student1Id == studentId
                         ? f.Student2.User.FirstName + " " + f.Student2.User.LastName
                         : f.Student1.User.FirstName + " " + f.Student1.User.LastName,
@@ -81,7 +81,7 @@ namespace Infrastructure.Repositories
                 .Where(f => f.Status == FriendStatus.Pending && f.ActionStudentId == studentId)
                 .Select(f => new FriendRequestDto
                 {
-                    Id = f.Student1Id == studentId ? f.Student2Id : f.Student1Id,
+                    Id = f.Id,
                     Name = f.Student1Id == studentId
                         ? f.Student2.User.FirstName + " " + f.Student2.User.LastName
                         : f.Student1.User.FirstName + " " + f.Student1.User.LastName,
