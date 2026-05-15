@@ -11,14 +11,18 @@ namespace Application.Features.StudyTools.Commands.AskAi
         private readonly HybridCache _hybridCache;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IExternalService _externalService;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly AiOptions _options;
+        private readonly IStudentStreakRepository _studentStreakRepository;
         public AskAiCommandHandler(HybridCache hybridCache, IHttpContextAccessor httpContextAccessor, IOptions<AiOptions> options,
-            IExternalService externalService)
+            IExternalService externalService, IStudentStreakRepository studentStreakRepository, IUnitOfWork unitOfWork)
         {
             _hybridCache = hybridCache;
             _httpContextAccessor = httpContextAccessor;
             _externalService = externalService;
+            _unitOfWork = unitOfWork;
             _options = options.Value;
+            _studentStreakRepository = studentStreakRepository;
         }
         public async Task<OneOf<AskAiDto, Error>> Handle(AskAiCommand request, CancellationToken cancellationToken)
         {
@@ -39,11 +43,12 @@ namespace Application.Features.StudyTools.Commands.AskAi
             };
 
             var endpoint = _options.AskAiEndPoint;
-            var result = await _externalService
-                .CallExternalServiceAsync<AskAiRequest, AskAiResponse>(endpoint, payload, cancellationToken);
+            var result = await _externalService.CallExternalServiceAsync<AskAiRequest, AskAiResponse>(endpoint, payload, cancellationToken);
             if (result is null)
                 throw new Exception();
 
+            await _studentStreakRepository.UpdateStudentStreakAsync(session.StudentId, cancellationToken);
+            await _unitOfWork.SaveAsync(cancellationToken);
             return new AskAiDto
             {
                 Question = result.Question,

@@ -14,9 +14,10 @@ namespace Application.Features.StudyTools.Commands.CreateFlashCardDeck
         private readonly IFlashCardRepository _flashCardRepository;
         private readonly AiOptions _options;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IStudentStreakRepository _studentStreakRepository;
         public CreateFlashCardDeckCommandHandler(HybridCache hybridCache, IHttpContextAccessor httpContextAccessor,
             IOptions<AiOptions> options, IExternalService externalService, IFlashCardRepository flashCardRepository,
-            IUnitOfWork unitOfWork)
+            IUnitOfWork unitOfWork, IStudentStreakRepository studentStreakRepository)
         {
             _hybridCache = hybridCache;
             _httpContextAccessor = httpContextAccessor;
@@ -24,6 +25,7 @@ namespace Application.Features.StudyTools.Commands.CreateFlashCardDeck
             _flashCardRepository = flashCardRepository;
             _unitOfWork = unitOfWork;
             _options = options.Value;
+            _studentStreakRepository = studentStreakRepository;
         }
         public async Task<OneOf<CreateFlashCardDeckDto, Error>> Handle(CreateFlashCardDeckCommand request, CancellationToken cancellationToken)
         {
@@ -76,6 +78,7 @@ namespace Application.Features.StudyTools.Commands.CreateFlashCardDeck
             try
             {
                 await _flashCardRepository.CreateFlashCardDeckAsync(newDeck, cancellationToken);
+                await _studentStreakRepository.UpdateStudentStreakAsync(session.StudentId, cancellationToken);
                 await _unitOfWork.CommitTransactionAsync(cancellationToken);
             }
             catch

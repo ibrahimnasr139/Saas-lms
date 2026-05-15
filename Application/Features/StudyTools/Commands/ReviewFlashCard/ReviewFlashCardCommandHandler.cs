@@ -11,13 +11,16 @@ namespace Application.Features.StudyTools.Commands.ReviewFlashCard
         private readonly IFlashCardRepository _flashCardRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IStudentRepository _studentRepository;
+        private readonly IStudentStreakRepository _studentStreakRepository;
 
         public ReviewFlashCardCommandHandler(HybridCache hybridCache, IHttpContextAccessor httpContextAccessor,
-            IFlashCardRepository flashCardRepository, IUnitOfWork unitOfWork, IStudentRepository studentRepository)
+            IFlashCardRepository flashCardRepository, IUnitOfWork unitOfWork, IStudentRepository studentRepository,
+            IStudentStreakRepository studentStreakRepository)
         {
             _flashCardRepository = flashCardRepository;
             _unitOfWork = unitOfWork;
             _studentRepository = studentRepository;
+            _studentStreakRepository = studentStreakRepository;
             _httpContextAccessor = httpContextAccessor;
             _hybridCache = hybridCache;
         }
@@ -77,6 +80,7 @@ namespace Application.Features.StudyTools.Commands.ReviewFlashCard
             flashCard.FlashCardDeck.NextReviewAt = DateTime.UtcNow.AddDays(3);
 
             await _flashCardRepository.CreateFlashCardReviewAsync(newFlashCardReview, cancellationToken);
+            await _studentStreakRepository.UpdateStudentStreakAsync(session.StudentId, cancellationToken);
             await _unitOfWork.SaveAsync(cancellationToken);
             return new ReviewFlashCardDto { Message = MessagesConstants.FlashCardReviewedSuccessfully };
         }

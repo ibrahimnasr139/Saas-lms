@@ -15,10 +15,11 @@ namespace Application.Features.StudyTools.Commands.CreateQuiz
         private readonly IStudentSubjectRepository _studentSubjectRepository;
         private readonly IStudentQuizRepository _studentQuizRepository;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IStudentStreakRepository _studentStreakRepository;
 
         public CreateQuizCommandHandler(HybridCache hybridCache, IHttpContextAccessor httpContextAccessor, IOptions<AiOptions> options,
             IExternalService externalService, IStudentSubjectRepository studentSubjectRepository, IStudentQuizRepository studentQuizRepository,
-            IUnitOfWork unitOfWork)
+            IUnitOfWork unitOfWork, IStudentStreakRepository studentStreakRepository)
         {
             _hybridCache = hybridCache;
             _httpContextAccessor = httpContextAccessor;
@@ -27,6 +28,7 @@ namespace Application.Features.StudyTools.Commands.CreateQuiz
             _studentSubjectRepository = studentSubjectRepository;
             _studentQuizRepository = studentQuizRepository;
             _unitOfWork = unitOfWork;
+            _studentStreakRepository = studentStreakRepository;
         }
         public async Task<OneOf<CreateQuizDto, Error>> Handle(CreateQuizCommand request, CancellationToken cancellationToken)
         {
@@ -78,6 +80,7 @@ namespace Application.Features.StudyTools.Commands.CreateQuiz
                 }).ToList()
             };
             await _studentQuizRepository.CreateStudentQuizAsync(newStudentQuiz, cancellationToken);
+            await _studentStreakRepository.UpdateStudentStreakAsync(session.StudentId, cancellationToken);
             await _unitOfWork.SaveAsync(cancellationToken);
             return new CreateQuizDto { Id = newStudentQuiz.Id };
         }
