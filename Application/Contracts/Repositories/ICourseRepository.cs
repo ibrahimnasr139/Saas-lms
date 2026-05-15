@@ -18,5 +18,6 @@ namespace Application.Contracts.Repositories
         Task<Course> GetCourseAsync(int courseId, int tenantId, CancellationToken cancellationToken);
         Task<string> GetCourseNameAsync(int courseId, CancellationToken cancellationToken);
         Task<Course?> GetCourseWithEnrollmentsAsync(int courseId, string subdomain, CancellationToken cancellationToken);
+        Task<(string Title, string Level)?> GetCourseTitleAndLevelAsync(int courseId, string subDomain, CancellationToken cancellationToken);
     }
 }

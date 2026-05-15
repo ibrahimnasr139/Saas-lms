@@ -15,5 +15,6 @@ namespace Application.Contracts.Repositories
         Task<List<AllModulesDto>> GetAllModulesAsync(int courseId, CancellationToken cancellationToken);
         Task<int?> GetFirstModuleIdAsync(int courseId, CancellationToken cancellationToken);
         Task<string?> GetModuleNameAsync(int itemId, int courseId, CancellationToken cancellationToken);
+        Task<string> GetModuleTitleAsync(int moduleId, string subDomain, CancellationToken cancellationToken);
     }
 }

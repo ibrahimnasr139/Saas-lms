@@ -105,5 +105,13 @@ namespace Infrastructure.Repositories
                 .FirstOrDefaultAsync(cancellationToken);
             return result;
         }
+        public Task<string> GetModuleTitleAsync(int moduleId, string subDomain, CancellationToken cancellationToken)
+        {
+            var title = _context.Modules
+                .Where(m => m.Id == moduleId && m.Course.Tenant.SubDomain == subDomain)
+                .Select(m => m.Title)
+                .FirstOrDefaultAsync(cancellationToken);
+            return title!;
+        }
     }
 }

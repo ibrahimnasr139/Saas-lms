@@ -3,6 +3,7 @@ using Application.Constants;
 using Application.Features.Tenants.Commands.CreateLiveSession;
 using Application.Features.Tenants.Commands.DeleteContentLibraryResource;
 using Application.Features.Tenants.Commands.DeleteLiveSession;
+using Application.Features.Tenants.Commands.GenerateDescription;
 using Application.Features.Tenants.Commands.UpdateLiveSession;
 using Application.Features.Tenants.Queries.GetContentLibraryResources;
 using Application.Features.Tenants.Queries.GetContentLibraryStatistics;
@@ -132,6 +133,17 @@ namespace Api.Controllers
         public async Task<IActionResult> GetLiveSessionsStatistics(CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(new GetLiveSessionsStatisticsQuery(), cancellationToken);
+            return result.Match<IActionResult>(
+                success => Ok(success),
+                error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message })
+            );
+        }
+
+
+        [HttpPost("generate-description")]
+        public async Task<IActionResult> GenerateDescription([FromBody] GenerateDescriptionCommand command, CancellationToken cancellationToken)
+        {
+            var result = await _mediator.Send(command, cancellationToken);
             return result.Match<IActionResult>(
                 success => Ok(success),
                 error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message })

@@ -218,5 +218,16 @@ namespace Infrastructure.Repositories
                         .ThenInclude(s => s.User)
                 .FirstOrDefaultAsync(c => c.Id == courseId && c.Tenant.SubDomain == subdomain, cancellationToken);
         }
+        public Task<(string Title, string Level)?> GetCourseTitleAndLevelAsync(int courseId, string subDomain, CancellationToken cancellationToken)
+        {
+            return _dbContext.Courses
+                .Where(c => c.Id == courseId && c.Tenant.SubDomain == subDomain)
+                .Select(c => new ValueTuple<string, string>(
+                    c.Title,
+                    c.Grade.Label
+                ))
+                .Cast<(string Title, string Level)?>()
+                .FirstOrDefaultAsync(cancellationToken);
+        }
     }
 }

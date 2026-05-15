@@ -7,5 +7,6 @@
         public string AskAiEndPoint { get; set; } = string.Empty;
         public string GenerateFlashCardsEndPoint { get; set; } = string.Empty;
         public string GenerateQuizEndPoint { get; set; } = string.Empty;
+        public string GenerateDescriptionEndPoint { get; set; } = string.Empty;
     }
 }
