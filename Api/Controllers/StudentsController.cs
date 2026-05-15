@@ -3,9 +3,11 @@ using Application.Features.Students.Commands.AcceptInvite;
 using Application.Features.Students.Commands.DeclineInvite;
 using Application.Features.Students.Commands.ValidateStudentInvite;
 using Application.Features.Students.Queries.GetAvailableSubjects;
+using Application.Features.Students.Queries.GetSubjects;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace Api.Controllers
 {
@@ -57,6 +59,17 @@ namespace Api.Controllers
         public async Task<IActionResult> GetAvailableSubjects(CancellationToken cancellationToken)
         {
             return Ok(await _mediator.Send(new GetAvailableSubjectsQuery(), cancellationToken));
+        }
+
+
+        [HttpGet("subjects")]
+        public async Task<IActionResult> GetSubjects(CancellationToken cancellationToken)
+        {
+            var result = await _mediator.Send(new GetSubjectsQuery(), cancellationToken);
+            return result.Match<IActionResult>(
+                response => Ok(response),
+                error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message })
+            );
         }
     }
 }

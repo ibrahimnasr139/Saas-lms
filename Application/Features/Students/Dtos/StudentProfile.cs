@@ -11,6 +11,9 @@
                .ForMember(dest => dest.IsExpired, opt => opt.MapFrom(src => src.ExpiresAt <= DateTime.UtcNow));
 
             CreateMap<AvailableSubject, AvailableSubjectDto>();
+
+            CreateMap<StudentSubject, SubjectDto>()
+                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.AvailableSubject.DisplayName));
         }
     }
 }

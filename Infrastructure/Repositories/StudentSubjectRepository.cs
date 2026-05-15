@@ -1,12 +1,18 @@
-﻿namespace Infrastructure.Repositories
+﻿using Application.Features.Students.Dtos;
+using AutoMapper;
+using AutoMapper.QueryableExtensions;
+
+namespace Infrastructure.Repositories
 {
     internal sealed class StudentSubjectRepository : IStudentSubjectRepository
     {
         private readonly AppDbContext _context;
+        private readonly IMapper _mapper;
 
-        public StudentSubjectRepository(AppDbContext context)
+        public StudentSubjectRepository(AppDbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
         public async Task CreateStudentSubjectAsync(List<StudentSubject> studentSubjects, CancellationToken cancellationToken)
         {
@@ -36,6 +42,13 @@
                 .FirstOrDefaultAsync(cancellationToken);
 
             return (result!.SubjectName, result.ChapterName);
+        }
+        public async Task<List<SubjectDto>> GetSubjectsAsync(int studentId, CancellationToken cancellationToken)
+        {
+            return await _context.StudentSubjects
+                .Where(ss => ss.StudentId == studentId)
+                .ProjectTo<SubjectDto>(_mapper.ConfigurationProvider)
+                .ToListAsync(cancellationToken);
         }
     }
 }
