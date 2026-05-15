@@ -62,19 +62,41 @@ namespace Infrastructure.Repositories
                 .Where(f => f.Status == FriendStatus.Pending
                     && f.ActionStudentId != studentId
                     && (f.Student1Id == studentId || f.Student2Id == studentId))
-                .ProjectTo<FriendRequestDto>(_mapper.ConfigurationProvider)
-                .ToListAsync(cancellationToken);
+                .Select(f => new FriendRequestDto
+                {
+                    StudentId = f.Student1Id == studentId ? f.Student2Id : f.Student1Id,
+                    Name = f.Student1Id == studentId
+                        ? f.Student2.User.FirstName + " " + f.Student2.User.LastName
+                        : f.Student1.User.FirstName + " " + f.Student1.User.LastName,
+                    ProfilePicture = f.Student1Id == studentId
+                        ? f.Student2.User.ProfilePicture
+                        : f.Student1.User.ProfilePicture,
+                    Grade = f.Student1Id == studentId
+                        ? f.Student2.Grade
+                        : f.Student1.Grade,
+                }).ToListAsync(cancellationToken);
 
-            var SentRequests = await _context.Friends
+            var sentRequests = await _context.Friends
                 .AsNoTracking()
                 .Where(f => f.Status == FriendStatus.Pending && f.ActionStudentId == studentId)
-                .ProjectTo<FriendRequestDto>(_mapper.ConfigurationProvider)
-                .ToListAsync(cancellationToken);
+                .Select(f => new FriendRequestDto
+                {
+                    StudentId = f.Student1Id == studentId ? f.Student2Id : f.Student1Id,
+                    Name = f.Student1Id == studentId
+                        ? f.Student2.User.FirstName + " " + f.Student2.User.LastName
+                        : f.Student1.User.FirstName + " " + f.Student1.User.LastName,
+                    ProfilePicture = f.Student1Id == studentId
+                        ? f.Student2.User.ProfilePicture
+                        : f.Student1.User.ProfilePicture,
+                    Grade = f.Student1Id == studentId
+                        ? f.Student2.Grade
+                        : f.Student1.Grade,
+                }).ToListAsync(cancellationToken);
 
             return new RequestsDto
             {
                 FriendRequests = incomingRequests,
-                SentRequests = SentRequests
+                SentRequests = sentRequests
             };
         }
         public async Task<bool> RequestAlreadySentAsync(int studentSenderId, int studentRecevierId, CancellationToken cancellationToken)
