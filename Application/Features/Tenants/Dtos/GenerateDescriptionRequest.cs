@@ -3,7 +3,7 @@
     public sealed class GenerateDescriptionRequest
     {
         public ContextDto Context { get; set; } = default!;
-        public DescriptionType Type { get; set; }
+        public string Type { get; set; } = string.Empty;
     }
     public class ContextDto
     {

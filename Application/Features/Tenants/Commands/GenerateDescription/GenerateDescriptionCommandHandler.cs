@@ -109,7 +109,7 @@ namespace Application.Features.Tenants.Commands.GenerateDescription
 
             var payload = new GenerateDescriptionRequest
             {
-                Type = request.Context,
+                Type = request.Context.ToString().ToLower(),
                 Context = context
             };
 
