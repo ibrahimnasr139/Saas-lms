@@ -72,7 +72,7 @@ namespace Application.Features.StudentQuizes.Commands.SubmitQuiz
                 attempt.TimeSpent = request.TimeSpent;
                 attempt.SubmittedAt = DateTime.UtcNow;
                 await _quizRepository.UpdateQuizAttempt(attempt);
-                await _studentStreakRepository.UpdateStudentStreakAsync(session.StudentId, cancellationToken);
+                await _studentStreakRepository.UpdateStudentStreakAsync(session.StudentId, cancellationToken, true);
                 await _unitOfWork.CommitTransactionAsync(cancellationToken);
             }
             catch

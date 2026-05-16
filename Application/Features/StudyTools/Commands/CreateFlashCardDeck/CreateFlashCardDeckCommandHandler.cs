@@ -78,7 +78,7 @@ namespace Application.Features.StudyTools.Commands.CreateFlashCardDeck
             try
             {
                 await _flashCardRepository.CreateFlashCardDeckAsync(newDeck, cancellationToken);
-                await _studentStreakRepository.UpdateStudentStreakAsync(session.StudentId, cancellationToken);
+                await _studentStreakRepository.UpdateStudentStreakAsync(session.StudentId, cancellationToken, true);
                 await _unitOfWork.CommitTransactionAsync(cancellationToken);
             }
             catch

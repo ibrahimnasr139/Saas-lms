@@ -27,14 +27,14 @@ namespace Infrastructure.Repositories
                 .FirstOrDefaultAsync(cancellationToken);
             return streak!;
         }
-        public async Task<bool> UpdateStudentStreakAsync(int studentId, CancellationToken cancellationToken)
+        public async Task<bool> UpdateStudentStreakAsync(int studentId, CancellationToken cancellationToken, bool updateActivity = false)
         {
             var streak = await _context.StudentStreaks.FirstOrDefaultAsync(ss => ss.StudentId == studentId, cancellationToken);
             if (streak is null)
                 return false;
 
             if (streak.LastActivityAt is null)
-                streak.CurrentStreak = 1;
+                streak.CurrentStreak = 0;
             else
             {
                 var lastDate = streak.LastActivityAt.Value.Date;
@@ -46,10 +46,12 @@ namespace Infrastructure.Repositories
                 else
                     streak.CurrentStreak = 1;
             }
+
             if (streak.CurrentStreak > streak.LongestStreak)
                 streak.LongestStreak = streak.CurrentStreak;
 
-            streak.LastActivityAt = DateTime.UtcNow.Date;
+            if (updateActivity)
+                streak.LastActivityAt = DateTime.UtcNow.Date;
             return true;
         }
     }

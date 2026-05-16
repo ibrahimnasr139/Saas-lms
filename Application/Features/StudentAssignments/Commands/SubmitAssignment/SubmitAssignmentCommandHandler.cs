@@ -83,7 +83,7 @@ namespace Application.Features.StudentAssignments.Commands.SubmitAssignment
                 newAssignmentSubmission.Link = request.Link;
 
             await _assignmentRepository.CreateAssignmentSubmissionAsync(newAssignmentSubmission, cancellationToken);
-            await _studentStreakRepository.UpdateStudentStreakAsync(session.StudentId, cancellationToken);
+            await _studentStreakRepository.UpdateStudentStreakAsync(session.StudentId, cancellationToken, true);
             await _unitOfWork.SaveAsync(cancellationToken);
             return new StudentAssignmentResponse { SubmissionId = newAssignmentSubmission.Id, Messsage = MessagesConstants.AssignmentSubmissionSuccessfully };
         }

@@ -6,6 +6,6 @@ namespace Application.Contracts.Repositories
     {
         Task CreateStudentStreakAsync(StudentStreak studentStreak, CancellationToken cancellationToken);
         Task<StudentStreakDto> GetStudentStreakAsync(int studentId, CancellationToken cancellationToken);
-        Task<bool> UpdateStudentStreakAsync(int studentId, CancellationToken cancellationToken);
+        Task<bool> UpdateStudentStreakAsync(int studentId, CancellationToken cancellationToken, bool updateActivity = false);
     }
 }

@@ -80,7 +80,7 @@ namespace Application.Features.StudyTools.Commands.CreateQuiz
                 }).ToList()
             };
             await _studentQuizRepository.CreateStudentQuizAsync(newStudentQuiz, cancellationToken);
-            await _studentStreakRepository.UpdateStudentStreakAsync(session.StudentId, cancellationToken);
+            await _studentStreakRepository.UpdateStudentStreakAsync(session.StudentId, cancellationToken, true);
             await _unitOfWork.SaveAsync(cancellationToken);
             return new CreateQuizDto { Id = newStudentQuiz.Id };
         }
