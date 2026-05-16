@@ -71,7 +71,9 @@ namespace Application.Features.StudyTools.Commands.CreateQuiz
                 {
                     Question = r.Question,
                     Explanation = r.Explanation,
-                    Type = Enum.TryParse<StudentQuizQuestionType>(r.Type, true, out var type) ? type : StudentQuizQuestionType.Mcq,
+                    Type = Enum.TryParse<StudentQuizQuestionType>(r.Type, true, out var type)
+                        ? type
+                        : StudentQuizQuestionType.Mcq,
                     Options = r.Options.Select(o => new StudentQuizQuestionOption
                     {
                         Text = o.Text,

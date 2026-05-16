@@ -39,8 +39,7 @@ namespace Application.Features.StudyTools.Commands.CreateFlashCardDeck
             if (session is null)
                 return UserErrors.Unauthorized;
 
-            (string SubjectName, string ChapterName) = await _flashCardRepository
-                .GetSubjectNameAndChapterNameAsync(session.StudentId, request.SubjectId, request.ChapterId, cancellationToken);
+            (string SubjectName, string ChapterName) = await _flashCardRepository.GetSubjectNameAndChapterNameAsync(session.StudentId, request.SubjectId, request.ChapterId, cancellationToken);
 
             var payload = new CreateFlashCardDeckRequest
             {
@@ -51,8 +50,7 @@ namespace Application.Features.StudyTools.Commands.CreateFlashCardDeck
                 NumberOfCards = request.NumberOfCards
             };
             var endpoint = _options.GenerateFlashCardsEndPoint;
-            var result = await _externalService
-                .CallExternalServiceAsync<CreateFlashCardDeckRequest, List<CreateFlashCardDeckResponse>>(endpoint, payload, cancellationToken);
+            var result = await _externalService.CallExternalServiceAsync<CreateFlashCardDeckRequest, List<CreateFlashCardDeckResponse>>(endpoint, payload, cancellationToken);
 
             if (result is null)
                 throw new Exception();
