@@ -13,7 +13,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers
 {
-    [Route("api/student")]
+    [Route("api/student/study-tools")]
     [ApiController]
     [Authorize]
     public class StudyToolsController : ControllerBase
