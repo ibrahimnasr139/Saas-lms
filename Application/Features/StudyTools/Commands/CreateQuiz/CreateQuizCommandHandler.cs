@@ -50,7 +50,7 @@ namespace Application.Features.StudyTools.Commands.CreateQuiz
                 Subject = subject,
                 Chapter = chapter,
                 NumberOfQuestions = request.NumberOfQuestions,
-                Difficulty = request.Difficulty
+                Difficulty = request.Difficulty.ToString().ToLower()
             };
 
             var endpoint = _options.GenerateQuizEndPoint;

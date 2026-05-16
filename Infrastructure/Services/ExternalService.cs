@@ -14,7 +14,7 @@ namespace Infrastructure.Services
         }
 
         public async Task<TResponse> CallExternalServiceAsync<TPayload, TResponse>(string endpoint, TPayload payload,
-        CancellationToken cancellationToken) where TPayload : class where TResponse : class
+            CancellationToken cancellationToken) where TPayload : class where TResponse : class
         {
             var json = JsonSerializer.Serialize(payload);
             Console.WriteLine($"AI Payload: {json}");
