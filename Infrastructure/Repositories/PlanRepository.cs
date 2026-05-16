@@ -64,16 +64,21 @@ namespace Infrastructure.Repositories
                     .FirstOrDefaultAsync(cancellationToken);
             return limit.Value;
         }
-        public Task<(int Used, int Limit)?> GetFeatureUsageInfoAsync(int tenantId, string featureName, CancellationToken cancellationToken)
+        public async Task<(int Used, int Limit)?> GetFeatureUsageInfoAsync(int tenantId, string featureName, CancellationToken cancellationToken)
         {
-            return _context.TenantUsage
+            var result = await _context.TenantUsage
                 .Where(tu => tu.TenantId == tenantId && tu.PlanFeature.Feature.Key == featureName)
-                .Select(tu => new ValueTuple<int, int>(
+                .Select(tu => new
+                {
                     tu.Used,
-                    tu.PlanFeature.LimitValue!.Value
-                ))
-                .Cast<(int Used, int Limit)?>()
+                    Limit = tu.PlanFeature.LimitValue!.Value
+                })
                 .FirstOrDefaultAsync(cancellationToken);
+
+            if (result is null)
+                return null;
+
+            return (result.Used, result.Limit);
         }
     }
 }
