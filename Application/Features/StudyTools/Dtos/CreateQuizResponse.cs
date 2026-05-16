@@ -7,6 +7,7 @@ namespace Application.Features.StudyTools.Dtos
         public string Question { get; set; } = string.Empty;
         public string Explanation { get; set; } = string.Empty;
         public List<StudentQuizQuestionOption> Options { get; set; } = [];
-        public StudentQuizQuestionType Type { get; set; }
+        //public StudentQuizQuestionType Type { get; set; }
+        public string Type { get; set; } = string.Empty;
     }
 }

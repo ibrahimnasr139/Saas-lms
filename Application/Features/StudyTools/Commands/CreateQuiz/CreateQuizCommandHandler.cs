@@ -1,5 +1,6 @@
 ﻿using Application.Contracts.Externals;
 using Application.Features.StudyTools.Dtos;
+using Domain.Enums;
 using Infrastructure.Common.Options;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
@@ -42,8 +43,7 @@ namespace Application.Features.StudyTools.Commands.CreateQuiz
             if (session is null)
                 return UserErrors.Unauthorized;
 
-            (string subject, string? chapter) = await _studentSubjectRepository
-                .GetSubjectAndChapterNamesAsync(request.SubjectId, request.ChapterId, session.StudentId, cancellationToken);
+            (string subject, string? chapter) = await _studentSubjectRepository.GetSubjectAndChapterNamesAsync(request.SubjectId, request.ChapterId, session.StudentId, cancellationToken);
 
             var payload = new CreateQuizPayload
             {
@@ -55,8 +55,7 @@ namespace Application.Features.StudyTools.Commands.CreateQuiz
             };
 
             var endpoint = _options.GenerateQuizEndPoint;
-            var result = await _externalService
-                .CallExternalServiceAsync<CreateQuizPayload, List<CreateQuizResponse>>(endpoint, payload, cancellationToken);
+            var result = await _externalService.CallExternalServiceAsync<CreateQuizPayload, List<CreateQuizResponse>>(endpoint, payload, cancellationToken);
 
             if (result is null)
                 throw new Exception();
@@ -72,7 +71,7 @@ namespace Application.Features.StudyTools.Commands.CreateQuiz
                 {
                     Question = r.Question,
                     Explanation = r.Explanation,
-                    Type = r.Type,
+                    Type = Enum.TryParse<StudentQuizQuestionType>(r.Type, true, out var type) ? type : StudentQuizQuestionType.Mcq,
                     Options = r.Options.Select(o => new StudentQuizQuestionOption
                     {
                         Text = o.Text,
