@@ -48,6 +48,7 @@ namespace Application.Features.StudyTools.Commands.CreateQuiz
             var payload = new CreateQuizPayload
             {
                 Subject = subject,
+                Topic = request.Topic,
                 Chapter = chapter,
                 NumberOfQuestions = request.NumberOfQuestions,
                 Difficulty = request.Difficulty.ToString().ToLower()
