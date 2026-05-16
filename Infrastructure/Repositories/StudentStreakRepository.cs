@@ -44,7 +44,7 @@ namespace Infrastructure.Repositories
                 else if (diff == 1)
                     streak.CurrentStreak++;
                 else
-                    streak.CurrentStreak = 1;
+                    streak.CurrentStreak = 0;
             }
 
             if (streak.CurrentStreak > streak.LongestStreak)
