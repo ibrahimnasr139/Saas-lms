@@ -22,7 +22,7 @@ namespace Application.Features.Quizzes.Commands.CreateAiQuizQuestions
         private readonly AiOptions _options;
         public CreateAiQuizQuestionsCommandHandler(ITenantMemberRepository tenantMemberRepository, ICurrentUserId currentUserId,
             ISubscriptionRepository subscriptionRepository, IHttpContextAccessor httpContextAccessor, IExternalService externalService,
-            IQuizRepository quizRepository, IQuestionRepository questionRepository, ITenantRepository tenantRepository, IUnitOfWork unitOfWork, 
+            IQuizRepository quizRepository, IQuestionRepository questionRepository, ITenantRepository tenantRepository, IUnitOfWork unitOfWork,
             IMapper mapper, IOptions<AiOptions> options, IPlanRepository planRepository)
         {
             _tenantMemberRepository = tenantMemberRepository;
@@ -43,11 +43,11 @@ namespace Application.Features.Quizzes.Commands.CreateAiQuizQuestions
             var userId = _currentUserId.GetUserId();
             var subDomain = _httpContextAccessor?.HttpContext?.Request.Cookies[AuthConstants.SubDomain];
             var tenantId = await _tenantRepository.GetTenantIdAsync(subDomain!, cancellationToken);
-            
+
             var isPermitted = await _tenantMemberRepository.IsPermittedMember(userId, PermissionConstants.MANAGE_QUIZZES, cancellationToken);
             if (!isPermitted)
                 return MemberErrors.NotAllowed;
-            
+
             var isSubscribed = await _subscriptionRepository.HasActiveSubscriptionByTenantDomain(subDomain!, cancellationToken);
             if (!isSubscribed)
                 return TenantErrors.NotSubscribed;
@@ -63,12 +63,20 @@ namespace Application.Features.Quizzes.Commands.CreateAiQuizQuestions
             if (metadata is null)
                 return ModuleItemErrors.ModuleItemNotFound;
 
-            var payload = new AiPayload(request.Prompt, metadata, request.Difficulty, request.Type, request.QuestionsNumber);
+            var payload = new AiPayload
+            (
+                request.Prompt,
+                metadata,
+                request.Difficulty.ToString().ToLower(),
+                request.Type.ToString().ToLower(),
+                request.QuestionsNumber
+            );
+
             var endpoint = _options.QuestionEndPoint;
             var result = await _externalService.CallExternalServiceAsync<AiPayload, IEnumerable<AiResponse>>(endpoint, payload, cancellationToken);
             if (result is null)
                 throw new Exception();
-            
+
             var category = await _questionRepository.GetQuestionCategory(TenantMemberConstants.GeneralQuestionCategory, subDomain!, cancellationToken);
             await _unitOfWork.BeginTransactionAsync(cancellationToken);
             try
