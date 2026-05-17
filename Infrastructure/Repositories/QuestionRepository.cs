@@ -117,5 +117,13 @@ namespace Infrastructure.Repositories
                     .ExecuteUpdateAsync(qq => qq.SetProperty(q => q.Order, order), cancellationToken);
             }
         }
+        public Task<int> GetLastQuestionOrderAsync(int quizId, CancellationToken cancellationToken)
+        {
+            return _dbContext.QuizQuestions
+                .Where(qq => qq.QuizId == quizId)
+                .OrderByDescending(qq => qq.Order)
+                .Select(qq => qq.Order)
+                .FirstOrDefaultAsync(cancellationToken);
+        }
     }
 }

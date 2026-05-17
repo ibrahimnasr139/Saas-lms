@@ -78,13 +78,17 @@ namespace Application.Features.Quizzes.Commands.CreateAiQuizQuestions
                 throw new Exception();
 
             var category = await _questionRepository.GetQuestionCategory(TenantMemberConstants.GeneralQuestionCategory, subDomain!, cancellationToken);
+            var lastOrder = await _questionRepository.GetLastQuestionOrderAsync(request.ItemId, cancellationToken);
+
             await _unitOfWork.BeginTransactionAsync(cancellationToken);
             try
             {
                 var quizQuestions = _mapper.Map<List<QuizQuestion>>(result);
+                var order = lastOrder + 1;
                 foreach (var quizQuestion in quizQuestions)
                 {
                     quizQuestion.QuizId = request.ItemId;
+                    quizQuestion.Order = order++;
                     quizQuestion.Question.QuestionCategoryId = category!.Id;
                     quizQuestion.Question.TenantId = tenantId;
                 }
