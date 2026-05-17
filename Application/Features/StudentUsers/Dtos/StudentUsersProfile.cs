@@ -23,7 +23,7 @@ namespace Application.Features.StudentUsers.Dtos
 
             CreateMap<Student, GamificationDto>()
                 .ForMember(dest => dest.Xp, opt => opt.MapFrom(src => src.XP))
-                .ForMember(dest => dest.Level, opt => opt.MapFrom(src => src.Level))
+                .ForMember(dest => dest.Level, opt => opt.Ignore())
                 .ForMember(dest => dest.NextLevelXp, opt => opt.Ignore());
 
             CreateMap<StudentStreak, StreakDto>();

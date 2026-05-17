@@ -165,12 +165,14 @@ namespace Infrastructure.Repositories
                 .ProjectTo<CurrentStudentDto>(_mapper.ConfigurationProvider)
                 .FirstOrDefaultAsync(cancellationToken);
 
-            var requiredXp = _context.Levels
-               .Where(l => l.LevelNumber == result!.Gamification.Level + 1)
-               .Select(l => l.RequiredXp)
-               .FirstOrDefault();
+            var studentLevel = await _context.Levels
+                .Where(l => l.RequiredXp > result!.Gamification.Xp)
+                .OrderBy(l => l.RequiredXp)
+                .Select(l => new { l.RequiredXp, l.LevelNumber })
+                .FirstOrDefaultAsync(cancellationToken);
 
-            result!.Gamification.NextLevelXp = requiredXp - result.Gamification.Xp;
+            result!.Gamification.Level = studentLevel!.LevelNumber;
+            result!.Gamification.NextLevelXp = studentLevel.RequiredXp - result.Gamification.Xp;
             return result;
         }
         public Task UpdateStudentXPAsync(int studentId, int xpGained, CancellationToken cancellationToken)
