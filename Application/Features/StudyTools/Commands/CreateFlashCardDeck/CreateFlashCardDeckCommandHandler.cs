@@ -39,12 +39,12 @@ namespace Application.Features.StudyTools.Commands.CreateFlashCardDeck
             if (session is null)
                 return UserErrors.Unauthorized;
 
-            (string SubjectName, string ChapterName) = await _flashCardRepository.GetSubjectNameAndChapterNameAsync(session.StudentId, request.SubjectId, request.ChapterId, cancellationToken);
+            var name = await _flashCardRepository.GetSubjectNameAndChapterNameAsync(session.StudentId, request.SubjectId, request.ChapterId, cancellationToken);
 
             var payload = new CreateFlashCardDeckRequest
             {
-                Subject = SubjectName,
-                Chapter = ChapterName,
+                Subject = name.Value.SubjectName,
+                Chapter = name?.ChapterName,
                 Goal = request.Goal,
                 Topic = request.Topic,
                 NumberOfCards = request.NumberOfCards
