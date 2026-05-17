@@ -43,13 +43,22 @@ namespace Application.Features.StudyTools.Commands.CreateQuiz
             if (session is null)
                 return UserErrors.Unauthorized;
 
-            (string subject, string? chapter) = await _studentSubjectRepository.GetSubjectAndChapterNamesAsync(request.SubjectId, request.ChapterId, session.StudentId, cancellationToken);
+            var subjectName = await _studentSubjectRepository.GetSubjectNameAsync(session.StudentId, request.SubjectId, cancellationToken);
+            if (subjectName is null)
+                return SubjectErrors.SubjectNotFound;
 
+            string? chapterName = null;
+            if (request.ChapterId.HasValue)
+            {
+                chapterName = await _studentSubjectRepository.GetChapterNameAsync(session.StudentId, request.SubjectId, request.ChapterId.Value, cancellationToken);
+                if (chapterName is null)
+                    return SubjectErrors.ChapterNotFound;
+            }
             var payload = new CreateQuizPayload
             {
-                Subject = subject,
+                Subject = subjectName,
                 Topic = request.Topic,
-                Chapter = chapter,
+                Chapter = chapterName,
                 NumberOfQuestions = request.NumberOfQuestions,
                 Difficulty = request.Difficulty.ToString().ToLower()
             };

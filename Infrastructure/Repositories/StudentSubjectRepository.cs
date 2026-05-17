@@ -25,23 +25,19 @@ namespace Infrastructure.Repositories
                 .Select(s => new { s.Key, s.Id })
                 .ToDictionaryAsync(s => s.Key, s => s.Id, cancellationToken);
         }
-        public async Task<(string, string?)> GetSubjectAndChapterNamesAsync(int subjectId, int? chapterId, int studentId, CancellationToken cancellationToken)
+        public async Task<string?> GetChapterNameAsync(int studentId, int subjectId, int chapterId, CancellationToken cancellationToken)
         {
-            var result = await _context.StudentSubjects
-                .Where(ss => ss.StudentId == studentId && ss.Id == subjectId)
-                .Select(ss => new
-                {
-                    SubjectName = ss.AvailableSubject.DisplayName,
-                    ChapterName = chapterId == null
-                        ? null
-                        : ss.StudentChapters
-                            .Where(sc => sc.Id == chapterId)
-                            .Select(sc => sc.Title)
-                            .FirstOrDefault()
-                })
+            return await _context.StudentChapters
+                .Where(sc => sc.Id == chapterId && sc.SubjectId == subjectId && sc.StudentSubject.StudentId == studentId)
+                .Select(sc => sc.Title)
                 .FirstOrDefaultAsync(cancellationToken);
-
-            return (result!.SubjectName, result.ChapterName);
+        }
+        public async Task<string?> GetSubjectNameAsync(int studentId, int subjectId, CancellationToken cancellationToken)
+        {
+            return await _context.StudentSubjects
+                .Where(ss => ss.Id == subjectId && ss.StudentId == studentId)
+                .Select(ss => ss.AvailableSubject.DisplayName)
+                .FirstOrDefaultAsync(cancellationToken);
         }
         public async Task<List<SubjectDto>> GetSubjectsAsync(int studentId, CancellationToken cancellationToken)
         {

@@ -15,9 +15,10 @@ namespace Application.Features.StudyTools.Commands.CreateFlashCardDeck
         private readonly AiOptions _options;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IStudentStreakRepository _studentStreakRepository;
+        private readonly IStudentSubjectRepository _studentSubjectRepository;
         public CreateFlashCardDeckCommandHandler(HybridCache hybridCache, IHttpContextAccessor httpContextAccessor,
             IOptions<AiOptions> options, IExternalService externalService, IFlashCardRepository flashCardRepository,
-            IUnitOfWork unitOfWork, IStudentStreakRepository studentStreakRepository)
+            IUnitOfWork unitOfWork, IStudentStreakRepository studentStreakRepository, IStudentSubjectRepository studentSubjectRepository)
         {
             _hybridCache = hybridCache;
             _httpContextAccessor = httpContextAccessor;
@@ -26,6 +27,7 @@ namespace Application.Features.StudyTools.Commands.CreateFlashCardDeck
             _unitOfWork = unitOfWork;
             _options = options.Value;
             _studentStreakRepository = studentStreakRepository;
+            _studentSubjectRepository = studentSubjectRepository;
         }
         public async Task<OneOf<CreateFlashCardDeckDto, Error>> Handle(CreateFlashCardDeckCommand request, CancellationToken cancellationToken)
         {
@@ -39,12 +41,22 @@ namespace Application.Features.StudyTools.Commands.CreateFlashCardDeck
             if (session is null)
                 return UserErrors.Unauthorized;
 
-            var name = await _flashCardRepository.GetSubjectNameAndChapterNameAsync(session.StudentId, request.SubjectId, request.ChapterId, cancellationToken);
+            var subjectName = await _studentSubjectRepository.GetSubjectNameAsync(session.StudentId, request.SubjectId, cancellationToken);
+            if (subjectName is null)
+                return SubjectErrors.SubjectNotFound;
+
+            string? chapterName = null;
+            if (request.ChapterId.HasValue)
+            {
+                chapterName = await _studentSubjectRepository.GetChapterNameAsync(session.StudentId, request.SubjectId, request.ChapterId.Value, cancellationToken);
+                if (chapterName is null)
+                    return SubjectErrors.ChapterNotFound;
+            }
 
             var payload = new CreateFlashCardDeckRequest
             {
-                Subject = name.Value.SubjectName,
-                Chapter = name?.ChapterName,
+                Subject = subjectName,
+                Chapter = chapterName,
                 Goal = request.Goal,
                 Topic = request.Topic,
                 NumberOfCards = request.NumberOfCards

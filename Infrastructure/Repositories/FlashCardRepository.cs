@@ -73,21 +73,6 @@ namespace Infrastructure.Repositories
                     }).ToList()
                 }).FirstOrDefaultAsync(cancellationToken);
         }
-        public async Task<(string SubjectName, string ChapterName)?> GetSubjectNameAndChapterNameAsync(int studentId, int subjectId, int chapterId, CancellationToken cancellationToken)
-        {
-            var result = await _context.StudentChapters
-                .Where(sc => sc.Id == chapterId && sc.SubjectId == subjectId && sc.StudentSubject.StudentId == studentId)
-                .Select(sc => new
-                {
-                    SubjectName = sc.StudentSubject.AvailableSubject.DisplayName,
-                    ChapterName = sc.Title
-                }).FirstOrDefaultAsync(cancellationToken);
-
-            if (result is null)
-                return null;
-
-            return (result.SubjectName, result.ChapterName);
-        }
         public async Task<bool> FlashCardDeckIsExistAsync(int deckId, CancellationToken cancellationToken)
         {
             return await _context.FlashCardDecks.AnyAsync(fd => fd.Id == deckId, cancellationToken);

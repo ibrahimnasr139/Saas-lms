@@ -6,6 +6,6 @@
         public string? Chapter { get; set; }
         public int NumberOfCards { get; set; }
         public string? Goal { get; set; }
-        public string? Topic { get; set; }
+        public string Topic { get; set; } = string.Empty;
     }
 }

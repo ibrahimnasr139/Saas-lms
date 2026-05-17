@@ -15,8 +15,8 @@ namespace Domain.Entites
         public DateTime? UpdatedAt { get; set; }
         public int SubjectId { get; set; }
         public StudentSubject StudentSubject { get; set; } = null!;
-        public int ChapterId { get; set; }
-        public StudentChapter StudentChapter { get; set; } = null!;
+        public int? ChapterId { get; set; }
+        public StudentChapter? StudentChapter { get; set; }
         public int StudentId { get; set; }
         public Student Student { get; set; } = null!;
         public ICollection<FlashCard> FlashCards { get; set; } = [];
