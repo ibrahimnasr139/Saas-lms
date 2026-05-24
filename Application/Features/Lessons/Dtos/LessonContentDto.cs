@@ -6,7 +6,7 @@
         public string VideoId { get; set; } = string.Empty;
         public string VideoUrl { get; set; } = string.Empty;
         public int Duration { get; set; }
-        public List<Resource> Resources { get; set; } = [];
+        public List<ResourceDto> Resources { get; set; } = [];
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
     }

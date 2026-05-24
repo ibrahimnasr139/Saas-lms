@@ -145,7 +145,7 @@ namespace Infrastructure.Repositories
                     Duration = l.File.Metadata != null && l.File.Metadata.ContainsKey("Duration")
                         ? int.Parse(l.File.Metadata["Duration"])
                         : 0,
-                    Resources = l.Resources.Select(r => new Resource
+                    Resources = l.Resources.Select(r => new ResourceDto
                     {
                         Name = r.Name,
                         Url = r.Url
