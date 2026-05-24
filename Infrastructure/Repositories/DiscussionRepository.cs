@@ -29,7 +29,7 @@ namespace Infrastructure.Repositories
         {
             await _context.DicussionThreadReads.AddAsync(dicussionThreadRead, cancellationToken);
         }
-        public async Task<AllDiscussionsDto> GetAllDiscussionsAsync(string subDomain, string currentUser, string? Q, int? CourseId, ModuleItemType? Type, int? Cursor, int? Limit, CancellationToken cancellationToken)
+        public async Task<AllDiscussionsDto> GetAllDiscussionsAsync(string subDomain, string currentUser, string? Q, int? CourseId, ModuleItemType? Type, int? Cursor, int? Limit, int? ModuleId, int? ItemId, CancellationToken cancellationToken)
         {
             var pageSize = Limit ?? 8;
 
@@ -37,11 +37,15 @@ namespace Infrastructure.Repositories
                 .AsNoTracking()
                 .Where(dt => dt.Tenant.SubDomain == subDomain);
 
+            if (CourseId.HasValue)
+            {
+                query = query.Where(dt => dt.CourseId == CourseId.Value);
+                if (ModuleId.HasValue && ItemId.HasValue)
+                    query = query.Where(dt => dt.ModuleId == ModuleId.Value && dt.ItemId == ItemId.Value);
+            }
+
             if (!string.IsNullOrEmpty(Q))
                 query = query.Where(dt => dt.Content.Contains(Q));
-
-            if (CourseId.HasValue)
-                query = query.Where(dt => dt.CourseId == CourseId.Value);
 
             if (Type.HasValue)
                 query = query.Where(dt => dt.ItemType == Type.Value);
@@ -66,8 +70,7 @@ namespace Infrastructure.Repositories
                     Unread = !dt.DicussionReads.Any(dr => dr.UserId == currentUser),
                     RepliesCount = dt.RepliesCount,
                     LastActivityAt = dt.UpdatedAt
-                })
-                .ToListAsync(cancellationToken);
+                }).ToListAsync(cancellationToken);
 
             var hasMore = threads.Count > pageSize;
             if (hasMore)

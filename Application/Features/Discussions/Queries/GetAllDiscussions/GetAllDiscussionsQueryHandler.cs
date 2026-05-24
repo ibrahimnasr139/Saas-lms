@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace Application.Features.Discussions.Queries.GetAllDiscussions
 {
-    internal sealed class GetAllDiscussionsQueryHandler : IRequestHandler<GetDiscussionsQuery, AllDiscussionsDto>
+    internal sealed class GetAllDiscussionsQueryHandler : IRequestHandler<GetAllDiscussionsQuery, AllDiscussionsDto>
     {
         private readonly IDiscussionRepository _discussionRepository;
         private readonly IHttpContextAccessor _httpContextAccessor;
@@ -16,7 +16,7 @@ namespace Application.Features.Discussions.Queries.GetAllDiscussions
             _httpContextAccessor = httpContextAccessor;
             _currentUserId = currentUserId;
         }
-        public async Task<AllDiscussionsDto> Handle(GetDiscussionsQuery request, CancellationToken cancellationToken)
+        public async Task<AllDiscussionsDto> Handle(GetAllDiscussionsQuery request, CancellationToken cancellationToken)
         {
             var subDomain = _httpContextAccessor.HttpContext?.Request.Cookies[AuthConstants.SubDomain];
             var currentUserId = _currentUserId.GetUserId();
@@ -28,6 +28,8 @@ namespace Application.Features.Discussions.Queries.GetAllDiscussions
                 Type: request.Type,
                 Cursor: request.Cursor,
                 Limit: request.Limit,
+                ModuleId: request.ModuleId,
+                ItemId: request.ItemId,
                 cancellationToken: cancellationToken
             );
         }

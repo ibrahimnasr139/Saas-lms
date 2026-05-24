@@ -9,7 +9,7 @@ namespace Application.Contracts.Repositories
         Task CreateDiscussionThreadAsync(DicussionThread dicussionThread, CancellationToken cancellationToken);
         Task CreateDiscussionThreadReplyAsync(DicussionThreadReply reply, CancellationToken cancellationToken);
         Task CreateDiscussionThreadReadAsync(DicussionThreadRead dicussionThreadRead, CancellationToken cancellationToken);
-        Task<AllDiscussionsDto> GetAllDiscussionsAsync(string subDomain, string currentUser, string? Q, int? CourseId, ModuleItemType? Type, int? Cursor, int? Limit, CancellationToken cancellationToken);
+        Task<AllDiscussionsDto> GetAllDiscussionsAsync(string subDomain, string currentUser, string? Q, int? CourseId, ModuleItemType? Type, int? Cursor, int? Limit, int? ModuleId, int? ItemId, CancellationToken cancellationToken);
         Task<List<DiscussionReplyDto>> GetDiscussionReplyAsync(int threadId, CancellationToken cancellationToken);
         Task<DicussionThread?> GetThreadTenantAsync(int threadId, string subDomain, CancellationToken cancellationToken);
         Task<DiscussionStatisticsDto> GetDiscussionStatisticsAsync(string subDomain, CancellationToken cancellationToken);

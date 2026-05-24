@@ -26,7 +26,7 @@ namespace Api.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetDiscussions([FromQuery] GetDiscussionsQuery Query, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetDiscussions([FromQuery] GetAllDiscussionsQuery Query, CancellationToken cancellationToken)
         {
             return Ok(await _mediator.Send(Query, cancellationToken));
         }
