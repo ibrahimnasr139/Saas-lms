@@ -41,10 +41,21 @@ namespace Infrastructure.Repositories
         }
         public async Task<List<SubjectDto>> GetSubjectsAsync(int studentId, CancellationToken cancellationToken)
         {
-            return await _context.StudentSubjects
+            var subjects = await _context.StudentSubjects
                 .Where(ss => ss.StudentId == studentId)
                 .ProjectTo<SubjectDto>(_mapper.ConfigurationProvider)
                 .ToListAsync(cancellationToken);
+
+            var currentChapters = await _context.StudentSubjects
+                .Where(ss => ss.StudentId == studentId && ss.CurrentChaper != null)
+                .Select(ss => ss.CurrentChaper!.Value)
+                .ToListAsync(cancellationToken);
+
+            foreach (var subject in subjects)
+                foreach (var chapter in subject.Chapters)
+                    chapter.IsCurrentChapter = currentChapters.Contains(chapter.Id);
+
+            return subjects;
         }
     }
 }

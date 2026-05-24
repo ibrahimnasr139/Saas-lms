@@ -22,7 +22,8 @@
                     src.Metadata != null && src.Metadata.ContainsKey("total_lessons")
                         ? int.Parse(src.Metadata["total_lessons"])
                         : 0)
-                );
+                )
+                .ForMember(dest => dest.IsCurrentChapter, opt => opt.Ignore());
         }
     }
 }
