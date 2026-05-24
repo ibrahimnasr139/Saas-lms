@@ -66,7 +66,7 @@ namespace Application.Features.Files.Commands.CreateUpload
                 Url = credentials.EmbedUrl,
                 Metadata = new Dictionary<string, string>
                 {
-                    { "Duration", request.Duration.ToString() }
+                    { "duration", request.Duration.ToString() }
                 },
                 TenantId = tenantId,
                 UploadedById = userId

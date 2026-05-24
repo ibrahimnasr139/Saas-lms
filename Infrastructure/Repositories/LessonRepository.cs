@@ -141,8 +141,8 @@ namespace Infrastructure.Repositories
                 {
                     VideoId = l.VideoId,
                     VideoUrl = l.File.Url,
-                    Duration = l.File.Metadata != null && l.File.Metadata.ContainsKey("Duration")
-                        ? l.File.Metadata["Duration"]
+                    Duration = l.File.Metadata != null && l.File.Metadata.ContainsKey("duration")
+                        ? l.File.Metadata["duration"]
                         : string.Empty,
                     Resources = l.Resources,
                     CreatedAt = l.ModuleItem.CreatedAt,
