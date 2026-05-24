@@ -133,5 +133,27 @@ namespace Infrastructure.Repositories
                     CreatedAt = ai.CreatedAt
                 }).ToListAsync(cancellationToken);
         }
+        public async Task<LessonContentDto> GetLessonContentAsync(int courseId, int moduleId, int itemId, CancellationToken cancellationToken)
+        {
+            var result = await _dbContext.Lessons
+                .Where(l => l.ModuleItemId == itemId && l.ModuleId == moduleId && l.CourseId == courseId)
+                .Select(l => new LessonContentDto
+                {
+                    Type = ModuleItemType.Lesson.ToString(),
+                    VideoId = l.VideoId,
+                    VideoUrl = l.File.Url,
+                    Duration = l.File.Metadata != null && l.File.Metadata.ContainsKey("Duration")
+                        ? int.Parse(l.File.Metadata["Duration"])
+                        : 0,
+                    Resources = l.Resources.Select(r => new Resource
+                    {
+                        Name = r.Name,
+                        Url = r.Url
+                    }).ToList(),
+                    CreatedAt = l.ModuleItem.CreatedAt,
+                    UpdatedAt = l.ModuleItem.UpdatedAt,
+                }).FirstOrDefaultAsync(cancellationToken);
+            return result!;
+        }
     }
 }

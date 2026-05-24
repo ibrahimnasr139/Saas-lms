@@ -17,9 +17,8 @@ namespace Application.Features.Lessons.Queries.GetLessonOverview
             var subdomain = _httpContextAccessor?.HttpContext?.Request.Cookies[AuthConstants.SubDomain];
             var isLessonFound = await _lessonRepository.IsFound(request.ItemId, request.ModuleId, request.CourseId, subdomain!, cancellationToken);
             if (!isLessonFound)
-            {
                 return ModuleItemErrors.ModuleItemNotFound;
-            }
+
             var overview = await _lessonRepository.GetLessonOverviewAsync(request.ItemId, cancellationToken);
             var peakActivity = await _lessonRepository.GetPeakActivityTimeAsync(request.ItemId, cancellationToken);
             overview?.PeakActivity = peakActivity;

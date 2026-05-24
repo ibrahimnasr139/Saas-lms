@@ -1,6 +1,7 @@
 ﻿using Application.Common;
 using Application.Constants;
 using Application.Features.Lessons.Commands.UpdateLesson;
+using Application.Features.Lessons.Queries.GetLessonContent;
 using Application.Features.Lessons.Queries.GetLessonOverview;
 using Application.Features.Lessons.Queries.GetLessonPerformance;
 using Application.Features.Lessons.Queries.GetViews;
@@ -58,6 +59,17 @@ namespace Api.Controllers
             return result.Match<IActionResult>(
                 success => Ok(success),
                 error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message }));
+        }
+
+
+        [HttpGet("content")]
+        public async Task<IActionResult> GetContent(int courseId, int moduleId, int itemId, CancellationToken cancellationToken)
+        {
+            var result = await _mediator.Send(new GetLessonContentQuery(courseId, moduleId, itemId), cancellationToken);
+            return result.Match<IActionResult>(
+                success => Ok(success),
+                error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message })
+            );
         }
     }
 }
