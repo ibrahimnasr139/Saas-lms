@@ -64,6 +64,10 @@ namespace Application.Features.Files.Commands.CreateUpload
                 Type = Domain.Enums.FileType.Video,
                 Status = Domain.Enums.FileStatus.Pending,
                 Url = credentials.EmbedUrl,
+                Metadata = new Dictionary<string, string>
+                {
+                    { "Duration", request.Duration.ToString() }
+                },
                 TenantId = tenantId,
                 UploadedById = userId
             };
