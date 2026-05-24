@@ -133,27 +133,39 @@ namespace Infrastructure.Repositories
                     CreatedAt = ai.CreatedAt
                 }).ToListAsync(cancellationToken);
         }
-        public async Task<LessonContentDto> GetLessonContentAsync(int courseId, int moduleId, int itemId, CancellationToken cancellationToken)
+        public async Task<LessonContentDto?> GetLessonContentAsync(int courseId, int moduleId, int itemId, CancellationToken cancellationToken)
         {
-            var result = await _dbContext.Lessons
+            var lesson = await _dbContext.Lessons
                 .Where(l => l.ModuleItemId == itemId && l.ModuleId == moduleId && l.CourseId == courseId)
-                .Select(l => new LessonContentDto
+                .Select(l => new
                 {
-                    Type = ModuleItemType.Lesson.ToString(),
                     VideoId = l.VideoId,
                     VideoUrl = l.File.Url,
                     Duration = l.File.Metadata != null && l.File.Metadata.ContainsKey("Duration")
                         ? int.Parse(l.File.Metadata["Duration"])
                         : 0,
-                    Resources = l.Resources.Select(r => new ResourceDto
-                    {
-                        Name = r.Name,
-                        Url = r.Url
-                    }).ToList(),
+                    Resources = l.Resources,
                     CreatedAt = l.ModuleItem.CreatedAt,
                     UpdatedAt = l.ModuleItem.UpdatedAt,
                 }).FirstOrDefaultAsync(cancellationToken);
-            return result!;
+
+            if (lesson is null)
+                return null;
+
+            return new LessonContentDto
+            {
+                Type = ModuleItemType.Lesson.ToString(),
+                VideoId = lesson.VideoId,
+                VideoUrl = lesson.VideoUrl,
+                Duration = lesson.Duration,
+                Resources = lesson.Resources.Select(r => new ResourceDto
+                {
+                    Name = r.Name,
+                    Url = r.Url
+                }).ToList(),
+                CreatedAt = lesson.CreatedAt,
+                UpdatedAt = lesson.UpdatedAt,
+            };
         }
     }
 }

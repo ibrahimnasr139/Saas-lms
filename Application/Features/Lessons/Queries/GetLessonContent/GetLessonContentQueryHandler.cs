@@ -18,7 +18,7 @@ namespace Application.Features.Lessons.Queries.GetLessonContent
             var isLessonFound = await _lessonRepository.IsFound(request.ItemId, request.ModuleId, request.CourseId, subdomain!, cancellationToken);
             if (!isLessonFound)
                 return ModuleItemErrors.ModuleItemNotFound;
-            return await _lessonRepository.GetLessonContentAsync(request.CourseId, request.ModuleId, request.ItemId, cancellationToken);
+            return await _lessonRepository.GetLessonContentAsync(request.CourseId, request.ModuleId, request.ItemId, cancellationToken) ?? new LessonContentDto();
         }
     }
 }
