@@ -20,9 +20,7 @@ namespace Application.Features.Quizzes.Queries.GetOverview
             var subdomain = _httpContextAccessor?.HttpContext?.Request.Cookies[AuthConstants.SubDomain];
             var quiz = await _moduleItemRepository.GetQuizAsync(request.ItemId, request.ModuleId, request.CourseId, subdomain!, cancellationToken);
             if (quiz is null)
-            {
                 return ModuleItemErrors.ModuleItemNotFound;
-            }
             return await _quizRepository.GetQuizOverview(request.ItemId, cancellationToken) ?? new OverviewDto();
         }
     }

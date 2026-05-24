@@ -73,7 +73,12 @@ namespace Infrastructure.Repositories
                             Views = i.Type == ModuleItemType.Lesson ? i.Lesson!.LessonViews.Count() : null,
                             QuestionsCount = i.Type == ModuleItemType.Quiz ? i.Quiz!.Questions.Count() : null,
                             PassingScore = i.Type == ModuleItemType.Quiz ? i.Quiz!.PassingScore : null,
-                            AverageScore = i.Type == ModuleItemType.Quiz ? i.Quiz!.Attempts.Average(s => s.Score) : null,
+                            AverageScore = i.Type == ModuleItemType.Quiz ? i.StudentGrades
+                                    .Where(sg => sg.TypeId == i.Id)
+                                    .Select(sg => sg.TotalMarks > 0 ? sg.Score / sg.TotalMarks * 100 : 0)
+                                    .DefaultIfEmpty(0)
+                                    .Average()
+                                : null,
                             Attempts = i.Type == ModuleItemType.Quiz ? i.Quiz!.Attempts.Count() : null,
                             Submissions = i.Type == ModuleItemType.Assignment ? i.Assignment!.Submissions.Count() : null
                         }
