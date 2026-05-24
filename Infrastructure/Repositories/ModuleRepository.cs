@@ -75,8 +75,8 @@ namespace Infrastructure.Repositories
                             PassingScore = i.Type == ModuleItemType.Quiz ? i.Quiz!.PassingScore : null,
                             AverageScore = i.Type == ModuleItemType.Quiz ? i.StudentGrades
                                     .Where(sg => sg.TypeId == i.Id)
-                                    .Select(sg => sg.TotalMarks > 0 ? sg.Score / sg.TotalMarks * 100 : 0)
-                                    .DefaultIfEmpty(0)
+                                    .Select(sg => sg.TotalMarks > 0 ? sg.Score / sg.TotalMarks * 100.0 : 0.0)
+                                    .DefaultIfEmpty(0.0)
                                     .Average()
                                 : null,
                             Attempts = i.Type == ModuleItemType.Quiz ? i.Quiz!.Attempts.Count() : null,
