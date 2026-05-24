@@ -6,10 +6,10 @@
         public string Title { get; set; } = string.Empty;
         public string Semester { get; set; } = string.Empty;
         public int ChapterNumber { get; set; }
-        public string SkillTag { get; set; } = string.Empty;
+        public string? SkillTag { get; set; }
         public Dictionary<string, string>? Metadata { get; set; }
         public int SubjectId { get; set; }
-        public StudentSubject StudentSubject { get; set; } = null!;
+        public AvailableSubject AvailableSubject { get; set; } = null!;
         public ICollection<FlashCardDeck> FlashCardDecks { get; set; } = [];
         public ICollection<StudentQuiz> StudentQuizzes { get; set; } = [];
     }

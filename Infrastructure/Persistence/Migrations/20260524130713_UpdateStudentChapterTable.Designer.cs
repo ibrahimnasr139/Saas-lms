@@ -5,6 +5,7 @@ using System.Text.Json;
 using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -13,9 +14,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260524130713_UpdateStudentChapterTable")]
+    partial class UpdateStudentChapterTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -4314,13 +4317,13 @@ namespace Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("Domain.Entites.StudentChapter", b =>
                 {
-                    b.HasOne("Domain.Entites.AvailableSubject", "AvailableSubject")
+                    b.HasOne("Domain.Entites.StudentSubject", "StudentSubject")
                         .WithMany("StudentChapters")
                         .HasForeignKey("SubjectId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("AvailableSubject");
+                    b.Navigation("StudentSubject");
                 });
 
             modelBuilder.Entity("Domain.Entites.StudentGrade", b =>
@@ -4787,8 +4790,6 @@ namespace Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("Domain.Entites.AvailableSubject", b =>
                 {
-                    b.Navigation("StudentChapters");
-
                     b.Navigation("StudentSubjects");
                 });
 
@@ -5032,6 +5033,8 @@ namespace Infrastructure.Persistence.Migrations
             modelBuilder.Entity("Domain.Entites.StudentSubject", b =>
                 {
                     b.Navigation("FlashCardDecks");
+
+                    b.Navigation("StudentChapters");
 
                     b.Navigation("StudentQuizzes");
                 });

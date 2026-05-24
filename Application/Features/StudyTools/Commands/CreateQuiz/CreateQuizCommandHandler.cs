@@ -50,7 +50,7 @@ namespace Application.Features.StudyTools.Commands.CreateQuiz
             string? chapterName = null;
             if (request.ChapterId.HasValue)
             {
-                chapterName = await _studentSubjectRepository.GetChapterNameAsync(session.StudentId, request.SubjectId, request.ChapterId.Value, cancellationToken);
+                chapterName = await _studentSubjectRepository.GetChapterNameAsync(request.SubjectId, request.ChapterId.Value, cancellationToken);
                 if (chapterName is null)
                     return SubjectErrors.ChapterNotFound;
             }

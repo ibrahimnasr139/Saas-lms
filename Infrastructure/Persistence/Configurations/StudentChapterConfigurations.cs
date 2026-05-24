@@ -30,13 +30,12 @@ namespace Infrastructure.Persistence.Configurations
             );
 
             builder.Property(sc => sc.Metadata)
-                .HasConversion(converter)
+                .HasConversion(converter!)
+                .IsRequired(false)
+                .HasColumnType("jsonb")
                 .Metadata.SetValueComparer(comparer);
 
-            builder.Property(sc => sc.Metadata)
-                .HasColumnType("jsonb");
-
-            builder.HasOne(sc => sc.StudentSubject)
+            builder.HasOne(sc => sc.AvailableSubject)
                 .WithMany(s => s.StudentChapters)
                 .HasForeignKey(sc => sc.SubjectId)
                 .OnDelete(DeleteBehavior.Cascade);

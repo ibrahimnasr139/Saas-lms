@@ -25,10 +25,10 @@ namespace Infrastructure.Repositories
                 .Select(s => new { s.Key, s.Id })
                 .ToDictionaryAsync(s => s.Key, s => s.Id, cancellationToken);
         }
-        public async Task<string?> GetChapterNameAsync(int studentId, int subjectId, int chapterId, CancellationToken cancellationToken)
+        public async Task<string?> GetChapterNameAsync(int subjectId, int chapterId, CancellationToken cancellationToken)
         {
             return await _context.StudentChapters
-                .Where(sc => sc.Id == chapterId && sc.SubjectId == subjectId && sc.StudentSubject.StudentId == studentId)
+                .Where(sc => sc.Id == chapterId && sc.SubjectId == subjectId)
                 .Select(sc => sc.Title)
                 .FirstOrDefaultAsync(cancellationToken);
         }
