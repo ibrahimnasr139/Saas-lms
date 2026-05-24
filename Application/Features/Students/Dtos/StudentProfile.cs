@@ -13,7 +13,16 @@
             CreateMap<AvailableSubject, AvailableSubjectDto>();
 
             CreateMap<StudentSubject, SubjectDto>()
-                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.AvailableSubject.DisplayName));
+                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.AvailableSubject.DisplayName))
+                .ForMember(dest => dest.Chapters, opt => opt.MapFrom(src => src.AvailableSubject.StudentChapters));
+
+            CreateMap<StudentChapter, ChapterDto>()
+                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Title))
+                .ForMember(dest => dest.TotalLessons, opt => opt.MapFrom(src =>
+                    src.Metadata != null && src.Metadata.ContainsKey("total_lessons")
+                        ? int.Parse(src.Metadata["total_lessons"])
+                        : 0)
+                );
         }
     }
 }
