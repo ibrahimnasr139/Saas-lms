@@ -42,7 +42,7 @@ namespace Application.Features.ModuleItems.Dtos
                 .ForMember(dest => dest.Conditions, opt => opt.Ignore());
 
             CreateMap<UpdateLessonCommand, Lesson>()
-                .ForMember(dest => dest.Resources, opt => opt.MapFrom(src => src.Resources));
+                .ForMember(dest => dest.Resources, opt => opt.MapFrom(src => src.Resources.ToList()));
 
             CreateMap<UpdateQuizCommand, Quiz>()
                 .ForMember(dest => dest.Questions, opt => opt.Ignore());
