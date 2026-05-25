@@ -20,7 +20,8 @@ namespace Application.Features.Discussions.Queries.GetAllDiscussions
         {
             var subDomain = _httpContextAccessor.HttpContext?.Request.Cookies[AuthConstants.SubDomain];
             var currentUserId = _currentUserId.GetUserId();
-            return await _discussionRepository.GetAllDiscussionsAsync(
+            return await _discussionRepository.GetAllDiscussionsAsync
+            (
                 subDomain: subDomain!,
                 currentUser: currentUserId,
                 Q: request.Q,

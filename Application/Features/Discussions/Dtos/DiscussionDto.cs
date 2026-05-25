@@ -5,6 +5,7 @@ namespace Application.Features.Discussions.Dtos
     public sealed class DiscussionDto
     {
         public int Id { get; set; }
+        public string Content { get; set; } = string.Empty;
         public int CourseId { get; set; }
         public string CourseName { get; set; } = string.Empty;
         public int ItemId { get; set; }

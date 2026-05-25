@@ -57,6 +57,7 @@ namespace Infrastructure.Repositories
                 .Select(dt => new DiscussionDto
                 {
                     Id = dt.Id,
+                    Content = dt.Content,
                     CourseId = dt.CourseId,
                     CourseName = dt.Course.Title,
                     ItemId = dt.ItemId,
