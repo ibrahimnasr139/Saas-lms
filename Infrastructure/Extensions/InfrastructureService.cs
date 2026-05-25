@@ -55,36 +55,36 @@ namespace Infrastructure.Extensions
             });
 
             builder.Services.AddHybridCache();
+
             builder.Services.AddOptions<JwtOptions>()
                 .BindConfiguration(nameof(JwtOptions))
                 .ValidateDataAnnotations()
                 .ValidateOnStart();
+
             builder.Services.AddOptions<MailOptions>()
                 .BindConfiguration(nameof(MailOptions))
                 .ValidateDataAnnotations()
                 .ValidateOnStart();
+
             builder.Services.AddOptions<BunnyOptions>()
                 .BindConfiguration(nameof(BunnyOptions))
                 .ValidateDataAnnotations()
                 .ValidateOnStart();
+
             builder.Services.AddOptions<AiOptions>()
                 .BindConfiguration(nameof(AiOptions))
                 .ValidateDataAnnotations()
                 .ValidateOnStart();
+
             builder.Services.AddOptions<Common.Options.FileOptions>()
                 .BindConfiguration(nameof(Common.Options.FileOptions))
                 .ValidateDataAnnotations()
                 .ValidateOnStart();
+
             builder.Services.AddOptions<Common.Options.ZoomOptions>()
                 .BindConfiguration(nameof(Common.Options.ZoomOptions))
                 .ValidateDataAnnotations()
                 .ValidateOnStart();
-
-
-            builder.Services.AddOptions<AiTranscriptionOptions>()
-                 .BindConfiguration(nameof(AiTranscriptionOptions))
-                 .ValidateDataAnnotations()
-                 .ValidateOnStart();
 
             builder.Services.AddHangfire(config =>
             {

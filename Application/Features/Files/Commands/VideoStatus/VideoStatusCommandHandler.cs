@@ -6,17 +6,13 @@ namespace Application.Features.Files.Commands.VideoStatus
     internal sealed class VideoStatusCommandHandler : IRequestHandler<VideoStatusCommand, Unit>
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly IPlanRepository _planRepository;
-        private readonly ISubscriptionRepository _subscriptionRepository;
         private readonly ITenantRepository _tenantRepository;
         private readonly IFileRepository _fileRepository;
         private readonly IUnitOfWork _unitOfWork;
-        public VideoStatusCommandHandler(IHttpContextAccessor httpContextAccessor, IPlanRepository planRepository, IUnitOfWork unitOfWork,
-            ISubscriptionRepository subscriptionRepository, ITenantRepository tenantRepository, IFileRepository fileRepository)
+        public VideoStatusCommandHandler(IHttpContextAccessor httpContextAccessor, ITenantRepository tenantRepository,
+            IFileRepository fileRepository, IUnitOfWork unitOfWork)
         {
             _httpContextAccessor = httpContextAccessor;
-            _planRepository = planRepository;
-            _subscriptionRepository = subscriptionRepository;
             _tenantRepository = tenantRepository;
             _fileRepository = fileRepository;
             _unitOfWork = unitOfWork;
@@ -27,7 +23,7 @@ namespace Application.Features.Files.Commands.VideoStatus
             if (file == null)
                 return Unit.Value;
 
-            if (request.Status == FileStatus.Processing.ToString())
+            if (request.Status is FileStatus.Processing)
             {
                 file.Status = FileStatus.Processing;
                 if (request.Size.HasValue && request.Size.Value > 0)
@@ -38,7 +34,6 @@ namespace Application.Features.Files.Commands.VideoStatus
             }
             else
                 await _fileRepository.DeleteFileAsync(file, cancellationToken);
-
             await _unitOfWork.SaveAsync(cancellationToken);
             return Unit.Value;
         }

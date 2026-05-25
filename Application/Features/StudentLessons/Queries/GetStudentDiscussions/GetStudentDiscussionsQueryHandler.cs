@@ -11,7 +11,6 @@ namespace Application.Features.StudentLessons.Queries.GetStudentDiscussions
         private readonly IEnrollmentRepository _enrollmentRepository;
         private readonly IModuleItemRepository _moduleItemRepository;
         private readonly IDiscussionRepository _discussionRepository;
-
         public GetStudentDiscussionsQueryHandler(HybridCache hybridCache, IHttpContextAccessor httpContextAccessor,
             IStudentSubscriptionRepository studentSubscriptionRepository, IEnrollmentRepository enrollmentRepository,
             IModuleItemRepository moduleItemRepository, IDiscussionRepository discussionRepository)
@@ -46,7 +45,6 @@ namespace Application.Features.StudentLessons.Queries.GetStudentDiscussions
             var moduleItemIsExist = await _moduleItemRepository.ModuleItemIsExistAsync(request.ItemId, request.CourseId, cancellationToken);
             if (!moduleItemIsExist)
                 return ModuleItemErrors.ModuleItemNotFound;
-
             return await _discussionRepository.GetStudentDiscussionAsync(request.ItemId, request.CourseId, cancellationToken);
         }
     }

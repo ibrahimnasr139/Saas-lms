@@ -16,10 +16,10 @@ namespace Infrastructure.Services
     {
         private readonly IOptions<Common.Options.FileOptions> _fileOptions;
         private readonly IOptions<BunnyOptions> _bunnyOptions;
-        private readonly IOptions<AiTranscriptionOptions> _aiOptions;
+        private readonly IOptions<AiOptions> _aiOptions;
         private readonly HttpClient _httpClient;
         public FileService(IOptions<Common.Options.FileOptions> fileOptions, IOptions<BunnyOptions> bunnyOptions,
-            IOptions<AiTranscriptionOptions> aiOptions, HttpClient httpClient)
+            IOptions<AiOptions> aiOptions, HttpClient httpClient)
         {
             _fileOptions = fileOptions;
             _bunnyOptions = bunnyOptions;
@@ -84,9 +84,8 @@ namespace Infrastructure.Services
             content.Add(streamContent, FileConstants.AiRequestFile, file.FileName);
             content.Add(new StringContent(fileId), FileConstants.AiRequestFileId);
             content.Add(new StringContent(fileType.ToString()), FileConstants.AiRequestFileType);
-            content.Add(new StringContent(_aiOptions.Value.CallbackUrl), FileConstants.AiRequestCallBackUrl);
-
-            _ = _httpClient.PostAsync(_aiOptions.Value.Url, content);
+            content.Add(new StringContent(_aiOptions.Value.CallBackUrl), FileConstants.AiRequestCallBackUrl);
+            _ = _httpClient.PostAsync(_aiOptions.Value.EmbeddingEndPoint, content);
         }
         public async Task<CreateUploadDto?> CreateUploadCredentialsAsync(string title, long Size, CancellationToken cancellationToken)
         {

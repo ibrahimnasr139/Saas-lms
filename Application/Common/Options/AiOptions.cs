@@ -2,6 +2,8 @@
 {
     public sealed class AiOptions
     {
+        public string EmbeddingEndPoint { get; set; } = string.Empty;
+        public string CallBackUrl { get; set; } = string.Empty;
         public string QuestionEndPoint { get; set; } = string.Empty;
         public string AiAssistantEndPoint { get; set; } = string.Empty;
         public string AskAiEndPoint { get; set; } = string.Empty;
