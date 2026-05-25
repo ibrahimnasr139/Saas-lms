@@ -129,17 +129,16 @@ namespace Infrastructure.Repositories
 
             _dbContext.TenantUsage.AddRange(tenantUsages);
         }
-        public async Task<ContentLibraryResourceDto> GetTenantLibraryResource(int TenantId, FileType Type, string? Q, CancellationToken cancellationToken)
+        public async Task<ContentLibraryResourceDto> GetTenantLibraryResource(string subDomain, FileType Type, string? Q, CancellationToken cancellationToken)
         {
             var query = _dbContext.Files
                 .AsNoTracking()
-                .Where(f => f.TenantId == TenantId && f.Type == Type);
+                .Where(f => f.Tenant!.SubDomain == subDomain && f.Type == Type);
 
             if (!string.IsNullOrWhiteSpace(Q))
                 query = query.Where(f => f.Name.Contains(Q));
 
             var files = await query.ToListAsync(cancellationToken);
-
             return new ContentLibraryResourceDto
             {
                 Resources = new ResourceDto

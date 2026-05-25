@@ -1,6 +1,7 @@
 using Application.Contracts.Files;
 using Application.Features.Files.Dtos;
 using Microsoft.AspNetCore.Http;
+using System.Globalization;
 
 namespace Application.Features.Files.Commands.CreateUpload
 {
@@ -56,7 +57,7 @@ namespace Application.Features.Files.Commands.CreateUpload
                 Url = credentials.EmbedUrl,
                 Metadata = new Dictionary<string, string>
                 {
-                    { "duration", request.Duration.ToString() }
+                    { "duration", request.Duration.ToString(CultureInfo.InvariantCulture) }
                 },
                 TenantId = tenantId,
                 UploadedById = userId

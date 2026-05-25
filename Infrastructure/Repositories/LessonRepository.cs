@@ -139,14 +139,14 @@ namespace Infrastructure.Repositories
                 .Where(l => l.ModuleItemId == itemId && l.ModuleId == moduleId && l.CourseId == courseId)
                 .Select(l => new
                 {
-                    VideoId = l.VideoId,
+                    l.VideoId,
                     VideoUrl = l.File.Url,
                     Duration = l.File.Metadata != null && l.File.Metadata.ContainsKey("duration")
                         ? l.File.Metadata["duration"]
                         : string.Empty,
-                    Resources = l.Resources,
-                    CreatedAt = l.ModuleItem.CreatedAt,
-                    UpdatedAt = l.ModuleItem.UpdatedAt,
+                    l.Resources,
+                    l.ModuleItem.CreatedAt,
+                    l.ModuleItem.UpdatedAt,
                 }).FirstOrDefaultAsync(cancellationToken);
 
             if (lesson is null)

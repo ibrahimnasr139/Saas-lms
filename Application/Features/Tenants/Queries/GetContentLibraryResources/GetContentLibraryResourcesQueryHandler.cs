@@ -1,5 +1,4 @@
 ﻿using Application.Features.Tenants.Dtos;
-using Domain.Enums;
 using Microsoft.AspNetCore.Http;
 
 namespace Application.Features.Tenants.Queries.GetContentLibraryResources
@@ -17,12 +16,7 @@ namespace Application.Features.Tenants.Queries.GetContentLibraryResources
         public async Task<ContentLibraryResourceDto> Handle(GetContentLibraryResourcesQuery request, CancellationToken cancellationToken)
         {
             var subdomain = _httpContextAccessor.HttpContext?.Request.Cookies[AuthConstants.SubDomain];
-            var tenantId = await _tenantRepository.GetTenantIdAsync(subdomain!, cancellationToken);
-
-            FileType type = 0;
-            if (!string.IsNullOrWhiteSpace(request.Type) && Enum.TryParse<FileType>(request.Type, true, out var parsedType))
-                type = parsedType;
-            return await _tenantRepository.GetTenantLibraryResource(tenantId, type, request.Q, cancellationToken);
+            return await _tenantRepository.GetTenantLibraryResource(subdomain!, request.Type, request.Q, cancellationToken);
         }
     }
 }
