@@ -1,5 +1,6 @@
 ﻿using Application.Features.Assignments.Commands.UpdateAssignment;
 using Application.Features.Lessons.Commands.UpdateLesson;
+using Application.Features.Lessons.Dtos;
 using Application.Features.ModuleItems.Commands.CreateModuleItem;
 using Application.Features.ModuleItems.Commands.UpdateSettings;
 using Application.Features.Quizzes.Commands.UpdateQuiz;
