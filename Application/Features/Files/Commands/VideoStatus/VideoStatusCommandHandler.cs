@@ -11,7 +11,6 @@ namespace Application.Features.Files.Commands.VideoStatus
         private readonly ITenantRepository _tenantRepository;
         private readonly IFileRepository _fileRepository;
         private readonly IUnitOfWork _unitOfWork;
-
         public VideoStatusCommandHandler(IHttpContextAccessor httpContextAccessor, IPlanRepository planRepository, IUnitOfWork unitOfWork,
             ISubscriptionRepository subscriptionRepository, ITenantRepository tenantRepository, IFileRepository fileRepository)
         {
@@ -34,13 +33,7 @@ namespace Application.Features.Files.Commands.VideoStatus
                 if (request.Size.HasValue && request.Size.Value > 0)
                 {
                     var subDomain = _httpContextAccessor.HttpContext?.Request.Cookies[AuthConstants.SubDomain];
-                    var tenantId = await _tenantRepository.GetTenantIdAsync(subDomain!, cancellationToken);
-                    var planPricingId = await _subscriptionRepository.GetPlanPricingIdAsync(tenantId, cancellationToken);
-                    var planId = await _planRepository.GetPlanIdAsync(planPricingId, cancellationToken);
-                    var featureId = await _planRepository.GetFeatureIdAsync(FeatureConstants.VIDEO_STORAGE_GB, cancellationToken);
-                    var planFeatureId = await _planRepository.GetPlanFeatureIdByFeatureIdAsync(planId, featureId, cancellationToken);
-
-                    await _tenantRepository.InCreasePlanFeatureUsageAsync(tenantId, planFeatureId, request.Size.Value, cancellationToken);
+                    await _tenantRepository.IncreasePlanFeatureUsageByKeyAsync(subDomain!, FeatureConstants.VIDEO_STORAGE_GB, cancellationToken, request.Size.Value);
                 }
             }
             else

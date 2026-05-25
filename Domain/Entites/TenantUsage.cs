@@ -5,7 +5,7 @@ namespace Domain.Entites
     public sealed class TenantUsage : IAuditable
     {
         public int Id { get; set; }
-        public int Used { get; set; }
+        public long Used { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? UpdatedAt { get; set; }
         public Guid PlanFeatureId { get; set; }

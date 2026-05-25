@@ -42,29 +42,7 @@ namespace Infrastructure.Repositories
                     .Select(pf => pf.Id)
                     .ToListAsync(cancellationToken);
         }
-        public Task<Guid> GetFeatureIdAsync(string featureName, CancellationToken cancellationToken)
-        {
-            return _context.Features
-                    .Where(f => f.Key == featureName)
-                    .Select(f => f.Id)
-                    .FirstOrDefaultAsync(cancellationToken);
-        }
-        public Task<Guid> GetPlanFeatureIdByFeatureIdAsync(Guid PlanId, Guid FeatureId, CancellationToken cancellationToken)
-        {
-            return _context.PlanFeatures
-                    .Where(pf => pf.PlanId == PlanId && pf.FeatureId == FeatureId)
-                    .Select(pf => pf.Id)
-                    .FirstOrDefaultAsync(cancellationToken);
-        }
-        public async Task<int> GetFeatureLimitAsync(Guid planFeatureId, CancellationToken cancellationToken)
-        {
-            var limit = await _context.PlanFeatures
-                    .Where(pf => pf.Id == planFeatureId)
-                    .Select(pf => pf.LimitValue)
-                    .FirstOrDefaultAsync(cancellationToken);
-            return limit.Value;
-        }
-        public async Task<(int Used, int Limit)?> GetFeatureUsageInfoAsync(int tenantId, string featureName, CancellationToken cancellationToken)
+        public async Task<(long Used, int Limit)?> GetFeatureUsageInfoAsync(int tenantId, string featureName, CancellationToken cancellationToken)
         {
             var result = await _context.TenantUsage
                 .Where(tu => tu.TenantId == tenantId && tu.PlanFeature.Feature.Key == featureName)
@@ -72,12 +50,10 @@ namespace Infrastructure.Repositories
                 {
                     tu.Used,
                     Limit = tu.PlanFeature.LimitValue!.Value
-                })
-                .FirstOrDefaultAsync(cancellationToken);
+                }).FirstOrDefaultAsync(cancellationToken);
 
             if (result is null)
                 return null;
-
             return (result.Used, result.Limit);
         }
     }

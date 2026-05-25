@@ -8,59 +8,49 @@ namespace Application.Features.Files.Commands.CreateUpload
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IPlanRepository _planRepository;
-        private readonly ISubscriptionRepository _subscriptionRepository;
         private readonly ITenantRepository _tenantRepository;
         private readonly IFileService _fileService;
         private readonly IFileRepository _fileRepository;
         private readonly ICurrentUserId _currentUserId;
         private readonly IUnitOfWork _unitOfWork;
-
-        private const int OverFlowSizeMB = 20;
+        private const long OverflowBytes = 20L * 1024 * 1024;
 
         public CreateUploadCommandHandler(IHttpContextAccessor httpContextAccessor, IPlanRepository planRepository,
-            ISubscriptionRepository subscriptionRepository, ITenantRepository tenantRepository, IFileService fileService,
-            IFileRepository fileRepository, ICurrentUserId currentUserId, IUnitOfWork unitOfWork)
+            ITenantRepository tenantRepository, IFileService fileService, IUnitOfWork unitOfWork, ICurrentUserId currentUserId,
+            IFileRepository fileRepository)
         {
             _httpContextAccessor = httpContextAccessor;
             _planRepository = planRepository;
-            _subscriptionRepository = subscriptionRepository;
             _tenantRepository = tenantRepository;
             _fileService = fileService;
             _fileRepository = fileRepository;
             _currentUserId = currentUserId;
             _unitOfWork = unitOfWork;
         }
-
         public async Task<OneOf<CreateUploadDto, Error>> Handle(CreateUploadCommand request, CancellationToken cancellationToken)
         {
             var userId = _currentUserId.GetUserId();
             var subDomain = _httpContextAccessor.HttpContext?.Request.Cookies[AuthConstants.SubDomain];
             var tenantId = await _tenantRepository.GetTenantIdAsync(subDomain!, cancellationToken);
-            var planPricingId = await _subscriptionRepository.GetPlanPricingIdAsync(tenantId, cancellationToken);
-            var planId = await _planRepository.GetPlanIdAsync(planPricingId, cancellationToken);
-            var featureId = await _planRepository.GetFeatureIdAsync(FeatureConstants.VIDEO_STORAGE_GB, cancellationToken);
-            var planFeatureId = await _planRepository.GetPlanFeatureIdByFeatureIdAsync(planId, featureId, cancellationToken);
+            var featureUsage = await _planRepository.GetFeatureUsageInfoAsync(tenantId, FeatureConstants.VIDEO_STORAGE_GB, cancellationToken);
+            if (featureUsage is null)
+                return FileErrors.UploadFailed;
 
-            var limitValueGB = await _planRepository.GetFeatureLimitAsync(planFeatureId, cancellationToken);
-            var limitMB = limitValueGB * 1024;
-
-            var usedBytes = await _tenantRepository.GetPlanFeatureUsageAsync(planFeatureId, tenantId, cancellationToken);
-            var usedMB = Math.Max(0, usedBytes / (1024 * 1024));
-            var requestMB = request.Size / (1024 * 1024);
-            var totalAfterUpload = usedMB + requestMB - OverFlowSizeMB;
-
-            if (totalAfterUpload > limitMB)
+            var (usedBytes, limitGB) = featureUsage.Value;
+            var limitBytes = limitGB * 1024L * 1024L * 1024L;
+            var totalAfterUploadBytes =  Math.Max(0, usedBytes + request.Size - OverflowBytes);
+            if (totalAfterUploadBytes > limitBytes)
                 return FileErrors.UploadFailed;
 
             var credentials = await _fileService.CreateUploadCredentialsAsync(request.Title, request.Size, cancellationToken);
-            if (credentials == null)
+            if (credentials is null)
                 return FileErrors.UploadFailed;
 
             var newFile = new Domain.Entites.File
             {
                 Id = credentials.VideoId,
                 Name = request.Title,
-                Size = requestMB,
+                Size = request.Size,
                 Type = Domain.Enums.FileType.Video,
                 Status = Domain.Enums.FileStatus.Pending,
                 Url = credentials.EmbedUrl,

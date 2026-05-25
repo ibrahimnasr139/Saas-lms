@@ -16,11 +16,8 @@ namespace Application.Contracts.Repositories
         Task InitializeTenantUsageAsync(List<Guid> PlanFeatureId, int SubscriptionId, int TenantId);
         Task<ContentLibraryResourceDto> GetTenantLibraryResource(int TenantId, FileType Type, string? Q, CancellationToken cancellationToken);
         Task<ContentLibraryStatisticsDto> GetStatisticsAsync(int TenantId, CancellationToken cancellationToken);
-        Task<int> GetPlanFeatureUsageAsync(Guid PlanFeatureId, int tenantId, CancellationToken cancellationToken);
-        Task InCreasePlanFeatureUsageAsync(int tenantId, Guid PlanFeatureId, long Size, CancellationToken cancellationToken);
         Task IncreasePlanFeatureUsageByKeyAsync(string subDomain, string featureName, CancellationToken cancellationToken, long Size = 1);
         Task DecreasePlanFeatureUsageByKeyAsync(string subDomain, string featureName, CancellationToken cancellationToken, long Size = 1);
-        Task DeCreasePlanFeatureUsageAsync(int tenantId, Guid PlanFeatureId, long Size, CancellationToken cancellationToken);
         Task<bool> IsFeatureUsingEnded(string subDomain, string featureName, CancellationToken cancellationToken);
         Task<string> GetSubDomainAsync(int tenantId, CancellationToken cancellationToken);
     }

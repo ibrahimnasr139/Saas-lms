@@ -164,26 +164,6 @@ namespace Infrastructure.Repositories
                 TotalImages = files.Count(f => f.Type == FileType.Image),
             };
         }
-        public Task<int> GetPlanFeatureUsageAsync(Guid PlanFeatureId, int tenantId, CancellationToken cancellationToken)
-        {
-            return _dbContext.TenantUsage
-                .AsNoTracking()
-                .Where(tu => tu.PlanFeatureId == PlanFeatureId && tu.TenantId == tenantId)
-                .Select(tu => tu.Used)
-                .FirstOrDefaultAsync(cancellationToken);
-        }
-        public async Task InCreasePlanFeatureUsageAsync(int tenantId, Guid PlanFeatureId, long Size, CancellationToken cancellationToken)
-        {
-            await _dbContext.TenantUsage
-                .Where(tu => tu.TenantId == tenantId && tu.PlanFeatureId == PlanFeatureId)
-                .ExecuteUpdateAsync(s => s.SetProperty(tu => tu.Used, tu => tu.Used + Size), cancellationToken);
-        }
-        public async Task DeCreasePlanFeatureUsageAsync(int tenantId, Guid PlanFeatureId, long Size, CancellationToken cancellationToken)
-        {
-            await _dbContext.TenantUsage
-                .Where(tu => tu.TenantId == tenantId && tu.PlanFeatureId == PlanFeatureId)
-                .ExecuteUpdateAsync(s => s.SetProperty(tu => tu.Used, tu => tu.Used - Size), cancellationToken);
-        }
         public async Task<bool> IsFeatureUsingEnded(string subDomain, string featureName, CancellationToken cancellationToken)
         {
             var isEnded = await _dbContext.TenantUsage
@@ -194,12 +174,6 @@ namespace Infrastructure.Repositories
                 .FirstOrDefaultAsync(cancellationToken);
             return isEnded != null && isEnded.Used >= isEnded.LimitValue;
         }
-        public async Task IncreasePlanFeatureUsageByKeyAsync(string subDomain, string featureName, CancellationToken cancellationToken, long Size = 1)
-        {
-            await _dbContext.TenantUsage
-                .Where(tu => tu.Tenant.SubDomain == subDomain && tu.PlanFeature.Feature.Key == featureName)
-                .ExecuteUpdateAsync(s => s.SetProperty(tu => tu.Used, tu => tu.Used + Size), cancellationToken);
-        }
         public Task<string> GetSubDomainAsync(int tenantId, CancellationToken cancellationToken)
         {
             var SubDomain = _dbContext.Tenants
@@ -208,6 +182,12 @@ namespace Infrastructure.Repositories
                 .Select(t => t.SubDomain)
                 .FirstOrDefaultAsync(cancellationToken);
             return SubDomain!;
+        }
+        public async Task IncreasePlanFeatureUsageByKeyAsync(string subDomain, string featureName, CancellationToken cancellationToken, long Size = 1)
+        {
+            await _dbContext.TenantUsage
+                .Where(tu => tu.Tenant.SubDomain == subDomain && tu.PlanFeature.Feature.Key == featureName)
+                .ExecuteUpdateAsync(s => s.SetProperty(tu => tu.Used, tu => tu.Used + Size), cancellationToken);
         }
         public async Task DecreasePlanFeatureUsageByKeyAsync(string subDomain, string featureName, CancellationToken cancellationToken, long Size = 1)
         {

@@ -88,7 +88,7 @@ namespace Infrastructure.Services
 
             _ = _httpClient.PostAsync(_aiOptions.Value.Url, content);
         }
-        public async Task<CreateUploadDto?> CreateUploadCredentialsAsync(string title, int Size, CancellationToken cancellationToken)
+        public async Task<CreateUploadDto?> CreateUploadCredentialsAsync(string title, long Size, CancellationToken cancellationToken)
         {
             if (Size > _fileOptions.Value.VideoMaxSize)
                 return null;

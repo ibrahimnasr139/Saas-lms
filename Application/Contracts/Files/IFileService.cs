@@ -13,8 +13,6 @@ namespace Application.Contracts.Files
         string CreateUploadUrl(string path);
         Task<string?> UploadFileAsync(IFormFile file, string path);
         Task CallAIService(IFormFile file, FileType fileType, string fileId);
-
-
-        Task<CreateUploadDto?> CreateUploadCredentialsAsync(string title, int Size, CancellationToken cancellationToken);
+        Task<CreateUploadDto?> CreateUploadCredentialsAsync(string title, long Size, CancellationToken cancellationToken);
     }
 }

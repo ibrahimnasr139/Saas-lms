@@ -10,16 +10,6 @@ namespace Infrastructure.Persistence.Configurations
         {
             builder.HasKey(e => e.ModuleItemId);
 
-            //builder.Property(l => l.Resources)
-            //    .HasColumnType("jsonb")
-            //    .HasConversion(
-            //        v => JsonSerializer.Serialize(v, (JsonSerializerOptions?)null),
-            //        v => JsonSerializer.Deserialize<List<Resource>>(v, new JsonSerializerOptions
-            //        {
-            //            PropertyNameCaseInsensitive = true
-            //        })!
-            //    );
-
             builder.Property(l => l.Resources)
                    .HasColumnType("jsonb")
                    .HasConversion(
