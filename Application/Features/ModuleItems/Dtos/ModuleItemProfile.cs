@@ -22,10 +22,6 @@ namespace Application.Features.ModuleItems.Dtos
 
             CreateMap<CreateModuleItemCommand, Quiz>();
 
-            CreateMap<UpdateLessonCommand, Lesson>()
-                .ForPath(dest => dest.ModuleItem.Title, opt => opt.MapFrom(src => src.Title))
-                .ForPath(dest => dest.ModuleItem.Description, opt => opt.MapFrom(src => src.Description));
-
             CreateMap<UpdateAssignmentCommand, Assignment>()
                 .ForMember(dest => dest.Marks, opt => opt.MapFrom(src => src.TotalMarks));
 
