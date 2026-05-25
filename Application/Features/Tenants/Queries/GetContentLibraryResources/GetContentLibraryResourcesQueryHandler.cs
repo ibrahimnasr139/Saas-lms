@@ -20,9 +20,9 @@ namespace Application.Features.Tenants.Queries.GetContentLibraryResources
             var tenantId = await _tenantRepository.GetTenantIdAsync(subdomain!, cancellationToken);
 
             FileType type = 0;
-            if (!string.IsNullOrWhiteSpace(request.type) && Enum.TryParse<FileType>(request.type, true, out var parsedType))
+            if (!string.IsNullOrWhiteSpace(request.Type) && Enum.TryParse<FileType>(request.Type, true, out var parsedType))
                 type = parsedType;
-            return await _tenantRepository.GetTenantLibraryResource(tenantId, type, request.q, cancellationToken);
+            return await _tenantRepository.GetTenantLibraryResource(tenantId, type, request.Q, cancellationToken);
         }
     }
 }

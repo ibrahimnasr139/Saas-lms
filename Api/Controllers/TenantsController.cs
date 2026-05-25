@@ -47,9 +47,9 @@ namespace Api.Controllers
 
 
         [HttpGet("content-library/resources")]
-        public async Task<IActionResult> GetContentLibraryResources([FromQuery] string? q, [FromQuery] string type, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetContentLibraryResources([FromQuery] GetContentLibraryResourcesQuery query, CancellationToken cancellationToken)
         {
-            return Ok(await _mediator.Send(new GetContentLibraryResourcesQuery(q, type), cancellationToken));
+            return Ok(await _mediator.Send(query, cancellationToken));
         }
 
 
