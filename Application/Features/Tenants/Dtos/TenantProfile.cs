@@ -44,7 +44,6 @@ namespace Application.Features.Tenants.Dtos
             CreateMap<Domain.Entites.File, VideoDto>()
                 .ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.Name))
                 .ForMember(dest => dest.UploadedAt, opt => opt.MapFrom(src => src.CreatedAt))
-                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status))
                 .ForMember(dest => dest.Duration, opt => opt.MapFrom(src => src.Metadata != null && src.Metadata.ContainsKey("duration") ? double.Parse(src.Metadata["duration"], CultureInfo.InvariantCulture) : 0.0))
                 .ForMember(dest => dest.Extension, opt => opt.MapFrom(src => Path.GetExtension(src.Url).TrimStart('.')));
 
