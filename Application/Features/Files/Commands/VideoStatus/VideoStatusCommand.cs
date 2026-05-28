@@ -2,5 +2,5 @@
 
 namespace Application.Features.Files.Commands.VideoStatus
 {
-    public record VideoStatusCommand(string Id, FileStatus Status, long? Size) : IRequest<Unit>;
+    public sealed record VideoStatusCommand(string Id, FileStatus Status, long? Size) : IRequest<Unit>;
 }

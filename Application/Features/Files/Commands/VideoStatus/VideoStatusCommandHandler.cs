@@ -19,6 +19,7 @@ namespace Application.Features.Files.Commands.VideoStatus
         }
         public async Task<Unit> Handle(VideoStatusCommand request, CancellationToken cancellationToken)
         {
+            var subDomain = _httpContextAccessor.HttpContext?.Request.Cookies[AuthConstants.SubDomain];
             var file = await _fileRepository.GetFileByIdAsync(request.Id, cancellationToken);
             if (file == null)
                 return Unit.Value;
@@ -27,13 +28,11 @@ namespace Application.Features.Files.Commands.VideoStatus
             {
                 file.Status = FileStatus.Processing;
                 if (request.Size.HasValue && request.Size.Value > 0)
-                {
-                    var subDomain = _httpContextAccessor.HttpContext?.Request.Cookies[AuthConstants.SubDomain];
                     await _tenantRepository.IncreasePlanFeatureUsageByKeyAsync(subDomain!, FeatureConstants.VIDEO_STORAGE_GB, cancellationToken, request.Size.Value);
-                }
             }
             else
                 await _fileRepository.DeleteFileAsync(file, cancellationToken);
+
             await _unitOfWork.SaveAsync(cancellationToken);
             return Unit.Value;
         }
