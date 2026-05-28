@@ -1,4 +1,5 @@
 ﻿using Domain.Enums;
+using System.Globalization;
 
 namespace Application.Features.StudentLessons.Dtos
 {
@@ -14,7 +15,8 @@ namespace Application.Features.StudentLessons.Dtos
 
             CreateMap<Domain.Entites.File, ContentDto>()
                 .ForMember(dest => dest.VideoId, opt => opt.MapFrom(src => src.Id))
-                .ForMember(dest => dest.VideoUrl, opt => opt.MapFrom(src => src.Url));
+                .ForMember(dest => dest.VideoUrl, opt => opt.MapFrom(src => src.Url))
+                .ForMember(dest => dest.Duration, opt => opt.MapFrom(src => src.Metadata != null && src.Metadata.ContainsKey("duration") ? double.Parse(src.Metadata["duration"], CultureInfo.InvariantCulture) : 0.0));
 
             CreateMap<DicussionThread, StudentDiscussionDto>()
                 .ForMember(dest => dest.Author, opt => opt.MapFrom(src => src.User))
