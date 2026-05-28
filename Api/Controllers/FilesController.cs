@@ -4,6 +4,7 @@ using Application.Features.Files.Commands.CallBack;
 using Application.Features.Files.Commands.CreateUpload;
 using Application.Features.Files.Commands.UploadFile;
 using Application.Features.Files.Commands.VideoStatus;
+using Application.Features.Files.Dtos;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -53,9 +54,9 @@ namespace Api.Controllers
 
 
         [HttpPut("video-status/{id}")]
-        public async Task<IActionResult> UpdateVideoStatus([FromRoute] string id, [FromBody] VideoStatusCommand command, CancellationToken cancellationToken)
+        public async Task<IActionResult> UpdateVideoStatus([FromRoute] string id, [FromBody] VideoStatusRequest request, CancellationToken cancellationToken)
         {
-            await _mediator.Send(command with { Id = id }, cancellationToken);
+            await _mediator.Send(new VideoStatusCommand(id, request.Status, request.Size), cancellationToken);
             return NoContent();
         }
     }
