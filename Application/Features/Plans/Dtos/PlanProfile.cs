@@ -8,11 +8,11 @@
              .ForMember(dest => dest.PlanPricing, opt => opt.MapFrom(src => src.PlanPricings))
              .ForMember(dest => dest.PlanFeatures, opt => opt.MapFrom(src => src.PlanFeatures));
 
-            CreateMap<PlanPricing, PlanPricingResponse>()
+            CreateMap<PlanPricing, PlanPricingDto>()
                 .ForMember(dest => dest.BillingCycle, opt => opt.MapFrom(src => src.BillingCycle.ToString()))
                 .ForMember(dest => dest.Discount, opt => opt.MapFrom(src => src.DiscountPercent));
 
-            CreateMap<PlanFeature, PlanFeatureResponse>()
+            CreateMap<PlanFeature, PlanFeatureDto>()
                 .ForMember(dest => dest.FeatureName, opt => opt.MapFrom(src => src.Feature.Name))
                 .ForMember(dest => dest.FeatureDescription, opt => opt.MapFrom(src => src.Description))
                 .ForMember(dest => dest.FeatureKey, opt => opt.MapFrom(src => src.Feature.Key));

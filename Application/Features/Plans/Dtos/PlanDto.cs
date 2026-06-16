@@ -7,9 +7,9 @@
         public string Name { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
         public string Slug { get; set; } = string.Empty;
-        public DateTime createdAt { get; set; }
-        public DateTime? updatedAt { get; set; }
-        public IEnumerable<PlanPricingResponse> PlanPricing { get; set; } = [];
-        public IEnumerable<PlanFeatureResponse> PlanFeatures { get; set; } = [];
+        public DateTime CreatedAt { get; set; }
+        public DateTime? UpdatedAt { get; set; }
+        public IEnumerable<PlanPricingDto> PlanPricing { get; set; } = [];
+        public IEnumerable<PlanFeatureDto> PlanFeatures { get; set; } = [];
     }
 }

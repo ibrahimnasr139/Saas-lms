@@ -2,7 +2,7 @@
 
 namespace Application.Features.Plans.Dtos
 {
-    public sealed class PlansResponseDto
+    public sealed class PlansDto
     {
         public IEnumerable<PlanDto> Plans { get; init; } = [];
     }

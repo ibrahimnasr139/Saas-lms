@@ -14,7 +14,7 @@ namespace Infrastructure.Repositories
             _context = context;
             _mapper = mapper;
         }
-        public async Task<IEnumerable<PlanDto>> GetAllPlansWithDetailsAsync(CancellationToken cancellationToken)
+        public async Task<IEnumerable<PlanDto>> GetPlansWithDetailsAsync(CancellationToken cancellationToken)
         {
             return await _context.Plans
                     .Where(p => p.Slug != "free-trial")

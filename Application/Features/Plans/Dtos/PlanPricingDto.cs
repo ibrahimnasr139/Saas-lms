@@ -1,6 +1,6 @@
 ﻿namespace Application.Features.Plan.DTOs
 {
-    public sealed class PlanPricingResponse
+    public sealed class PlanPricingDto
     {
         public string Id { get; set; } = string.Empty;
         public decimal Price { get; set; }

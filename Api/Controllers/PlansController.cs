@@ -1,4 +1,4 @@
-﻿using Application.Features.Plans.Queries.GetAllPlans;
+﻿using Application.Features.Plans.Queries.GetAllPlan;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,9 +16,9 @@ namespace Api.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllPlans(CancellationToken cancellationToken)
+        public async Task<IActionResult> GetAllPlan(CancellationToken cancellationToken)
         {
-            return Ok(await _mediator.Send(new GetAllPlansQuery(), cancellationToken));
+            return Ok(await _mediator.Send(new GetAllPlanQuery(), cancellationToken));
         }
     }
 }

@@ -4,7 +4,7 @@ namespace Application.Contracts.Repositories
 {
     public interface IPlanRepository
     {
-        Task<IEnumerable<PlanDto>> GetAllPlansWithDetailsAsync(CancellationToken cancellationToken);
+        Task<IEnumerable<PlanDto>> GetPlansWithDetailsAsync(CancellationToken cancellationToken);
         Task<Guid> GetFreePlanPricingIdAsync(CancellationToken cancellationToken);
         Task<List<Guid>> GetPlanFeatureIdsAsync(Guid PlanId, CancellationToken cancellationToken);
         Task<Guid> GetPlanIdAsync(Guid PlanPricingId, CancellationToken cancellationToken);
