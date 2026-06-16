@@ -1,4 +1,6 @@
 ﻿using Application.Features.Dashboards.Dtos;
+using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using Domain.Enums;
 
 namespace Infrastructure.Repositories
@@ -6,9 +8,12 @@ namespace Infrastructure.Repositories
     internal sealed class DashboardRepository : IDashboardRepository
     {
         private readonly AppDbContext _context;
-        public DashboardRepository(AppDbContext context)
+        private readonly IMapper _mapper;
+
+        public DashboardRepository(AppDbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
         public async Task<List<PendingTaskDto>> GetPendingTasksAsync(string subdomain, CancellationToken cancellationToken)
         {
@@ -63,11 +68,11 @@ namespace Infrastructure.Repositories
         public async Task<QuickAnalyticsDto> GetQuickAnalyticsAsync(string subdomain, CancellationToken cancellationToken)
         {
             var totalCourses = await _context.Courses.CountAsync(c => c.Tenant.SubDomain == subdomain, cancellationToken);
-            
+
             var totalLessons = await _context.Modules
                 .Where(m => m.Course.Tenant.SubDomain == subdomain)
                 .SumAsync(m => m.ModuleItems.Count(mi => mi.Type == ModuleItemType.Lesson), cancellationToken);
-            
+
             var newMessages = await _context.DicussionThreads
                 .Where(dt => dt.Tenant.SubDomain == subdomain && !dt.DicussionReads.Any(dr => dr.DicussionId == dt.Id))
                 .CountAsync(cancellationToken);
@@ -90,6 +95,13 @@ namespace Infrastructure.Repositories
                 NewMessages = newMessages,
                 CompletionRate = completionRate
             };
+        }
+        public async Task<List<UpcomingSessionsDto>> GetUpcomingSessionsAsync(string subdomain, CancellationToken cancellationToken)
+        {
+            return await _context.LiveSessions
+                .Where(s => s.Course.Tenant.SubDomain == subdomain && s.Status == LiveSessionStatus.Upcoming)
+                .ProjectTo<UpcomingSessionsDto>(_mapper.ConfigurationProvider)
+                .ToListAsync(cancellationToken);
         }
     }
 }
