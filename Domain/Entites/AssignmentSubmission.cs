@@ -13,7 +13,7 @@ namespace Domain.Entites
         public File? File { get; set; }
         public AssignmentStatus Status { get; set; }
         public DateTime SubmittedAt { get; set; } = DateTime.UtcNow;
-        public double EarnedMarks { get; set; }
+        public double? EarnedMarks { get; set; }
         public string? Feedback { get; set; }
         public string? Link { get; set; }
         public string? Text { get; set; }

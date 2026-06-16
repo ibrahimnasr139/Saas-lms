@@ -69,7 +69,7 @@ namespace Application.Features.StudentAssignments.Commands.SubmitAssignment
             if (status == ModuleItemStatus.completed)
                 return ModuleItemErrors.ModuleItemAlreadyCompleted;
 
-            var newAssignmentSubmission = new AssignmentSubmission()
+            var newAssignmentSubmission = new AssignmentSubmission
             {
                 AssignmentId = request.ItemId,
                 StudentId = session.StudentId,
