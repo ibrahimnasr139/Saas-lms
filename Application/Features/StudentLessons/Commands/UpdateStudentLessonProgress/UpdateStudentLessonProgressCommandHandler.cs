@@ -14,10 +14,12 @@ namespace Application.Features.StudentLessons.Commands.UpdateStudentLessonProgre
         private readonly IModuleItemRepository _moduleItemRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly ILessonViewRepository _lessonViewRepository;
+        private readonly ICourseProgressRepository _courseProgressRepository;
 
         public UpdateStudentLessonProgressCommandHandler(HybridCache hybridCache, IHttpContextAccessor httpContextAccessor,
             IStudentSubscriptionRepository studentSubscriptionRepository, IEnrollmentRepository enrollmentRepository,
-            IModuleItemRepository moduleItemRepository, IUnitOfWork unitOfWork, ILessonViewRepository lessonViewRepository)
+            IModuleItemRepository moduleItemRepository, IUnitOfWork unitOfWork, ILessonViewRepository lessonViewRepository,
+            ICourseProgressRepository courseProgressRepository)
         {
             _hybridCache = hybridCache;
             _httpContextAccessor = httpContextAccessor;
@@ -26,6 +28,7 @@ namespace Application.Features.StudentLessons.Commands.UpdateStudentLessonProgre
             _moduleItemRepository = moduleItemRepository;
             _unitOfWork = unitOfWork;
             _lessonViewRepository = lessonViewRepository;
+            _courseProgressRepository = courseProgressRepository;
         }
 
         public async Task<OneOf<LessonProgressDto, Error>> Handle(UpdateStudentLessonProgressCommand request, CancellationToken cancellationToken)
@@ -113,6 +116,10 @@ namespace Application.Features.StudentLessons.Commands.UpdateStudentLessonProgre
             lessonView.Status = isCompleted ? ViewStatus.Completed : ViewStatus.InProgress;
             lessonView.ViewCount = nextViewsCount;
             lessonView.LastWatchedAt = DateTime.UtcNow;
+
+            var courseProgress = await _courseProgressRepository.GetCourseProgressAsync(session.StudentId, request.CourseId, cancellationToken);
+            if (courseProgress != null)
+                courseProgress.CompletedLessons += 1;
 
             await _unitOfWork.SaveAsync(cancellationToken);
             return new LessonProgressDto
