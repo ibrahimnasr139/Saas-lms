@@ -172,7 +172,7 @@ namespace Infrastructure.Repositories
                 .FirstOrDefaultAsync(cancellationToken);
 
             result!.Gamification.Level = studentLevel!.LevelNumber;
-            result!.Gamification.NextLevelXp = studentLevel.RequiredXp - result.Gamification.Xp;
+            result!.Gamification.NextLevelXp = studentLevel.RequiredXp;
             return result;
         }
         public Task UpdateStudentXPAsync(int studentId, int xpGained, CancellationToken cancellationToken)
