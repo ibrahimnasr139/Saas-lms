@@ -1,6 +1,7 @@
 ﻿using Application.Common;
 using Application.Constants;
 using Application.Features.Dashboards.Queries.GetPendingTasks;
+using Application.Features.Dashboards.Queries.GetQuickAnalytics;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -23,6 +24,17 @@ namespace Api.Controllers
         public async Task<IActionResult> GetPendingTasks(CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(new GetPendingTasksQuery(), cancellationToken);
+            return result.Match<IActionResult>(
+               success => Ok(success),
+               error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message })
+            );
+        }
+
+
+        [HttpGet("quick-analytics")]
+        public async Task<IActionResult> GetQuickAnalytics(CancellationToken cancellationToken)
+        {
+            var result = await _mediator.Send(new GetQuickAnalyticsQuery(), cancellationToken);
             return result.Match<IActionResult>(
                success => Ok(success),
                error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message })

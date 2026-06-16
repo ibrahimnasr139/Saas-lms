@@ -32,7 +32,7 @@ namespace Infrastructure.Repositories
                     ModuleId = g.Key.ModuleId,
                     CourseId = g.Key.CourseId,
                     LastSubmittedAt = g.Max(x => x.SubmittedAt)
-                }).ToListAsync(cancellationToken);
+                }).Take(5).ToListAsync(cancellationToken);
 
             var assignmentTasks = await _context.AssignmentSubmissions
                 .Where(aa => aa.Status != AssignmentStatus.Graded &&
@@ -52,13 +52,44 @@ namespace Infrastructure.Repositories
                     ModuleId = g.Key.ModuleId,
                     CourseId = g.Key.CourseId,
                     LastSubmittedAt = g.Max(x => x.SubmittedAt)
-                }).ToListAsync(cancellationToken);
+                }).Take(5).ToListAsync(cancellationToken);
 
             return quizTasks
                 .Concat(assignmentTasks)
                 .OrderByDescending(x => x.LastSubmittedAt)
                 .Take(5)
                 .ToList();
+        }
+        public async Task<QuickAnalyticsDto> GetQuickAnalyticsAsync(string subdomain, CancellationToken cancellationToken)
+        {
+            var totalCourses = await _context.Courses.CountAsync(c => c.Tenant.SubDomain == subdomain, cancellationToken);
+            
+            var totalLessons = await _context.Modules
+                .Where(m => m.Course.Tenant.SubDomain == subdomain)
+                .SumAsync(m => m.ModuleItems.Count(mi => mi.Type == ModuleItemType.Lesson), cancellationToken);
+            
+            var newMessages = await _context.DicussionThreads
+                .Where(dt => dt.Tenant.SubDomain == subdomain && !dt.DicussionReads.Any(dr => dr.DicussionId == dt.Id))
+                .CountAsync(cancellationToken);
+
+            var completionRate = 0;
+            var hasProgress = await _context.CourseProgresses
+                .AnyAsync(cc => cc.Course.Tenant.SubDomain == subdomain && cc.TotalLessons > 0, cancellationToken);
+            if (hasProgress)
+            {
+                var avg = await _context.CourseProgresses
+                    .Where(cc => cc.Course.Tenant.SubDomain == subdomain && cc.TotalLessons > 0)
+                    .AverageAsync(cc => (double)cc.CompletedLessons / cc.TotalLessons, cancellationToken);
+                completionRate = (int)(avg * 100);
+            }
+
+            return new QuickAnalyticsDto
+            {
+                TotalCourses = totalCourses,
+                TotalLessons = totalLessons,
+                NewMessages = newMessages,
+                CompletionRate = completionRate
+            };
         }
     }
 }
