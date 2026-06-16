@@ -26,6 +26,7 @@ namespace Application.Features.Dashboards.Queries.GetPendingTasks
                 return TenantErrors.NotSubscribed;
 
             var cacheKey = $"{subdomain}_{CacheKeysConstants.PendingTaskKey}";
+            await _hybridCache.RemoveAsync(cacheKey, cancellationToken);
             var pendingTasks = await _hybridCache.GetOrCreateAsync(
                 cacheKey,
                 async cacheEntry =>
