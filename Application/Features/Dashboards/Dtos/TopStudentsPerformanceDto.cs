@@ -4,6 +4,7 @@
     {
         public int Id { get; set; }
         public string Name { get; set; } = string.Empty;
+        public string? ProfilePicture { get; set; }
         public List<string> Courses { get; set; } = [];
         public int OverallScore { get; set; }
         public BreakdownDto Breakdown { get; set; } = new BreakdownDto();

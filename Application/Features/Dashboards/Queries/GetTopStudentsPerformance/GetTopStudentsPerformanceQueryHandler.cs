@@ -25,7 +25,6 @@ namespace Application.Features.Dashboards.Queries.GetTopStudentsPerformance
                 return TenantErrors.NotSubscribed;
 
             var cacheKey = $"{subdomain}_{CacheKeysConstants.TopStudentsPerformanceKey}";
-            await _hybridCache.RemoveAsync(cacheKey, cancellationToken);
             var topStudentsPerformance = await _hybridCache.GetOrCreateAsync(
                 cacheKey,
                 async cacheEntry =>

@@ -114,8 +114,8 @@ namespace Infrastructure.Repositories
                     e.TenantId,
                     CourseTitle = e.Course.Title,
                     StudentName = e.Student.User.FirstName + " " + e.Student.User.LastName,
-                })
-                .ToListAsync(cancellationToken);
+                    ProfilePicture = e.Student.User.ProfilePicture
+                }).ToListAsync(cancellationToken);
 
             var studentIds = enrollments.Select(e => e.StudentId).Distinct().ToList();
             var tenantId = enrollments.Select(e => e.TenantId).FirstOrDefault();
@@ -132,15 +132,15 @@ namespace Infrastructure.Repositories
                 .ToListAsync(cancellationToken);
 
             var studentEnrollments = enrollments
-                .GroupBy(e => new { e.StudentId, e.StudentName })
+                .GroupBy(e => new { e.StudentId, e.StudentName, e.ProfilePicture })
                 .Select(g => new
                 {
                     g.Key.StudentId,
                     g.Key.StudentName,
+                    g.Key.ProfilePicture,
                     Courses = g.Select(e => e.CourseTitle).Distinct().ToList(),
                     CourseIds = g.Select(e => e.CourseId).Distinct().ToList()
-                })
-                .ToList();
+                }).ToList();
 
             return studentEnrollments
                 .Select(s =>
@@ -184,6 +184,7 @@ namespace Infrastructure.Repositories
                     {
                         Id = s.StudentId,
                         Name = s.StudentName,
+                        ProfilePicture = s.ProfilePicture,
                         Courses = s.Courses,
                         OverallScore = (int)Math.Round(overallScore),
                         Breakdown = new BreakdownDto
