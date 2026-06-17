@@ -25,6 +25,7 @@ namespace Application.Features.Dashboards.Queries.Getperformance
                 return TenantErrors.NotSubscribed;
 
             var cacheKey = $"{subdomain}_{CacheKeysConstants.PerformanceKey}";
+            await _hybridCache.RemoveAsync(cacheKey, cancellationToken);
             var performanceData = await _hybridCache.GetOrCreateAsync(
                 cacheKey,
                 async cacheEntry =>

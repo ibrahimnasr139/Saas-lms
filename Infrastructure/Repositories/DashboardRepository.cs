@@ -237,12 +237,23 @@ namespace Infrastructure.Repositories
                 .ThenBy(x => x.Month)
                 .ToListAsync(cancellationToken);
 
-            var chartDataDto = chartData
-                .Select(x => new ChartDataDto
+            var allMonths = Enumerable.Range(0, 6)
+                .Select(i => DateTime.UtcNow.AddMonths(-5 + i))
+                .Select(d => new { d.Year, d.Month })
+                .ToList();
+
+            var chartDataDto = allMonths
+                .Where(m => new DateTime(m.Year, m.Month, 1, 0, 0, 0, DateTimeKind.Utc) >= startDate)
+                .Select(m =>
                 {
-                    Month = new DateTime(x.Year, x.Month, 1).ToString("MMMM", new System.Globalization.CultureInfo("ar-EG")),
-                    Revenue = x.Revenue,
-                    Students = x.Students
+                    var existing = chartData.FirstOrDefault(x => x.Year == m.Year && x.Month == m.Month);
+                    return new ChartDataDto
+                    {
+                        Month = new DateTime(m.Year, m.Month, 1)
+                            .ToString("MMMM", new System.Globalization.CultureInfo("ar-EG")),
+                        Revenue = existing?.Revenue ?? 0,
+                        Students = existing?.Students ?? 0
+                    };
                 }).ToList();
 
             return new DashboardPerformanceDto
