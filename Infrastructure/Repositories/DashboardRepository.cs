@@ -103,5 +103,79 @@ namespace Infrastructure.Repositories
                 .ProjectTo<UpcomingSessionsDto>(_mapper.ConfigurationProvider)
                 .ToListAsync(cancellationToken);
         }
+        public async Task<List<TopStudentsPerformanceDto>> GetTopStudentsPerformanceAsync(string subdomain, CancellationToken cancellationToken)
+        {
+            var enrollments = await _context.Enrollments
+                .Where(e => e.Tenant.SubDomain == subdomain)
+                .Select(e => new
+                {
+                    e.StudentId,
+                    e.CourseId,
+                    e.TenantId,
+                    Name = e.Student.User.FirstName + " " + e.Student.User.LastName,
+                    Course = e.Course.Title,
+                    Grades = e.Student.StudentGrades
+                        .Where(sg => sg.TenantId == e.TenantId)
+                        .Select(sg => new { sg.Score, sg.Type })
+                        .ToList()
+                }).ToListAsync(cancellationToken);
+
+            var studentIds = enrollments.Select(e => e.StudentId).Distinct().ToList();
+            var courseIds = enrollments.Select(e => e.CourseId).Distinct().ToList();
+
+            var lessonViews = await _context.LessonViews
+                .Where(lv => studentIds.Contains(lv.StudentId) && lv.Lesson.ModuleItem.CourseId != null)
+                .Select(lv => new
+                {
+                    lv.StudentId,
+                    CourseId = lv.Lesson.ModuleItem.CourseId,
+                    lv.Status
+                }).ToListAsync(cancellationToken);
+
+            var totalLessonsPerCourse = await _context.ModuleItems
+                .Where(mi => courseIds.Contains(mi.CourseId) && mi.Type == ModuleItemType.Lesson)
+                .GroupBy(mi => mi.CourseId)
+                .Select(g => new { CourseId = g.Key, Total = g.Count() })
+                .ToListAsync(cancellationToken);
+
+            return enrollments
+                .Select(e =>
+                {
+                    var quizGrades = e.Grades.Where(g => g.Type == StudentGradeType.Quiz);
+                    var assignmentGrades = e.Grades.Where(g => g.Type == StudentGradeType.Assignment);
+
+                    var quizAverage = quizGrades.Any()
+                        ? quizGrades.Average(g => g.Score * 100)
+                        : 0;
+
+                    var assignmentAverage = assignmentGrades.Any()
+                        ? assignmentGrades.Average(g => g.Score * 100)
+                        : 0;
+
+                    var completedLessons = lessonViews
+                        .Count(lv => lv.StudentId == e.StudentId && lv.CourseId == e.CourseId && lv.Status == ViewStatus.Completed);
+
+                    var totalLessons = totalLessonsPerCourse
+                        .FirstOrDefault(x => x.CourseId == e.CourseId)?.Total ?? 0;
+
+                    var progressPercentage = totalLessons > 0
+                        ? (double)completedLessons / totalLessons * 100
+                        : 0;
+
+                    return new TopStudentsPerformanceDto
+                    {
+                        Id = e.StudentId,
+                        Name = e.Name,
+                        Course = e.Course,
+                        Performance = Math.Round(
+                            quizAverage * 0.5 +
+                            assignmentAverage * 0.3 +
+                            progressPercentage * 0.2, 2)
+                    };
+                })
+                .OrderByDescending(x => x.Performance)
+                .Take(5)
+                .ToList();
+        }
     }
 }

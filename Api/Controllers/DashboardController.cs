@@ -2,6 +2,7 @@
 using Application.Constants;
 using Application.Features.Dashboards.Queries.GetPendingTasks;
 using Application.Features.Dashboards.Queries.GetQuickAnalytics;
+using Application.Features.Dashboards.Queries.GetTopStudentsPerformance;
 using Application.Features.Dashboards.Queries.GetUpcomingSessions;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -47,6 +48,17 @@ namespace Api.Controllers
         public async Task<IActionResult> GetUpcomingSessions(CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(new GetUpcomingSessionsQuery(), cancellationToken);
+            return result.Match<IActionResult>(
+               success => Ok(success),
+               error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message })
+            );
+        }
+
+
+        [HttpGet("top-students-performance")]
+        public async Task<IActionResult> GetTopStudentsPerformance(CancellationToken cancellationToken)
+        {
+            var result = await _mediator.Send(new GetTopStudentsPerformanceQuery(), cancellationToken);
             return result.Match<IActionResult>(
                success => Ok(success),
                error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message })

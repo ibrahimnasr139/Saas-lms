@@ -17,5 +17,6 @@
         public const string PendingTaskKey = "Pending_Tasks";
         public const string QuickAnalyticsKey = "Quick_Analytics";
         public const string UpcomingSessionsKey = "Upcoming_Sessions";
+        public const string TopStudentsPerformanceKey = "Top_Students_Performance";
     }
 }

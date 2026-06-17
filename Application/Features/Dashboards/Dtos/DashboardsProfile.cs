@@ -2,7 +2,7 @@
 
 namespace Application.Features.Dashboards.Dtos
 {
-    public sealed class DashboardsProfile :Profile
+    public sealed class DashboardsProfile : Profile
     {
         public DashboardsProfile()
         {
