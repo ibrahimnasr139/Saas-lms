@@ -25,6 +25,7 @@ namespace Application.Features.Dashboards.Queries.GetStatistics
                 return TenantErrors.NotSubscribed;
 
             var cacheKey = $"{subdomain}_{CacheKeysConstants.DashboardStatisticsKey}";
+            await _hybridCache.RemoveAsync(cacheKey, cancellationToken); // Invalidate cache to ensure fresh data
             var statisticsData = await _hybridCache.GetOrCreateAsync(
                 cacheKey,
                 async cacheEntry =>
