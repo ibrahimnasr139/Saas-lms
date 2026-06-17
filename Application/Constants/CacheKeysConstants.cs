@@ -18,5 +18,6 @@
         public const string QuickAnalyticsKey = "Quick_Analytics";
         public const string UpcomingSessionsKey = "Upcoming_Sessions";
         public const string TopStudentsPerformanceKey = "Top_Students_Performance";
+        public const string PerformanceKey = "Performance";
     }
 }

@@ -199,5 +199,59 @@ namespace Infrastructure.Repositories
                 .Take(5)
                 .ToList();
         }
+        public async Task<DashboardPerformanceDto> GetPerformanceAsync(string subdomain, CancellationToken cancellationToken)
+        {
+            var newStudents = await _context.Enrollments
+                .Where(e => e.Tenant.SubDomain == subdomain && e.EnrolledAt >= DateTime.UtcNow.AddMonths(-1))
+                .CountAsync(cancellationToken);
+
+            var revenueThisMonth = await _context.Orders
+                .Where(o => o.Tenant.SubDomain == subdomain && o.CreatedAt >= DateTime.UtcNow.AddMonths(-1))
+                .SumAsync(o => (decimal?)o.PricePaid) ?? 0;
+
+            var completedLessons = await _context.CourseProgresses
+                .Where(cp => cp.Course.Tenant.SubDomain == subdomain)
+                .SumAsync(cp => cp.CompletedLessons, cancellationToken);
+
+            var tenantCreatedAt = await _context.Tenants
+                .Where(t => t.SubDomain == subdomain)
+                .Select(t => t.CreatedAt)
+                .FirstOrDefaultAsync(cancellationToken);
+
+            var sixMonthsAgo = new DateTime(DateTime.UtcNow.Year, DateTime.UtcNow.Month, 1, 0, 0, 0, DateTimeKind.Utc).AddMonths(-5);
+            var startDate = tenantCreatedAt > sixMonthsAgo
+                ? new DateTime(tenantCreatedAt.Year, tenantCreatedAt.Month, 1, 0, 0, 0, DateTimeKind.Utc)
+                : sixMonthsAgo;
+
+            var chartData = await _context.Orders
+                .Where(o => o.Tenant.SubDomain == subdomain && o.CreatedAt >= startDate)
+                .GroupBy(o => new { Year = o.CreatedAt.Year, Month = o.CreatedAt.Month })
+                .Select(g => new
+                {
+                    g.Key.Year,
+                    g.Key.Month,
+                    Revenue = g.Sum(o => (decimal?)o.PricePaid) ?? 0,
+                    Students = g.Select(o => o.StudentId).Distinct().Count()
+                })
+                .OrderBy(x => x.Year)
+                .ThenBy(x => x.Month)
+                .ToListAsync(cancellationToken);
+
+            var chartDataDto = chartData
+                .Select(x => new ChartDataDto
+                {
+                    Month = new DateTime(x.Year, x.Month, 1).ToString("MMMM", new System.Globalization.CultureInfo("ar-EG")),
+                    Revenue = x.Revenue,
+                    Students = x.Students
+                }).ToList();
+
+            return new DashboardPerformanceDto
+            {
+                NewStudents = newStudents,
+                RevenueThisMonth = revenueThisMonth,
+                CompletedLessons = completedLessons,
+                ChartData = chartDataDto
+            };
+        }
     }
 }

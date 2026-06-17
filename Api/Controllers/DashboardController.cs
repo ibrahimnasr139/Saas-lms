@@ -1,6 +1,7 @@
 ﻿using Application.Common;
 using Application.Constants;
 using Application.Features.Dashboards.Queries.GetPendingTasks;
+using Application.Features.Dashboards.Queries.Getperformance;
 using Application.Features.Dashboards.Queries.GetQuickAnalytics;
 using Application.Features.Dashboards.Queries.GetTopStudentsPerformance;
 using Application.Features.Dashboards.Queries.GetUpcomingSessions;
@@ -59,6 +60,17 @@ namespace Api.Controllers
         public async Task<IActionResult> GetTopStudentsPerformance(CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(new GetTopStudentsPerformanceQuery(), cancellationToken);
+            return result.Match<IActionResult>(
+               success => Ok(success),
+               error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message })
+            );
+        }
+
+
+        [HttpGet("performance")]
+        public async Task<IActionResult> Getperformance(CancellationToken cancellationToken)
+        {
+            var result = await _mediator.Send(new GetperformanceQuery(), cancellationToken);
             return result.Match<IActionResult>(
                success => Ok(success),
                error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message })
