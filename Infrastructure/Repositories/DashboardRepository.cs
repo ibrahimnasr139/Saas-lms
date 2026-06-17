@@ -244,6 +244,8 @@ namespace Infrastructure.Repositories
 
             var chartDataDto = allMonths
                 .Where(m => new DateTime(m.Year, m.Month, 1, 0, 0, 0, DateTimeKind.Utc) >= startDate)
+                .OrderByDescending(m => m.Year)
+                .ThenByDescending(m => m.Month)
                 .Select(m =>
                 {
                     var existing = chartData.FirstOrDefault(x => x.Year == m.Year && x.Month == m.Month);
