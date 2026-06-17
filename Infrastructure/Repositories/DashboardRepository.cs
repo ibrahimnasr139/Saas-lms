@@ -118,7 +118,8 @@ namespace Infrastructure.Repositories
                         .Where(sg => sg.TenantId == e.TenantId)
                         .Select(sg => new { sg.Score, sg.Type })
                         .ToList()
-                }).ToListAsync(cancellationToken);
+                })
+                .ToListAsync(cancellationToken);
 
             var studentIds = enrollments.Select(e => e.StudentId).Distinct().ToList();
             var courseIds = enrollments.Select(e => e.CourseId).Distinct().ToList();
@@ -130,7 +131,8 @@ namespace Infrastructure.Repositories
                     lv.StudentId,
                     CourseId = lv.Lesson.ModuleItem.CourseId,
                     lv.Status
-                }).ToListAsync(cancellationToken);
+                })
+                .ToListAsync(cancellationToken);
 
             var totalLessonsPerCourse = await _context.ModuleItems
                 .Where(mi => courseIds.Contains(mi.CourseId) && mi.Type == ModuleItemType.Lesson)
@@ -153,7 +155,9 @@ namespace Infrastructure.Repositories
                         : 0;
 
                     var completedLessons = lessonViews
-                        .Count(lv => lv.StudentId == e.StudentId && lv.CourseId == e.CourseId && lv.Status == ViewStatus.Completed);
+                        .Count(lv => lv.StudentId == e.StudentId &&
+                                     lv.CourseId == e.CourseId &&
+                                     lv.Status == ViewStatus.Completed);
 
                     var totalLessons = totalLessonsPerCourse
                         .FirstOrDefault(x => x.CourseId == e.CourseId)?.Total ?? 0;
@@ -162,18 +166,25 @@ namespace Infrastructure.Repositories
                         ? (double)completedLessons / totalLessons * 100
                         : 0;
 
+                    var overallScore = quizAverage * 0.5 +
+                                       assignmentAverage * 0.3 +
+                                       progressPercentage * 0.2;
+
                     return new TopStudentsPerformanceDto
                     {
                         Id = e.StudentId,
                         Name = e.Name,
                         Course = e.Course,
-                        Performance = Math.Round(
-                            quizAverage * 0.5 +
-                            assignmentAverage * 0.3 +
-                            progressPercentage * 0.2, 2)
+                        OverallScore = (int)Math.Round(overallScore),
+                        Breakdown = new BreakdownDto
+                        {
+                            Quizzes = (int)Math.Round(quizAverage),
+                            Assignments = (int)Math.Round(assignmentAverage),
+                            Progress = (int)Math.Round(progressPercentage)
+                        }
                     };
                 })
-                .OrderByDescending(x => x.Performance)
+                .OrderByDescending(x => x.OverallScore)
                 .Take(5)
                 .ToList();
         }
