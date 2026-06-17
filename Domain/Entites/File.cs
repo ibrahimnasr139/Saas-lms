@@ -24,5 +24,6 @@ namespace Domain.Entites
         public Transcript Transcript { get; set; } = null!;
         public ICollection<Metadata> Metadatas { get; set; } = null!;
         public Lesson Lesson { get; set; } = null!;
+        public ICollection<FileChunk> FileChunks { get; set; } = null!;
     }
 }
