@@ -112,58 +112,57 @@ namespace Infrastructure.Repositories
                     e.StudentId,
                     e.CourseId,
                     e.TenantId,
-                    Name = e.Student.User.FirstName + " " + e.Student.User.LastName,
-                    Course = e.Course.Title,
-                    Grades = e.Student.StudentGrades
-                        .Where(sg => sg.TenantId == e.TenantId)
-                        .Select(sg => new { sg.Score, sg.Type })
-                        .ToList()
+                    CourseTitle = e.Course.Title,
+                    StudentName = e.Student.User.FirstName + " " + e.Student.User.LastName,
                 })
                 .ToListAsync(cancellationToken);
 
             var studentIds = enrollments.Select(e => e.StudentId).Distinct().ToList();
+            var tenantId = enrollments.Select(e => e.TenantId).FirstOrDefault();
             var courseIds = enrollments.Select(e => e.CourseId).Distinct().ToList();
 
-            var lessonViews = await _context.LessonViews
-                .Where(lv => studentIds.Contains(lv.StudentId) && lv.Lesson.ModuleItem.CourseId != null)
-                .Select(lv => new
+            var grades = await _context.StudentGrades
+                .Where(sg => sg.TenantId == tenantId && studentIds.Contains(sg.StudentId))
+                .Select(sg => new { sg.StudentId, sg.Score, sg.TotalMarks, sg.Type })
+                .ToListAsync(cancellationToken);
+
+            var progresses = await _context.CourseProgresses
+                .Where(cp => studentIds.Contains(cp.StudentId) && courseIds.Contains(cp.CourseId))
+                .Select(cp => new { cp.StudentId, cp.CourseId, cp.CompletedLessons, cp.TotalLessons })
+                .ToListAsync(cancellationToken);
+
+            var studentEnrollments = enrollments
+                .GroupBy(e => new { e.StudentId, e.StudentName })
+                .Select(g => new
                 {
-                    lv.StudentId,
-                    CourseId = lv.Lesson.ModuleItem.CourseId,
-                    lv.Status
+                    g.Key.StudentId,
+                    g.Key.StudentName,
+                    Courses = g.Select(e => e.CourseTitle).Distinct().ToList(),
+                    CourseIds = g.Select(e => e.CourseId).Distinct().ToList()
                 })
-                .ToListAsync(cancellationToken);
+                .ToList();
 
-            var totalLessonsPerCourse = await _context.ModuleItems
-                .Where(mi => courseIds.Contains(mi.CourseId) && mi.Type == ModuleItemType.Lesson)
-                .GroupBy(mi => mi.CourseId)
-                .Select(g => new { CourseId = g.Key, Total = g.Count() })
-                .ToListAsync(cancellationToken);
-
-            return enrollments
-                .Select(e =>
+            return studentEnrollments
+                .Select(s =>
                 {
-                    var quizGrades = e.Grades.Where(g => g.Type == StudentGradeType.Quiz);
-                    var assignmentGrades = e.Grades.Where(g => g.Type == StudentGradeType.Assignment);
+                    var studentGrades = grades.Where(g => g.StudentId == s.StudentId).ToList();
+                    var quizGrades = studentGrades.Where(g => g.Type == StudentGradeType.Quiz).ToList();
+                    var assignmentGrades = studentGrades.Where(g => g.Type == StudentGradeType.Assignment).ToList();
 
                     var quizAverage = quizGrades.Any()
-                        ? quizGrades.Average(g => g.Score * 100)
+                        ? quizGrades.Average(g => g.TotalMarks > 0 ? g.Score / g.TotalMarks * 100 : 0)
                         : 0;
 
                     var assignmentAverage = assignmentGrades.Any()
-                        ? assignmentGrades.Average(g => g.Score * 100)
+                        ? assignmentGrades.Average(g => g.TotalMarks > 0 ? g.Score / g.TotalMarks * 100 : 0)
                         : 0;
 
-                    var completedLessons = lessonViews
-                        .Count(lv => lv.StudentId == e.StudentId &&
-                                     lv.CourseId == e.CourseId &&
-                                     lv.Status == ViewStatus.Completed);
+                    var studentProgresses = progresses
+                        .Where(cp => cp.StudentId == s.StudentId && cp.TotalLessons > 0)
+                        .ToList();
 
-                    var totalLessons = totalLessonsPerCourse
-                        .FirstOrDefault(x => x.CourseId == e.CourseId)?.Total ?? 0;
-
-                    var progressPercentage = totalLessons > 0
-                        ? (double)completedLessons / totalLessons * 100
+                    var progressPercentage = studentProgresses.Any()
+                        ? studentProgresses.Average(cp => (double)cp.CompletedLessons / cp.TotalLessons * 100)
                         : 0;
 
                     var overallScore = quizAverage * 0.5 +
@@ -172,9 +171,9 @@ namespace Infrastructure.Repositories
 
                     return new TopStudentsPerformanceDto
                     {
-                        Id = e.StudentId,
-                        Name = e.Name,
-                        Course = e.Course,
+                        Id = s.StudentId,
+                        Name = s.StudentName,
+                        Courses = s.Courses,
                         OverallScore = (int)Math.Round(overallScore),
                         Breakdown = new BreakdownDto
                         {
