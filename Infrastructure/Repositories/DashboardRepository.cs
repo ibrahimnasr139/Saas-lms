@@ -266,5 +266,131 @@ namespace Infrastructure.Repositories
                 ChartData = chartDataDto
             };
         }
+        public async Task<DashboardStatisticsDto> GetStatisticsAsync(string subdomain, CancellationToken cancellationToken)
+        {
+            var startOfCurrentMonth = new DateTime(DateTime.UtcNow.Year, DateTime.UtcNow.Month, 1, 0, 0, 0, DateTimeKind.Utc);
+            var startOfPreviousMonth = startOfCurrentMonth.AddMonths(-1);
+
+            // TotalStudents
+            var valueTotalStudents = await _context.Enrollments
+                .Where(e => e.Tenant.SubDomain == subdomain)
+                .Select(e => e.StudentId)
+                .Distinct()
+                .CountAsync(cancellationToken);
+
+            var studentsCurrentMonth = await _context.Enrollments
+                .Where(e => e.Tenant.SubDomain == subdomain && e.EnrolledAt >= startOfCurrentMonth)
+                .Select(e => e.StudentId)
+                .Distinct()
+                .CountAsync(cancellationToken);
+
+            var studentsPreviousMonth = await _context.Enrollments
+                .Where(e => e.Tenant.SubDomain == subdomain && e.EnrolledAt >= startOfPreviousMonth
+                    && e.EnrolledAt < startOfCurrentMonth)
+                .Select(e => e.StudentId)
+                .Distinct()
+                .CountAsync(cancellationToken);
+
+            var changePercentageStudents = studentsPreviousMonth == 0
+                ? 100
+                : (((decimal)(studentsCurrentMonth - studentsPreviousMonth) / studentsPreviousMonth) * 100);
+
+            var statusStudents = changePercentageStudents > 0
+                ? StatisticStatus.Up
+                : StatisticStatus.Down;
+
+
+            // TotalRevenue
+            var valueTotalRevenue = await _context.Orders
+                .Where(o => o.Tenant.SubDomain == subdomain)
+                .SumAsync(o => (decimal?)o.PricePaid) ?? 0;
+
+            var currentMonthRevenue = await _context.Orders
+                .Where(o => o.Tenant.SubDomain == subdomain && o.CreatedAt >= startOfCurrentMonth)
+                .SumAsync(o => (decimal?)o.PricePaid) ?? 0;
+
+            var previousMonthRevenue = await _context.Orders
+                .Where(o => o.Tenant.SubDomain == subdomain && o.CreatedAt >= startOfPreviousMonth
+                    && o.CreatedAt < startOfCurrentMonth)
+                .SumAsync(o => (decimal?)o.PricePaid) ?? 0;
+
+            var changePercentageRevenue = previousMonthRevenue == 0
+                ? 100
+                : (((decimal)(currentMonthRevenue - previousMonthRevenue) / previousMonthRevenue) * 100);
+
+            var statusRevenue = changePercentageRevenue > 0
+                ? StatisticStatus.Up
+                : StatisticStatus.Down;
+
+
+            // NewSubscriptions
+            var valueNewSubscriptions = studentsCurrentMonth;
+
+            var changePercentageSubscriptions = studentsPreviousMonth == 0
+                ? 100
+                : (((decimal)(studentsCurrentMonth - studentsPreviousMonth) / studentsPreviousMonth) * 100);
+
+            var statusSubscriptions = changePercentageSubscriptions > 0
+                ? StatisticStatus.Up
+                : StatisticStatus.Down;
+
+
+            // CompletionRate
+            var completionRate = 0m;
+            var hasProgress = await _context.CourseProgresses
+                .AnyAsync(cp => cp.Course.Tenant.SubDomain == subdomain && cp.TotalLessons > 0, cancellationToken);
+
+            if (hasProgress)
+            {
+                var avg = await _context.CourseProgresses
+                    .Where(cp => cp.Course.Tenant.SubDomain == subdomain && cp.TotalLessons > 0)
+                    .AverageAsync(cp => (double)cp.CompletedLessons / cp.TotalLessons, cancellationToken);
+                completionRate = (decimal)Math.Round(avg * 100, 2);
+            }
+
+            var currentMonthAvg = 0m;
+            var hasCurrentProgress = await _context.CourseProgresses
+                .AnyAsync(cp => cp.Course.Tenant.SubDomain == subdomain && cp.TotalLessons > 0
+                    && cp.UpdatedAt >= startOfCurrentMonth, cancellationToken);
+
+            if (hasCurrentProgress)
+            {
+                var avg = await _context.CourseProgresses
+                    .Where(cp => cp.Course.Tenant.SubDomain == subdomain && cp.TotalLessons > 0
+                        && cp.UpdatedAt >= startOfCurrentMonth)
+                    .AverageAsync(cp => (double)cp.CompletedLessons / cp.TotalLessons, cancellationToken);
+                currentMonthAvg = (decimal)Math.Round(avg * 100, 2);
+            }
+
+            var previousMonthAvg = 0m;
+            var hasPreviousProgress = await _context.CourseProgresses
+                .AnyAsync(cp => cp.Course.Tenant.SubDomain == subdomain && cp.TotalLessons > 0
+                    && cp.UpdatedAt >= startOfPreviousMonth && cp.UpdatedAt < startOfCurrentMonth, cancellationToken);
+
+            if (hasPreviousProgress)
+            {
+                var avg = await _context.CourseProgresses
+                    .Where(cp => cp.Course.Tenant.SubDomain == subdomain && cp.TotalLessons > 0
+                        && cp.UpdatedAt >= startOfPreviousMonth && cp.UpdatedAt < startOfCurrentMonth)
+                    .AverageAsync(cp => (double)cp.CompletedLessons / cp.TotalLessons, cancellationToken);
+                previousMonthAvg = (decimal)Math.Round(avg * 100, 2);
+            }
+
+            var changePercentageCompletion = previousMonthAvg == 0
+                ? 100
+                : Math.Round(((currentMonthAvg - previousMonthAvg) / previousMonthAvg) * 100, 2);
+
+            var statusCompletion = changePercentageCompletion >= 0
+                ? StatisticStatus.Up
+                : StatisticStatus.Down;
+
+            return new DashboardStatisticsDto
+            {
+                TotalStudents = new StatisticsDto { Value = valueTotalStudents, Change = changePercentageStudents, Label = "اجمالي الطلاب", Status = statusStudents },
+                TotalRevenue = new StatisticsDto { Value = valueTotalRevenue, Change = changePercentageRevenue, Label = "اجمالي الإيرادات", Status = statusRevenue },
+                NewSubscriptions = new StatisticsDto { Value = valueNewSubscriptions, Change = changePercentageSubscriptions, Label = "الاشتراكات الجديدة", Status = statusSubscriptions },
+                CompletionRate = new StatisticsDto { Value = completionRate, Change = changePercentageCompletion, Label = "معدل الإنجاز", Status = statusCompletion }
+            };
+        }
     }
 }

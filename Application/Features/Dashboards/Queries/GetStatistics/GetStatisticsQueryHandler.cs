@@ -1,15 +1,15 @@
 ﻿using Application.Features.Dashboards.Dtos;
 using Microsoft.AspNetCore.Http;
 
-namespace Application.Features.Dashboards.Queries.Getperformance
+namespace Application.Features.Dashboards.Queries.GetStatistics
 {
-    internal sealed class GetperformanceQueryHandler : IRequestHandler<GetperformanceQuery, OneOf<DashboardPerformanceDto, Error>>
+    internal sealed class GetStatisticsQueryHandler : IRequestHandler<GetStatisticsQuery, OneOf<DashboardStatisticsDto, Error>>
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ISubscriptionRepository _subscriptionRepository;
         private readonly IDashboardRepository _dashboardRepository;
         private readonly HybridCache _hybridCache;
-        public GetperformanceQueryHandler(IHttpContextAccessor httpContextAccessor, ISubscriptionRepository subscriptionRepository,
+        public GetStatisticsQueryHandler(IHttpContextAccessor httpContextAccessor, ISubscriptionRepository subscriptionRepository,
             IDashboardRepository dashboardRepository, HybridCache hybridCache)
         {
             _httpContextAccessor = httpContextAccessor;
@@ -17,19 +17,19 @@ namespace Application.Features.Dashboards.Queries.Getperformance
             _dashboardRepository = dashboardRepository;
             _hybridCache = hybridCache;
         }
-        public async Task<OneOf<DashboardPerformanceDto, Error>> Handle(GetperformanceQuery request, CancellationToken cancellationToken)
+        public async Task<OneOf<DashboardStatisticsDto, Error>> Handle(GetStatisticsQuery request, CancellationToken cancellationToken)
         {
             var subdomain = _httpContextAccessor?.HttpContext?.Request.Cookies[AuthConstants.SubDomain];
             var isSubscribed = await _subscriptionRepository.HasActiveSubscriptionByTenantDomain(subdomain!, cancellationToken);
             if (!isSubscribed)
                 return TenantErrors.NotSubscribed;
 
-            var cacheKey = $"{subdomain}_{CacheKeysConstants.PerformanceKey}";
-            var performanceData = await _hybridCache.GetOrCreateAsync(
+            var cacheKey = $"{subdomain}_{CacheKeysConstants.DashboardStatisticsKey}";
+            var statisticsData = await _hybridCache.GetOrCreateAsync(
                 cacheKey,
                 async cacheEntry =>
                 {
-                    return await _dashboardRepository.GetPerformanceAsync(subdomain!, cancellationToken);
+                    return await _dashboardRepository.GetStatisticsAsync(subdomain!, cancellationToken);
                 },
                 new HybridCacheEntryOptions
                 {
@@ -37,7 +37,7 @@ namespace Application.Features.Dashboards.Queries.Getperformance
                 },
                 cancellationToken: cancellationToken
             );
-            return performanceData;
+            return statisticsData;
         }
     }
 }

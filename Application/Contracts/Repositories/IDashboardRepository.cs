@@ -9,5 +9,6 @@ namespace Application.Contracts.Repositories
         public Task<List<UpcomingSessionsDto>> GetUpcomingSessionsAsync(string subdomain, CancellationToken cancellationToken);
         public Task<List<TopStudentsPerformanceDto>> GetTopStudentsPerformanceAsync(string subdomain, CancellationToken cancellationToken);
         public Task<DashboardPerformanceDto> GetPerformanceAsync(string subdomain, CancellationToken cancellationToken);
+        public Task<DashboardStatisticsDto> GetStatisticsAsync(string subdomain, CancellationToken cancellationToken);
     }
 }

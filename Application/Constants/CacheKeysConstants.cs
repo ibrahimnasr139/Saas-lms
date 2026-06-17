@@ -19,5 +19,6 @@
         public const string UpcomingSessionsKey = "Upcoming_Sessions";
         public const string TopStudentsPerformanceKey = "Top_Students_Performance";
         public const string PerformanceKey = "Performance";
+        public const string DashboardStatisticsKey = "Dashboard_Statistics";
     }
 }
