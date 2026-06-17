@@ -149,11 +149,14 @@ namespace Infrastructure.Repositories
                     var quizGrades = studentGrades.Where(g => g.Type == StudentGradeType.Quiz).ToList();
                     var assignmentGrades = studentGrades.Where(g => g.Type == StudentGradeType.Assignment).ToList();
 
-                    var quizAverage = quizGrades.Any()
+                    var hasQuizzes = quizGrades.Any();
+                    var hasAssignments = assignmentGrades.Any();
+
+                    var quizAverage = hasQuizzes
                         ? quizGrades.Average(g => g.TotalMarks > 0 ? g.Score / g.TotalMarks * 100 : 0)
                         : 0;
 
-                    var assignmentAverage = assignmentGrades.Any()
+                    var assignmentAverage = hasAssignments
                         ? assignmentGrades.Average(g => g.TotalMarks > 0 ? g.Score / g.TotalMarks * 100 : 0)
                         : 0;
 
@@ -165,9 +168,17 @@ namespace Infrastructure.Repositories
                         ? studentProgresses.Average(cp => (double)cp.CompletedLessons / cp.TotalLessons * 100)
                         : 0;
 
-                    var overallScore = quizAverage * 0.5 +
-                                       assignmentAverage * 0.3 +
-                                       progressPercentage * 0.2;
+                    double quizWeight = hasQuizzes ? 0.5 : 0;
+                    double assignmentWeight = hasAssignments ? 0.3 : 0;
+                    double progressWeight = 0.2;
+
+                    double totalWeight = quizWeight + assignmentWeight + progressWeight;
+
+                    var overallScore = totalWeight > 0
+                        ? (quizAverage * quizWeight +
+                           assignmentAverage * assignmentWeight +
+                           progressPercentage * progressWeight) / totalWeight
+                        : 0;
 
                     return new TopStudentsPerformanceDto
                     {
