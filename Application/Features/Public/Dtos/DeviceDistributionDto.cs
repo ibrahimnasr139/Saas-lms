@@ -6,6 +6,5 @@ namespace Application.Features.Public.Dtos
     {
         public DeviceType DeviceType { get; set; }
         public int Visitors { get; set; }
-        public string Fill { get; set; } = string.Empty;
     }
 }

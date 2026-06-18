@@ -22,7 +22,7 @@ namespace Application.Features.Public.Queries.GetStatistics
                 subDomain = uri.Host.Split('.')[0];
             else
                 subDomain = httpRequest.Host.Host.Split(".")[0];
-            return new PublicStatisticsDto();
+            return await _tenantPageVisitRepository.GetTenantStatisticsAsync(subDomain, cancellationToken);
         }
     }
 }
