@@ -1,5 +1,6 @@
 using Application.Common;
 using Application.Features.Public.Commands.CreateOrder;
+using Application.Features.Public.Commands.EndVisit;
 using Application.Features.Public.Commands.UpdateReceipt;
 using Application.Features.Public.Commands.VisitPage;
 using Application.Features.Public.Queries.GetCourseDetails;
@@ -118,6 +119,17 @@ namespace Api.Controllers
 
         [HttpPost("visit-page")]
         public async Task<IActionResult> VisitPage([FromBody] VisitPageCommand command, CancellationToken cancellationToken)
+        {
+            var result = await _mediator.Send(command, cancellationToken);
+            return result.Match<IActionResult>(
+                success => Ok(success),
+                error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message })
+            );
+        }
+
+
+        [HttpPost("end-visit")]
+        public async Task<IActionResult> EndVisit([FromBody] EndVisitCommand command, CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(command, cancellationToken);
             return result.Match<IActionResult>(
