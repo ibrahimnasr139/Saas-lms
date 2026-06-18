@@ -63,6 +63,8 @@ namespace Application.Features.Quizzes.Commands.CreateAiQuizQuestions
             if (metadata is null)
                 return ModuleItemErrors.ModuleItemNotFound;
 
+            var quiz = await _quizRepository.GetQuizAsync(request.ItemId, cancellationToken);
+
             var payload = new AiPayload
             (
                 request.Prompt,
@@ -93,6 +95,7 @@ namespace Application.Features.Quizzes.Commands.CreateAiQuizQuestions
                     quizQuestion.Question.TenantId = tenantId;
                 }
                 await _questionRepository.AddQuestionsToQuiz(quizQuestions, cancellationToken);
+                quiz.TotalMarks += result.Sum(q => q.Marks);
                 await _tenantRepository.IncreasePlanFeatureUsageByKeyAsync(subDomain!, FeatureConstants.AI_CREDITS, cancellationToken, request.QuestionsNumber);
                 await _unitOfWork.CommitTransactionAsync(cancellationToken);
                 return true;
