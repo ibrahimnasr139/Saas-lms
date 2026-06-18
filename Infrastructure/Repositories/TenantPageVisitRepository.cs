@@ -1,4 +1,4 @@
-﻿using Application.Features.Public.Dtos;
+﻿using Application.Features.Website.Dtos;
 using Domain.Enums;
 
 namespace Infrastructure.Repositories
@@ -26,8 +26,7 @@ namespace Infrastructure.Repositories
             return await _context.TenantPageVisits
                 .FirstOrDefaultAsync(x => x.VisitorId == visitorId && x.TenantId == tenantId && x.PageUrl == pageUrl, cancellationToken);
         }
-
-        public async Task<PublicStatisticsDto> GetTenantStatisticsAsync(string subDomain, CancellationToken cancellationToken)
+        public async Task<WebSiteStatisticsDto> GetTenantStatisticsAsync(string subDomain, CancellationToken cancellationToken)
         {
             var visitsTask = _context.TenantPageVisits
                 .Where(v => v.Tenant.SubDomain == subDomain)
@@ -41,7 +40,7 @@ namespace Infrastructure.Repositories
 
             var visits = await visitsTask;
 
-            return new PublicStatisticsDto
+            return new WebSiteStatisticsDto
             {
                 WebsiteScorecards = BuildWebsiteScorecards(visits),
                 VisitorsAndPageViewsData = BuildVisitorsAndPageViewsData(visits),
@@ -50,7 +49,6 @@ namespace Infrastructure.Repositories
                 MonthlyRevenueData = await monthlyRevenueTask
             };
         }
-        private sealed record VisitRow(Guid VisitorId, int Views, bool Converted, int? DurationSecond, DateTime VisitedAt, DeviceType DeviceType);
         private static WebsiteScorecardsDto BuildWebsiteScorecards(List<VisitRow> visits)
         {
             if (visits.Count == 0)
@@ -158,5 +156,6 @@ namespace Infrastructure.Repositories
                 };
             }).ToList();
         }
+        private sealed record VisitRow(Guid VisitorId, int Views, bool Converted, int? DurationSecond, DateTime VisitedAt, DeviceType DeviceType);
     }
 }

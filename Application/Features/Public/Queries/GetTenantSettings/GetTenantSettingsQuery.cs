@@ -1,4 +1,4 @@
-﻿using Application.Features.TenantWebsiteSettings.Dtos;
+﻿using Application.Features.Website.Dtos;
 
 namespace Application.Features.Public.Queries.GetTenantSettings
 {

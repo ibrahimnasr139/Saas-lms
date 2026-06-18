@@ -1,4 +1,4 @@
-﻿using Application.Features.TenantWebsite.Dtos;
+﻿using Application.Features.Website.Dtos;
 using Microsoft.AspNetCore.Http;
 
 namespace Application.Features.Public.Queries.GetTenantPages

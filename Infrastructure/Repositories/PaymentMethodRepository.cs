@@ -1,5 +1,5 @@
 ﻿using Application.Features.Public.Dtos;
-using Application.Features.TenantPaymentMethods.Dtos;
+using Application.Features.Website.Dtos;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Domain.Enums;

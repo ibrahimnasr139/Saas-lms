@@ -1,4 +1,4 @@
-﻿using Application.Features.Public.Dtos;
+﻿using Application.Features.Website.Dtos;
 
 namespace Application.Contracts.Repositories
 {
@@ -7,6 +7,6 @@ namespace Application.Contracts.Repositories
         Task AddTenantPageVisitAsync(TenantPageVisit pageVisit, CancellationToken cancellationToken);
         Task<TenantPageVisit?> GetTenantPageVisitAsync(string subDomain, string pageUrl, Guid visitorId, CancellationToken cancellationToken);
         Task<TenantPageVisit?> GetByVisitorAndPageAsync(Guid visitorId, int tenantId, string pageUrl, CancellationToken cancellationToken);
-        Task<PublicStatisticsDto> GetTenantStatisticsAsync(string subDomain, CancellationToken cancellationToken);
+        Task<WebSiteStatisticsDto> GetTenantStatisticsAsync(string subDomain, CancellationToken cancellationToken);
     }
 }

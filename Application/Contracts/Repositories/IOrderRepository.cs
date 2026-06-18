@@ -1,6 +1,6 @@
 ﻿using Application.Features.Public.Dtos;
-using Application.Features.TenantOrders.Commands.BulkOrderAction;
-using Application.Features.TenantOrders.Dtos;
+using Application.Features.Website.Commands.BulkOrderAction;
+using Application.Features.Website.Dtos;
 using Domain.Enums;
 
 namespace Application.Contracts.Repositories

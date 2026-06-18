@@ -1,4 +1,4 @@
-﻿using Application.Features.TenantOrders.Dtos;
+﻿using Application.Features.Website.Dtos;
 
 namespace Application.Features.Public.Commands.UpdateReceipt
 {

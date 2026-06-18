@@ -1,5 +1,5 @@
-﻿using Application.Features.TenantWebsiteSettings.Commands.UpdateTenantWebsiteSettings;
-using Application.Features.TenantWebsiteSettings.Dtos;
+﻿using Application.Features.Website.Commands.UpdateTenantWebsiteSettings;
+using Application.Features.Website.Dtos;
 
 namespace Application.Contracts.Repositories
 {

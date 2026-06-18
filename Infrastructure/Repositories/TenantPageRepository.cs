@@ -1,8 +1,8 @@
 ﻿using Application.Constants;
 using Application.Features.Public.Dtos;
-using Application.Features.TenantWebsite.Commands.CreateTenantPage;
-using Application.Features.TenantWebsite.Commands.UpdateTenantPage;
-using Application.Features.TenantWebsite.Dtos;
+using Application.Features.Website.Commands.CreateTenantPage;
+using Application.Features.Website.Commands.UpdateTenantPage;
+using Application.Features.Website.Dtos;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Domain.Enums;
