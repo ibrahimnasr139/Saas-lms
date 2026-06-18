@@ -95,7 +95,7 @@ namespace Infrastructure.Repositories
                                     Subscription = new SubscriptionDto
                                     {
                                         Id = g.Key.Id,
-                                        Status = g.Key.Status.ToString(),
+                                        Status = g.Key.Status,
                                         Start = g.Key.StartsAt,
                                         End = g.Key.EndsAt,
                                         Plan = new SubscriptionPlanDto

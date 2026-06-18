@@ -59,6 +59,7 @@ namespace Application.Features.Questions.Commands.CreateQuizQuestion
                 quizQuestion.QuizId = quiz.ModuleItemId;
                 quizQuestion.QuestionId = id;
                 await _questionRepository.AddQuestionsToQuiz(new List<QuizQuestion> { quizQuestion }, cancellationToken);
+                quiz.TotalMarks += request.Marks; 
                 await _unitOfWork.CommitTransactionAsync(cancellationToken);
                 return true;
             }

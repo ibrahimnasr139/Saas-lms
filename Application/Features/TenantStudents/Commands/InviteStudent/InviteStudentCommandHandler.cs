@@ -16,13 +16,14 @@ namespace Application.Features.TenantStudents.Commands.InviteStudent
         private readonly ICurrentUserId _currentUserId;
         private readonly ICourseRepository _courseRepository;
         private readonly IStudentRepository _studentRepository;
+        private readonly ISubscriptionRepository _subscriptionRepository;
         private readonly IEnrollmentRepository _enrollmentRepository;
         private readonly IUnitOfWork _unitOfWork;
 
         public InviteStudentCommandHandler(ICourseInviteRepository courseInviteRepository, UserManager<ApplicationUser> userManager,
             ITenantMemberRepository tenantMemberRepository, ITenantRepository tenantRepository, IHttpContextAccessor httpContextAccessor,
             IEmailSender emailSender, ICurrentUserId currentUserId, ICourseRepository courseRepository, IStudentRepository studentRepository,
-            IEnrollmentRepository enrollmentRepository, IUnitOfWork unitOfWork)
+            ISubscriptionRepository subscriptionRepository, IEnrollmentRepository enrollmentRepository, IUnitOfWork unitOfWork)
         {
             _courseInviteRepository = courseInviteRepository;
             _userManager = userManager;
@@ -33,6 +34,7 @@ namespace Application.Features.TenantStudents.Commands.InviteStudent
             _currentUserId = currentUserId;
             _courseRepository = courseRepository;
             _studentRepository = studentRepository;
+            _subscriptionRepository = subscriptionRepository;
             _enrollmentRepository = enrollmentRepository;
             _unitOfWork = unitOfWork;
         }
@@ -41,9 +43,14 @@ namespace Application.Features.TenantStudents.Commands.InviteStudent
             var subDomain = _httpContextAccessor.HttpContext?.Request.Cookies[AuthConstants.SubDomain];
             var tenantId = await _tenantRepository.GetTenantIdAsync(subDomain!, cancellationToken);
             var currentUserId = _currentUserId.GetUserId();
+
             var isPermitted = await _tenantMemberRepository.IsPermittedMember(currentUserId, PermissionConstants.MANAGE_STUDENTS, cancellationToken);
             if (!isPermitted)
                 return MemberErrors.NotAllowed;
+
+            var isSubscribed = await _subscriptionRepository.HasActiveSubscriptionByTenantDomain(subDomain!, cancellationToken);
+            if (!isSubscribed)
+                return TenantErrors.NotSubscribed;
 
             var isFeatureEnded = await _tenantRepository.IsFeatureUsingEnded(subDomain!, FeatureConstants.STUDENT_LIMIT, cancellationToken);
             if (isFeatureEnded)
