@@ -1,6 +1,7 @@
 using Application.Common;
 using Application.Features.Public.Commands.CreateOrder;
 using Application.Features.Public.Commands.UpdateReceipt;
+using Application.Features.Public.Commands.VisitPage;
 using Application.Features.Public.Queries.GetCourseDetails;
 using Application.Features.Public.Queries.GetOrder;
 using Application.Features.Public.Queries.GetTenantNavigationLinks;
@@ -108,6 +109,17 @@ namespace Api.Controllers
         public async Task<IActionResult> UpdateOrderReceipt([FromRoute] int orderId, [FromBody] UpdateReceiptCommand command, CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(command with { OrderId = orderId }, cancellationToken);
+            return result.Match<IActionResult>(
+                success => Ok(success),
+                error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message })
+            );
+        }
+
+
+        [HttpPost("visit-page")]
+        public async Task<IActionResult> VisitPage([FromBody] VisitPageCommand command, CancellationToken cancellationToken)
+        {
+            var result = await _mediator.Send(command, cancellationToken);
             return result.Match<IActionResult>(
                 success => Ok(success),
                 error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message })

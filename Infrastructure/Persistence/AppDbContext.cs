@@ -80,6 +80,7 @@ namespace Infrastructure.Persistence
         internal DbSet<StudentQuizQuestion> StudentQuizQuestions { get; set; }
         internal DbSet<StudentAnswer> StudentAnswers { get; set; }
         internal DbSet<FileChunk> FileChunks { get; set; }
+        internal DbSet<TenantPageVisit> TenantPageVisits { get; set; }
 
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {

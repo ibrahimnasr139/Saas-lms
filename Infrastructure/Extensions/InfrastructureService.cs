@@ -163,6 +163,7 @@ namespace Infrastructure.Extensions
             builder.Services.AddScoped<AssignmentDeadlineReminderJob>();
             builder.Services.AddScoped<IDashboardRepository, DashboardRepository>();
             builder.Services.AddScoped<ICourseProgressRepository, CourseProgressRepository>();
+            builder.Services.AddScoped<ITenantPageVisitRepository, TenantPageVisitRepository>();
         }
         public static string BuildPostgresConnectionString(IConfiguration configuration)
         {
