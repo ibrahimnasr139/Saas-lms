@@ -8,6 +8,7 @@ namespace Domain.Entites
         public string PageUrl { get; set; } = string.Empty;
         public bool Converted { get; set; }
         public int? DurationSecond { get; set; }
+        public int Views { get; set; } = 1;
         public Guid VisitorId { get; set; }
         public DeviceType DeviceType { get; set; }
         public DateTime VisitedAt { get; set; } = DateTime.UtcNow;

@@ -168,5 +168,10 @@ namespace Infrastructure.Repositories
         {
             await _context.TenantPages.AddRangeAsync(tenantPages, cancellationToken);
         }
+        public Task<TenantPage> GetTenantPageByUrlAsync(string subDomain, string url, CancellationToken cancellationToken)
+        {
+            return _context.TenantPages
+                .FirstOrDefaultAsync(tp => tp.Url == url && tp.Tenant.SubDomain == subDomain, cancellationToken)!;
+        }
     }
 }

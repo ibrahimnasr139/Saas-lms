@@ -20,5 +20,6 @@ namespace Application.Contracts.Repositories
         Task<List<TenantCourseDto>> GetTenantWebsiteCoursesAsync(string subDomain, List<int> courseIds, CancellationToken cancellationToken);
         Task<List<TenantNavigationLinkDto>> GetTenantNavigationLinksAsync(int tenantId, CancellationToken cancellationToken);
         Task<TenantPageDto?> GetPublishedTenantPagesAsync(string url, string subDomain, CancellationToken cancellationToken);
+        Task<TenantPage> GetTenantPageByUrlAsync(string subDomain, string url, CancellationToken cancellationToken);
     }
 }

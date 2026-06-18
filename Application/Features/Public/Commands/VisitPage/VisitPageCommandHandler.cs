@@ -30,18 +30,31 @@ namespace Application.Features.Public.Commands.VisitPage
             else
                 subDomain = httpRequest.Host.Host.Split(".")[0];
 
-            var PageIsExist = await _tenantPageRepository.UrlExistsAsync(subDomain, request.PageUrl, cancellationToken);
-            if (!PageIsExist)
+            var pageIsExist = await _tenantPageRepository.UrlExistsAsync(subDomain, request.PageUrl, cancellationToken);
+            if (!pageIsExist)
                 return TenantWebsiteErrors.TenantPageNotFound;
 
-            var newTenantPageVisit = new TenantPageVisit
+            var tenantId = await _tenantRepository.GetTenantIdAsync(subDomain, cancellationToken);
+            var pageVisit = await _tenantPageVisitRepository.GetByVisitorAndPageAsync(request.VisitorId, tenantId, request.PageUrl, cancellationToken);
+            if (pageVisit is null)
             {
-                VisitorId = request.VisitorId,
-                DeviceType = request.DeviceType,
-                PageUrl = request.PageUrl,
-                TenantId = await _tenantRepository.GetTenantIdAsync(subDomain!, cancellationToken)
-            };
-            await _tenantPageVisitRepository.AddTenantPageVisitAsync(newTenantPageVisit, cancellationToken);
+                pageVisit = new TenantPageVisit
+                {
+                    VisitorId = request.VisitorId,
+                    DeviceType = request.DeviceType,
+                    PageUrl = request.PageUrl,
+                    TenantId = tenantId,
+                };
+                await _tenantPageVisitRepository.AddTenantPageVisitAsync(pageVisit, cancellationToken);
+            }
+            else
+            {
+                pageVisit.Views++;
+                pageVisit.VisitedAt = DateTime.UtcNow;
+                pageVisit.DeviceType = request.DeviceType;
+            }
+            var tenantPage = await _tenantPageRepository.GetTenantPageByUrlAsync(subDomain, request.PageUrl, cancellationToken);
+            tenantPage.Views++;
             await _unitOfWork.SaveAsync(cancellationToken);
             return true;
         }

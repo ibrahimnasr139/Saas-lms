@@ -5,6 +5,7 @@ using Application.Features.Public.Commands.UpdateReceipt;
 using Application.Features.Public.Commands.VisitPage;
 using Application.Features.Public.Queries.GetCourseDetails;
 using Application.Features.Public.Queries.GetOrder;
+using Application.Features.Public.Queries.GetStatistics;
 using Application.Features.Public.Queries.GetTenantNavigationLinks;
 using Application.Features.Public.Queries.GetTenantPages;
 using Application.Features.Public.Queries.GetTenantPaymentMethods;
@@ -13,6 +14,7 @@ using Application.Features.Public.Queries.GetTenantWebsiteCourses;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace Api.Controllers
 {
@@ -132,6 +134,17 @@ namespace Api.Controllers
         public async Task<IActionResult> EndVisit([FromBody] EndVisitCommand command, CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(command, cancellationToken);
+            return result.Match<IActionResult>(
+                success => Ok(success),
+                error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message })
+            );
+        }
+
+
+        [HttpGet("statistics")]
+        public async Task<IActionResult> GetStatistics(CancellationToken cancellationToken)
+        {
+            var result = await _mediator.Send(new GetStatisticsQuery(), cancellationToken);
             return result.Match<IActionResult>(
                 success => Ok(success),
                 error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message })
