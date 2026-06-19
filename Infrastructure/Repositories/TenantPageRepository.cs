@@ -173,5 +173,17 @@ namespace Infrastructure.Repositories
             return _context.TenantPages
                 .FirstOrDefaultAsync(tp => tp.Url == url && tp.Tenant.SubDomain == subDomain, cancellationToken)!;
         }
+        public async Task CreateWebsiteSettingAsync(WebsiteSetting setting, CancellationToken cancellationToken)
+        {
+            await _context.WebsiteSettings.AddAsync(setting, cancellationToken);
+        }
+        public async Task CreateEmailSettingsAsync(EmailSetting emailSetting, CancellationToken cancellationToken)
+        {
+            await _context.EmailSettings.AddAsync(emailSetting, cancellationToken);
+        }
+        public async Task CreateWebsiteAppearanceSettingAsync(WebsiteAppearanceSetting appearanceSetting, CancellationToken cancellationToken)
+        {
+            await _context.WebsiteAppearanceSettings.AddAsync(appearanceSetting, cancellationToken);
+        }
     }
 }

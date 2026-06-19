@@ -1,4 +1,5 @@
 ﻿using Application.Features.Tenants.Dtos;
+using Domain.Enums;
 using Microsoft.AspNetCore.Http;
 using System.Text.Json;
 
@@ -17,10 +18,9 @@ namespace Application.Features.Tenants.Commands.CreateOnboarding
         private readonly HybridCache _hybridCache;
         private readonly ITenantPageRepository _tenantPageRepository;
         private readonly IUnitOfWork _unitOfWork;
-
         public CreateOnboardingCommandHandler(ITenantRepository tenantRepository, IMapper mapper, IHttpContextAccessor httpContextAccessor
-            , UserManager<ApplicationUser> userManager, ICurrentUserId currentUserId, HybridCache hybridCache,
-            ITenantPageRepository tenantPageRepository,IPlanRepository planRepository, ISubscriptionRepository subscriptionRepository, IUnitOfWork unitOfWork,
+            , UserManager<ApplicationUser> userManager, ICurrentUserId currentUserId, HybridCache hybridCache, IPlanRepository planRepository,
+            ITenantPageRepository tenantPageRepository, ISubscriptionRepository subscriptionRepository, IUnitOfWork unitOfWork,
             IQuestionRepository questionRepository)
         {
             _tenantRepository = tenantRepository;
@@ -35,7 +35,6 @@ namespace Application.Features.Tenants.Commands.CreateOnboarding
             _unitOfWork = unitOfWork;
             _questionRepository = questionRepository;
         }
-
         public async Task<OneOf<OnboardingDto, Error>> Handle(CreateOnboardingCommand request, CancellationToken cancellationToken)
         {
             request = request with
@@ -90,7 +89,10 @@ namespace Application.Features.Tenants.Commands.CreateOnboarding
                     Title = TenantMemberConstants.GeneralQuestionCategory
                 }, cancellationToken);
 
-                await _tenantPageRepository.CreateTenantPagesAsync(SeedDefaultPages(createdTenantId, user!), cancellationToken);
+                await _tenantPageRepository.CreateTenantPagesAsync(seedDefaultPages(createdTenantId, user!), cancellationToken);
+                await _tenantPageRepository.CreateWebsiteSettingAsync(seedDefaultWebsiteSetting(createdTenantId), cancellationToken);
+                await _tenantPageRepository.CreateEmailSettingsAsync(seedDefaultEmailSetting(createdTenantId, user.Email!, user.Email!, $"{user.FirstName} {user.LastName}"), cancellationToken);
+                await _tenantPageRepository.CreateWebsiteAppearanceSettingAsync(seedDefaultAppearanceSetting(createdTenantId), cancellationToken);
 
                 await _unitOfWork.CommitTransactionAsync(cancellationToken);
                 await _hybridCache.RemoveAsync($"{CacheKeysConstants.LastTenantKey}_{ownerId}", cancellationToken);
@@ -112,7 +114,7 @@ namespace Application.Features.Tenants.Commands.CreateOnboarding
                 throw;
             }
         }
-        private List<TenantPage> SeedDefaultPages(int tenantId, ApplicationUser user)
+        private List<TenantPage> seedDefaultPages(int tenantId, ApplicationUser user)
         {
             return new List<TenantPage>
             {
@@ -144,6 +146,34 @@ namespace Application.Features.Tenants.Commands.CreateOnboarding
                         new PageBlock { BlockTypeId = "footer", Order = 2, Visible = true, Props = JsonSerializer.Deserialize<Dictionary<string, object>>($$$"""{"logo":"","email":"{{{user!.Email}}}","phone":"{{{user!.PhoneNumber}}}","address":"","companyName":"منصتنا","socialLinks":[],"copyrightText":"© 2026 جميع الحقوق محفوظة","footerSections":[],"companyDescription":"منصه تعليميه متكامله"}""")! }
                     }
                 }
+            };
+        }
+        private WebsiteSetting seedDefaultWebsiteSetting(int tenantId)
+        {
+            return new WebsiteSetting
+            {
+                TenantId = tenantId,
+            };
+        }
+        private EmailSetting seedDefaultEmailSetting(int tenantId, string senderEmail, string replyToEmail, string senderName)
+        {
+            return new EmailSetting
+            {
+                TenantId = tenantId,
+                SenderEmail = senderEmail,
+                SenderName = senderName,
+                ReplyToEmail = replyToEmail
+            };
+        }
+        private WebsiteAppearanceSetting seedDefaultAppearanceSetting(int tenantId, string primaryColor = "#6366f1", string secondaryColor = "#8b5cf6", string fontFamily = "cairo", DirectionType directionType = DirectionType.RTL)
+        {
+            return new WebsiteAppearanceSetting
+            {
+                TenantId = tenantId,
+                PrimaryColor = primaryColor,
+                SecondaryColor = secondaryColor,
+                FontFamily = fontFamily,
+                Direction = directionType
             };
         }
     }

@@ -21,5 +21,8 @@ namespace Application.Contracts.Repositories
         Task<List<TenantNavigationLinkDto>> GetTenantNavigationLinksAsync(int tenantId, CancellationToken cancellationToken);
         Task<TenantPageDto?> GetPublishedTenantPagesAsync(string url, string subDomain, CancellationToken cancellationToken);
         Task<TenantPage> GetTenantPageByUrlAsync(string subDomain, string url, CancellationToken cancellationToken);
+        Task CreateWebsiteSettingAsync(WebsiteSetting websiteSetting, CancellationToken cancellationToken);
+        Task CreateEmailSettingsAsync(EmailSetting emailSetting, CancellationToken cancellationToken);
+        Task CreateWebsiteAppearanceSettingAsync(WebsiteAppearanceSetting appearanceSetting, CancellationToken cancellationToken);
     }
 }
