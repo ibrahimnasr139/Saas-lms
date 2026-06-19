@@ -165,15 +165,15 @@ namespace Application.Features.Tenants.Commands.CreateOnboarding
                 ReplyToEmail = replyToEmail
             };
         }
-        private WebsiteAppearanceSetting seedDefaultAppearanceSetting(int tenantId, string primaryColor = "#6366f1", string secondaryColor = "#8b5cf6", string fontFamily = "cairo", DirectionType directionType = DirectionType.RTL)
+        private WebsiteAppearanceSetting seedDefaultAppearanceSetting(int tenantId)
         {
             return new WebsiteAppearanceSetting
             {
                 TenantId = tenantId,
-                PrimaryColor = primaryColor,
-                SecondaryColor = secondaryColor,
-                FontFamily = fontFamily,
-                Direction = directionType
+                PrimaryColor = "#6366f1",
+                SecondaryColor = "#8b5cf6",
+                FontFamily = "cairo",
+                Direction = DirectionType.RTL
             };
         }
     }

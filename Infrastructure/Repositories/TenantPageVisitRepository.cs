@@ -28,43 +28,43 @@ namespace Infrastructure.Repositories
         }
         public async Task<WebSiteStatisticsDto> GetTenantStatisticsAsync(string subDomain, CancellationToken cancellationToken)
         {
-            var visitsTask = _context.TenantPageVisits
-                .Where(v => v.Tenant.SubDomain == subDomain)
-                .Select(v => new VisitRow(v.VisitorId, v.Views, v.Converted, v.DurationSecond, v.VisitedAt, v.DeviceType))
-                .ToListAsync(cancellationToken);
-
-            var topPagesTask = GetTopPagesAsync(subDomain, cancellationToken);
-            var monthlyRevenueTask = GetMonthlyRevenueAsync(subDomain, cancellationToken);
-
-            await Task.WhenAll(visitsTask, topPagesTask, monthlyRevenueTask);
-
-            var visits = await visitsTask;
+            var websiteScorecards = await GetWebsiteScorecardsAsync(subDomain, cancellationToken);
+            var visitorsAndPageViewsData = await GetVisitorsAndPageViewsDataAsync(subDomain, cancellationToken);
+            var topPagesData = await GetTopPagesAsync(subDomain, cancellationToken);
+            var deviceDistributionData = await GetDeviceDistributionAsync(subDomain, cancellationToken);
+            var monthlyRevenueData = await GetMonthlyRevenueAsync(subDomain, cancellationToken);
 
             return new WebSiteStatisticsDto
             {
-                WebsiteScorecards = BuildWebsiteScorecards(visits),
-                VisitorsAndPageViewsData = BuildVisitorsAndPageViewsData(visits),
-                DeviceDistributionData = BuildDeviceDistribution(visits),
-                TopPagesData = await topPagesTask,
-                MonthlyRevenueData = await monthlyRevenueTask
+                WebsiteScorecards = websiteScorecards,
+                VisitorsAndPageViewsData = visitorsAndPageViewsData,
+                TopPagesData = topPagesData,
+                DeviceDistributionData = deviceDistributionData,
+                MonthlyRevenueData = monthlyRevenueData
             };
         }
-        private static WebsiteScorecardsDto BuildWebsiteScorecards(List<VisitRow> visits)
+        private async Task<WebsiteScorecardsDto> GetWebsiteScorecardsAsync(string subDomain, CancellationToken cancellationToken)
         {
+            var visits = await _context.TenantPageVisits
+                .Where(v => v.Tenant.SubDomain == subDomain)
+                .Select(v => new { v.VisitorId, v.Views, v.Converted, v.DurationSecond })
+                .ToListAsync(cancellationToken);
+
             if (visits.Count == 0)
                 return new WebsiteScorecardsDto();
 
-            var totalVisitors = visits.Select(v => v.VisitorId).Distinct().Count();
+            var uniqueVisitorIds = visits.Select(v => v.VisitorId).Distinct().ToList();
+            var totalVisitors = uniqueVisitorIds.Count;
             var totalPageViews = visits.Sum(v => v.Views);
 
-            var convertedVisitors = visits
+            var convertedUniqueVisitors = visits
                 .Where(v => v.Converted)
                 .Select(v => v.VisitorId)
                 .Distinct()
                 .Count();
 
             var conversionRate = totalVisitors > 0
-                ? convertedVisitors * 100.0 / totalVisitors
+                ? convertedUniqueVisitors * 100.0 / totalVisitors
                 : 0.0;
 
             var avgSessionDuration = visits
@@ -81,8 +81,13 @@ namespace Infrastructure.Repositories
                 AverageSessionDuration = avgSessionDuration
             };
         }
-        private static List<VisitorsAndPageViewsDataDto> BuildVisitorsAndPageViewsData(List<VisitRow> visits)
+        private async Task<List<VisitorsAndPageViewsDataDto>> GetVisitorsAndPageViewsDataAsync(string subDomain, CancellationToken cancellationToken)
         {
+            var visits = await _context.TenantPageVisits
+                .Where(v => v.Tenant.SubDomain == subDomain)
+                .Select(v => new { v.VisitorId, v.Views, v.VisitedAt })
+                .ToListAsync(cancellationToken);
+
             return visits
                 .GroupBy(v => new { v.VisitedAt.Year, v.VisitedAt.Month })
                 .OrderBy(g => g.Key.Year).ThenBy(g => g.Key.Month)
@@ -93,27 +98,35 @@ namespace Infrastructure.Repositories
                     PageViews = g.Sum(v => v.Views)
                 }).ToList();
         }
-        private static List<DeviceDistributionDto> BuildDeviceDistribution(List<VisitRow> visits)
+        private async Task<List<TopPagesDto>> GetTopPagesAsync(string subDomain, CancellationToken cancellationToken)
         {
+            return await _context.TenantPageVisits
+                .Where(v => v.Tenant.SubDomain == subDomain)
+                .GroupBy(v => v.PageUrl)
+                .Select(g => new TopPagesDto
+                {
+                    Page = g.Key,
+                    Views = g.Sum(v => v.Views)
+                })
+                .OrderByDescending(p => p.Views)
+                .Take(5)
+                .ToListAsync(cancellationToken);
+        }
+        private async Task<List<DeviceDistributionDto>> GetDeviceDistributionAsync(string subDomain, CancellationToken cancellationToken)
+        {
+            var visits = await _context.TenantPageVisits
+                .Where(v => v.Tenant.SubDomain == subDomain)
+                .Select(v => new { v.VisitorId, v.DeviceType })
+                .ToListAsync(cancellationToken);
+
             return visits
                 .GroupBy(v => v.DeviceType)
                 .Select(g => new DeviceDistributionDto
                 {
                     DeviceType = g.Key,
-                    Visitors = g.Select(v => v.VisitorId).Distinct().Count()
-                }).ToList();
-        }
-        private async Task<List<TopPagesDto>> GetTopPagesAsync(string subDomain, CancellationToken cancellationToken)
-        {
-            return await _context.TenantPages
-                .Where(p => p.Tenant.SubDomain == subDomain)
-                .OrderByDescending(p => p.Views)
-                .Take(8)
-                .Select(p => new TopPagesDto
-                {
-                    Page = p.Url,
-                    Views = p.Views
-                }).ToListAsync(cancellationToken);
+                    Visitors = g.Select(v => v.VisitorId).Distinct().Count(),
+                })
+                .ToList();
         }
         private async Task<List<MonthlyRevenueDto>> GetMonthlyRevenueAsync(string subDomain, CancellationToken cancellationToken)
         {
@@ -156,6 +169,5 @@ namespace Infrastructure.Repositories
                 };
             }).ToList();
         }
-        private sealed record VisitRow(Guid VisitorId, int Views, bool Converted, int? DurationSecond, DateTime VisitedAt, DeviceType DeviceType);
     }
 }
