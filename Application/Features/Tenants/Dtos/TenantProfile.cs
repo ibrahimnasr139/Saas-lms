@@ -56,7 +56,6 @@ namespace Application.Features.Tenants.Dtos
                }))
                .ForMember(dest => dest.DateTime, opt => opt.MapFrom(src => src.ScheduledAt))
                .ForMember(dest => dest.Teacher, opt => opt.MapFrom(src => src.ZoomIntegration!.ZoomDisplayName))
-               .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()))
                .ForMember(dest => dest.Attendance, opt => opt.MapFrom(src => src.Participants.Count))
                .ForMember(dest => dest.Recorded, opt => opt.MapFrom(src => src.RecordingUrl != null))
                .ForMember(dest => dest.JoinUrl, opt => opt.MapFrom(src => src.ZoomJoinUrl))

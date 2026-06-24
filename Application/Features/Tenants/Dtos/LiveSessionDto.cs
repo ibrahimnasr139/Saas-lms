@@ -1,4 +1,6 @@
-﻿namespace Application.Features.Tenants.Dtos
+﻿using Domain.Enums;
+
+namespace Application.Features.Tenants.Dtos
 {
     public sealed class LiveSessionDto
     {
@@ -9,7 +11,7 @@
         public DateTime DateTime { get; set; }
         public int Duration { get; set; }
         public string Teacher { get; set; } = string.Empty;
-        public string Status { get; set; } = string.Empty;
+        public LiveSessionStatus Status { get; set; }
         public int? Attendance { get; set; }
         public bool Recorded { get; set; }
         public string JoinUrl { get; set; } = string.Empty;

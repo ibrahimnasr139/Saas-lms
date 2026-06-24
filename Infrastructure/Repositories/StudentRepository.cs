@@ -63,11 +63,12 @@ namespace Infrastructure.Repositories
                 .Distinct()
                 .CountAsync(cancellationToken);
 
-            var averageGrade = await _context.StudentGrades
-                .AsNoTracking()
-                .Where(sg => sg.Tenant.SubDomain == subDomain)
-                .AverageAsync(sg => (double?)sg.Score / sg.TotalMarks * 100, cancellationToken) ?? 0;
-
+            var averageGrade = (int)Math.Round(
+                await _context.StudentGrades
+                    .AsNoTracking()
+                    .Where(sg => sg.Tenant.SubDomain == subDomain)
+                    .AverageAsync(sg => (double?)sg.Score / sg.TotalMarks * 100, cancellationToken) ?? 0
+                );
             return new StudentStatisticsDto
             {
                 Students = studentsCount,
