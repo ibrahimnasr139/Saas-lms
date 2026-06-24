@@ -2,7 +2,7 @@
 {
     public static class SegmentHelper
     {
-        public const double MaxSegmentSeconds = 15;
+        public const double MaxSegmentSeconds = 25;
         public const double CompletionThreshold = 0.9;
         public const double ViewCountThreshold = 10;
 
