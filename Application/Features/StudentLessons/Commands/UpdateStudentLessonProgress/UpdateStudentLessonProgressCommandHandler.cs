@@ -63,6 +63,9 @@ namespace Application.Features.StudentLessons.Commands.UpdateStudentLessonProgre
                 return new Error("InvalidSegments", "No valid segments or position provided", System.Net.HttpStatusCode.BadRequest);
 
             var lessonView = await _lessonViewRepository.GetLessonViewAsync(session.StudentId, request.ItemId, cancellationToken);
+
+            var wasAlreadyCompleted = lessonView?.Status == ViewStatus.Completed;
+
             if (lessonView is null)
             {
                 lessonView = new LessonView
@@ -118,7 +121,7 @@ namespace Application.Features.StudentLessons.Commands.UpdateStudentLessonProgre
             lessonView.LastWatchedAt = DateTime.UtcNow;
 
             var courseProgress = await _courseProgressRepository.GetCourseProgressAsync(session.StudentId, request.CourseId, cancellationToken);
-            if (courseProgress != null)
+            if (courseProgress != null && isCompleted && !wasAlreadyCompleted)
                 courseProgress.CompletedLessons += 1;
 
             await _unitOfWork.SaveAsync(cancellationToken);
