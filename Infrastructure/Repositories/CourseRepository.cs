@@ -25,36 +25,37 @@ namespace Infrastructure.Repositories
         public async Task<AllCoursesDto> GetAllCoursesAsync(string subDomain, string? q, int? gradeId, int? subjectId, string? sortBy, string? sortOrder, CourseStatus? status, int? cursor, string? lastSortValue, CancellationToken cancellationToken)
         {
             var query = _dbContext.Courses.Where(c => c.Tenant.SubDomain == subDomain).AsNoTracking();
+            
             if (!string.IsNullOrEmpty(q))
-            {
                 query = query.Where(c => c.Title.Contains(q) || c.Description.Contains(q));
-            }
+            
             if (gradeId.HasValue)
-            {
                 query = query.Where(c => c.GradeId == gradeId.Value);
-            }
+            
             if (subjectId.HasValue)
-            {
                 query = query.Where(c => c.SubjectId == subjectId.Value);
-            }
+            
             if (status.HasValue)
-            {
                 query = query.Where(c => c.CourseStatus == status.Value);
-            }
+            
             var studentCountQuery = _dbContext.Enrollments.AsNoTracking().Where(e => e.Course.Tenant.SubDomain == subDomain)
                 .GroupBy(e => e.CourseId)
                 .Select(g => new { CourseId = g.Key, StudentCount = g.Select(e => e.StudentId).Count().ToString() })
                 .DefaultIfEmpty();
+            
             var courseProgressQuery = _dbContext.CourseProgresses.AsNoTracking().Where(p => p.Course.Tenant.SubDomain == subDomain)
                 .GroupBy(e => e.CourseId)
-                .Select(g => new { CourseId = g.Key, CompletionRate = g.Where(p => p.TotalLessons > 0).Average(p => (double)p.CompletedLessons / p.TotalLessons).ToString() });
+                .Select(g => new { CourseId = g.Key, CompletionRate = g.Where(p => p.TotalLessons > 0).Average(p => (double)p.CompletedLessons / p.TotalLessons * 100).ToString() });
+            
             var lessonsQuery = _dbContext.Lessons.AsNoTracking().Where(l => l.Course.Tenant.SubDomain == subDomain)
                 .GroupBy(l => l.CourseId)
                 .Select(g => new { CourseId = g.Key, LessonsCount = g.Count().ToString() })
                 .DefaultIfEmpty();
+            
             var queryWithCounts = query.LeftJoin(studentCountQuery, c => c.Id, sc => sc.CourseId, (c, sc) => new { Course = c, StudentCount = sc != null ? sc.StudentCount : null! })
                 .LeftJoin(courseProgressQuery, c => c.Course.Id, cp => cp.CourseId, (c, cp) => new { c.Course, c.StudentCount, CompletionRate = cp != null ? cp.CompletionRate : null! })
                 .LeftJoin(lessonsQuery, c => c.Course.Id, lc => lc.CourseId, (c, lc) => new { c.Course, c.StudentCount, c.CompletionRate, LessonsCount = lc != null ? lc.LessonsCount : null! });
+            
             if (!string.IsNullOrEmpty(sortBy))
             {
                 if (sortBy == SortBy.Date)
@@ -117,15 +118,16 @@ namespace Infrastructure.Repositories
                     LessonsCount = a.LessonsCount != null ? int.Parse(a.LessonsCount) : 0
                 })
                 .ToListAsync(cancellationToken);
+            
             var hasMore = courses.Count > PaginationLimits.CoursesPageSize;
             if (hasMore)
-            {
                 courses.RemoveAt(courses.Count - 1);
-            }
+            
             var nextCursor = courses.LastOrDefault()?.Id;
             var lastSort = !string.IsNullOrEmpty(sortBy) && sortBy == SortBy.Date ? courses.LastOrDefault()?.CreatedAt.ToString("o") :
                 !string.IsNullOrEmpty(sortBy) && sortBy == SortBy.Students ? courses.LastOrDefault()?.StudentsCount.ToString() :
                 !string.IsNullOrEmpty(sortBy) && sortBy == SortBy.Completion ? courses.LastOrDefault()?.CompletionRate.ToString() : null;
+            
             return new AllCoursesDto
             {
                 Data = courses,
@@ -153,16 +155,19 @@ namespace Infrastructure.Repositories
                 {
                     TotalCourses = t.Courses.Count(),
                     ActiveCourses = t.Courses.Count(c => c.CourseStatus == CourseStatus.Published),
-                    TotalStudentsEnrolled = t.Courses.SelectMany(e => e.Enrollments).Select(x => x.StudentId).Distinct().Count(),
-
-                })
-                .FirstOrDefaultAsync(cancellationToken);
+                    TotalStudentsEnrolled = t.Courses
+                        .SelectMany(e => e.Enrollments)
+                        .Select(x => x.StudentId)
+                        .Distinct()
+                        .Count()
+                }).FirstOrDefaultAsync(cancellationToken);
             if (response != null)
             {
                 response.DraftCourses = response.TotalCourses - response.ActiveCourses;
                 var averages = await _dbContext.Courses.Where(c => c.Tenant.SubDomain == tenantSubdomain)
                     .SelectMany(c => c.CourseProgresses).Where(p => p.TotalLessons > 0)
-                    .Select(p => (double)p.CompletedLessons / p.TotalLessons).ToListAsync(cancellationToken);
+                    .Select(p => (double)p.CompletedLessons / p.TotalLessons * 100)
+                    .ToListAsync(cancellationToken);
                 response.AverageCompletionRate = averages.Count > 0 ? averages.Average() : 0.0;
             }
             return response!;
