@@ -182,5 +182,13 @@ namespace Infrastructure.Repositories
                 .Where(s => s.Id == studentId)
                 .ExecuteUpdateAsync(s => s.SetProperty(p => p.XP, p => p.XP + xpGained), cancellationToken);
         }
+        public Task<string?> GetStudentGradeAsync(int studentId, CancellationToken cancellationToken)
+        {
+            return _context.Students
+                .AsNoTracking()
+                .Where(sg => sg.Id == studentId)
+                .Select(sg => sg.Grade)
+                .FirstOrDefaultAsync(cancellationToken);
+        }
     }
 }

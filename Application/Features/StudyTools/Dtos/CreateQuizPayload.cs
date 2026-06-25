@@ -7,5 +7,6 @@
         public string? Chapter { get; set; }
         public int NumberOfQuestions { get; set; }
         public string Difficulty { get; set; } = string.Empty;
+        public string? Grade { get; set; }
     }
 }

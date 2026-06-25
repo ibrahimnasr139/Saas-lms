@@ -14,8 +14,11 @@ namespace Application.Features.StudyTools.Commands.AskAi
         private readonly IUnitOfWork _unitOfWork;
         private readonly AiOptions _options;
         private readonly IStudentStreakRepository _studentStreakRepository;
+        private readonly IStudentRepository _studentRepository;
+
         public AskAiCommandHandler(HybridCache hybridCache, IHttpContextAccessor httpContextAccessor, IOptions<AiOptions> options,
-            IExternalService externalService, IStudentStreakRepository studentStreakRepository, IUnitOfWork unitOfWork)
+            IExternalService externalService, IStudentStreakRepository studentStreakRepository, IStudentRepository studentRepository,
+            IUnitOfWork unitOfWork)
         {
             _hybridCache = hybridCache;
             _httpContextAccessor = httpContextAccessor;
@@ -23,6 +26,7 @@ namespace Application.Features.StudyTools.Commands.AskAi
             _unitOfWork = unitOfWork;
             _options = options.Value;
             _studentStreakRepository = studentStreakRepository;
+            _studentRepository = studentRepository;
         }
         public async Task<OneOf<AskAiDto, Error>> Handle(AskAiCommand request, CancellationToken cancellationToken)
         {
@@ -36,10 +40,12 @@ namespace Application.Features.StudyTools.Commands.AskAi
             if (session is null)
                 return UserErrors.Unauthorized;
 
+            var grade = await _studentRepository.GetStudentGradeAsync(session.StudentId, cancellationToken);
             var payload = new AskAiRequest
             {
                 Question = request.Question,
-                PreviousAnswer = request.PreviousAnswer
+                PreviousAnswer = request.PreviousAnswer,
+                Grade = grade
             };
 
             var endpoint = _options.AskAiEndPoint;

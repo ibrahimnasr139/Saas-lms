@@ -15,10 +15,12 @@ namespace Application.Features.StudyTools.Commands.CreateFlashCardDeck
         private readonly AiOptions _options;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IStudentStreakRepository _studentStreakRepository;
+        private readonly IStudentRepository _studentRepository;
         private readonly IStudentSubjectRepository _studentSubjectRepository;
         public CreateFlashCardDeckCommandHandler(HybridCache hybridCache, IHttpContextAccessor httpContextAccessor,
             IOptions<AiOptions> options, IExternalService externalService, IFlashCardRepository flashCardRepository,
-            IUnitOfWork unitOfWork, IStudentStreakRepository studentStreakRepository, IStudentSubjectRepository studentSubjectRepository)
+            IUnitOfWork unitOfWork, IStudentStreakRepository studentStreakRepository, IStudentRepository studentRepository,
+            IStudentSubjectRepository studentSubjectRepository)
         {
             _hybridCache = hybridCache;
             _httpContextAccessor = httpContextAccessor;
@@ -27,6 +29,7 @@ namespace Application.Features.StudyTools.Commands.CreateFlashCardDeck
             _unitOfWork = unitOfWork;
             _options = options.Value;
             _studentStreakRepository = studentStreakRepository;
+            _studentRepository = studentRepository;
             _studentSubjectRepository = studentSubjectRepository;
         }
         public async Task<OneOf<CreateFlashCardDeckDto, Error>> Handle(CreateFlashCardDeckCommand request, CancellationToken cancellationToken)
@@ -52,13 +55,14 @@ namespace Application.Features.StudyTools.Commands.CreateFlashCardDeck
                 if (chapterName is null)
                     return SubjectErrors.ChapterNotFound;
             }
-
+            var grade = await _studentRepository.GetStudentGradeAsync(session.StudentId, cancellationToken);
             var payload = new CreateFlashCardDeckRequest
             {
                 Subject = subjectName,
                 Chapter = chapterName,
                 Goal = request.Goal,
                 Topic = request.Topic,
+                Grade = grade,
                 NumberOfCards = request.NumberOfCards
             };
             var endpoint = _options.GenerateFlashCardsEndPoint;

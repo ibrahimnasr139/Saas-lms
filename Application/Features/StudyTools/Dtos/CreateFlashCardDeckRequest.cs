@@ -7,5 +7,6 @@
         public int NumberOfCards { get; set; }
         public string? Goal { get; set; }
         public string Topic { get; set; } = string.Empty;
+        public string? Grade { get; set; }
     }
 }

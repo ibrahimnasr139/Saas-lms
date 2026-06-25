@@ -17,10 +17,11 @@ namespace Application.Features.StudyTools.Commands.CreateQuiz
         private readonly IStudentQuizRepository _studentQuizRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IStudentStreakRepository _studentStreakRepository;
+        private readonly IStudentRepository _studentRepository;
 
         public CreateQuizCommandHandler(HybridCache hybridCache, IHttpContextAccessor httpContextAccessor, IOptions<AiOptions> options,
             IExternalService externalService, IStudentSubjectRepository studentSubjectRepository, IStudentQuizRepository studentQuizRepository,
-            IUnitOfWork unitOfWork, IStudentStreakRepository studentStreakRepository)
+            IUnitOfWork unitOfWork, IStudentStreakRepository studentStreakRepository, IStudentRepository studentRepository)
         {
             _hybridCache = hybridCache;
             _httpContextAccessor = httpContextAccessor;
@@ -30,6 +31,7 @@ namespace Application.Features.StudyTools.Commands.CreateQuiz
             _studentQuizRepository = studentQuizRepository;
             _unitOfWork = unitOfWork;
             _studentStreakRepository = studentStreakRepository;
+            _studentRepository = studentRepository;
         }
         public async Task<OneOf<CreateQuizDto, Error>> Handle(CreateQuizCommand request, CancellationToken cancellationToken)
         {
@@ -54,13 +56,15 @@ namespace Application.Features.StudyTools.Commands.CreateQuiz
                 if (chapterName is null)
                     return SubjectErrors.ChapterNotFound;
             }
+            var grade = await _studentRepository.GetStudentGradeAsync(session.StudentId, cancellationToken);
             var payload = new CreateQuizPayload
             {
                 Subject = subjectName,
                 Topic = request.Topic,
                 Chapter = chapterName,
                 NumberOfQuestions = request.NumberOfQuestions,
-                Difficulty = request.Difficulty.ToString().ToLower()
+                Difficulty = request.Difficulty.ToString().ToLower(),
+                Grade = grade   
             };
 
             var endpoint = _options.GenerateQuizEndPoint;
