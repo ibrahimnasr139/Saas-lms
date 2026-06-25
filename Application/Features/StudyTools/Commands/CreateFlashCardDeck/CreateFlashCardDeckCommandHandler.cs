@@ -48,10 +48,11 @@ namespace Application.Features.StudyTools.Commands.CreateFlashCardDeck
             if (subjectName is null)
                 return SubjectErrors.SubjectNotFound;
 
+            var availableSubjectId = await _studentSubjectRepository.GetAvailableSubjectIdAsync(request.SubjectId, session.StudentId, cancellationToken);
             string? chapterName = null;
             if (request.ChapterId.HasValue)
             {
-                chapterName = await _studentSubjectRepository.GetChapterNameAsync(request.SubjectId, request.ChapterId.Value, cancellationToken);
+                chapterName = await _studentSubjectRepository.GetChapterNameAsync(availableSubjectId, request.ChapterId.Value, cancellationToken);
                 if (chapterName is null)
                     return SubjectErrors.ChapterNotFound;
             }
