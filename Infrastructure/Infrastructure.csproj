@@ -65,6 +65,12 @@
 	  <Content Include="Templates\NewQuizNotification.html">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </Content>
+	  <Content Include="Templates\SubscriptionExpiredTemplate.html">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	  <Content Include="Templates\SubscriptionExpiringSoonTemplate.html">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
   </ItemGroup>
 
   <ItemGroup>

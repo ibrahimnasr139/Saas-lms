@@ -45,15 +45,24 @@ var recurringJobManager = app.Services.GetRequiredService<IRecurringJobManager>(
 
 recurringJobManager.AddOrUpdate<IZoomOAuthStateRepository>("cleanup-zoom-oauth-states",
     repo => repo.DeleteAllExpiredAndUsedStatesAsync(),
-    Cron.Hourly);
+    Cron.Hourly
+);
 
 recurringJobManager.AddOrUpdate<QuizDeadlineReminderJob>("quiz-deadline-reminders",
     job => job.SendQuizDeadlineRemindersAsync(),
-    Cron.Daily);
+    Cron.Daily
+);
 
 recurringJobManager.AddOrUpdate<AssignmentDeadlineReminderJob>("assignment-deadline-reminders",
     job => job.SendAssignmentDeadlineRemindersAsync(),
-    Cron.Daily);
+    Cron.Daily
+);
+
+recurringJobManager.AddOrUpdate<SubscriptionExpiryJob>("subscription-expiry",
+    job => job.ProcessSubscriptionExpiryAsync(),
+    Cron.Daily,
+    new RecurringJobOptions { TimeZone = TimeZoneInfo.FindSystemTimeZoneById("Egypt Standard Time") }
+);
 
 
 // Configure the HTTP request pipeline.

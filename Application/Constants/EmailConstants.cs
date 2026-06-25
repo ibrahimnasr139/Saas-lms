@@ -48,5 +48,9 @@
         public const string NewQuizNotificationTemplate = "NewQuizNotification";
         public const string QuizDeadlineReminderTemplate = "QuizDeadlineReminder";
         public const string AssignmentDeadlineReminderTemplate = "AssignmentDeadlineReminder";
+
+        public const string SubscriptionExpiredTemplate = "SubscriptionExpiredTemplate";
+        public const string SubscriptionExpiringSoonTemplate = "SubscriptionExpiringSoonTemplate";
+        public const string RenewalLink = "https://www.waey.online/renew-subscription";
     }
 }

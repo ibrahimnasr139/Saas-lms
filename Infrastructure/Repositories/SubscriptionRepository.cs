@@ -1,4 +1,5 @@
-﻿using Domain.Enums;
+﻿using Application.Features.Tenants.Dtos;
+using Domain.Enums;
 
 namespace Infrastructure.Repositories
 {
@@ -52,6 +53,40 @@ namespace Infrastructure.Repositories
                       && s.EndsAt > DateTime.UtcNow
                       && f.Key == featureKey
                     select s.Id).AnyAsync(cancellationToken);
+        }
+        public async Task<List<ExpiredSubscriptionDto>> GetExpiredSubscriptionsAsync(CancellationToken cancellationToken)
+        {
+            return await _context.Subscriptions
+                .Where(s => (s.Status == SubscriptionStatus.Active || s.Status == SubscriptionStatus.Trialed)
+                         && s.EndsAt <= DateTime.UtcNow)
+                .Select(s => new ExpiredSubscriptionDto
+                {
+                    SubscriptionId = s.Id,
+                    TenantEmail = s.Tenant.Owner.Email!,
+                    TenantName = $"{s.Tenant.Owner.FirstName} {s.Tenant.Owner.LastName}"
+                })
+                .ToListAsync(cancellationToken);
+        }
+        public async Task<List<ExpiringSubscriptionDto>> GetSubscriptionsExpiringSoonAsync(CancellationToken cancellationToken)
+        {
+            var in3Days = DateTime.UtcNow.AddDays(3);
+            return await _context.Subscriptions
+                .Where(s => (s.Status == SubscriptionStatus.Active || s.Status == SubscriptionStatus.Trialed)
+                         && s.EndsAt > DateTime.UtcNow
+                         && s.EndsAt <= in3Days)
+                .Select(s => new ExpiringSubscriptionDto
+                {
+                    TenantEmail = s.Tenant.Owner.Email!,
+                    TenantName = $"{s.Tenant.Owner.FirstName} {s.Tenant.Owner.LastName}",
+                    EndsAt = s.EndsAt
+                })
+                .ToListAsync(cancellationToken);
+        }
+        public async Task BulkExpireSubscriptionsAsync(List<int> subscriptionIds, CancellationToken cancellationToken)
+        {
+            await _context.Subscriptions
+                .Where(s => subscriptionIds.Contains(s.Id))
+                .ExecuteUpdateAsync(s => s.SetProperty(x => x.Status, SubscriptionStatus.Expired), cancellationToken);
         }
     }
 }
