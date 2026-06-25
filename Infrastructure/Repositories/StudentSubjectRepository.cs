@@ -25,10 +25,10 @@ namespace Infrastructure.Repositories
                 .Select(s => new { s.Key, s.Id })
                 .ToDictionaryAsync(s => s.Key, s => s.Id, cancellationToken);
         }
-        public async Task<string?> GetChapterNameAsync(int subjectId, int chapterId, CancellationToken cancellationToken)
+        public async Task<string?> GetChapterNameAsync(int availableSubjectId, int chapterId, CancellationToken cancellationToken)
         {
             return await _context.StudentChapters
-                .Where(sc => sc.Id == chapterId && sc.SubjectId == subjectId)
+                .Where(sc => sc.Id == chapterId && sc.AvailableSubject.Id == availableSubjectId)
                 .Select(sc => sc.Title)
                 .FirstOrDefaultAsync(cancellationToken);
         }
@@ -56,6 +56,13 @@ namespace Infrastructure.Repositories
                     chapter.IsCurrentChapter = currentChapters.Contains(chapter.Id);
 
             return subjects;
+        }
+        public async Task<int> GetAvailableSubjectIdAsync(int subjectId, int studentId, CancellationToken cancellationToken)
+        {
+            return await _context.StudentSubjects
+                .Where(ss => ss.Id == subjectId && ss.StudentId == studentId)
+                .Select(ss => ss.AvailableSubjectId)
+                .FirstAsync(cancellationToken);
         }
     }
 }

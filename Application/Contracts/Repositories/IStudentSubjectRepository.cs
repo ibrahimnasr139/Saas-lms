@@ -8,6 +8,7 @@ namespace Application.Contracts.Repositories
         Task<Dictionary<string, int>> GetSubjectIdsAsync(List<string> keys, CancellationToken cancellationToken);
         Task<List<SubjectDto>> GetSubjectsAsync(int studentId, CancellationToken cancellationToken);
         Task<string?> GetSubjectNameAsync(int studentId, int subjectId, CancellationToken cancellationToken);
-        Task<string?> GetChapterNameAsync(int subjectId, int chapterId, CancellationToken cancellationToken);
+        Task<int> GetAvailableSubjectIdAsync(int subjectId, int studentId, CancellationToken cancellationToken);
+        Task<string?> GetChapterNameAsync(int availableSubjectId, int chapterId, CancellationToken cancellationToken);
     }
 }
