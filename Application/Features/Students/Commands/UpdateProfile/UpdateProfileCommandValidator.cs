@@ -5,9 +5,13 @@ namespace Application.Features.Students.Commands.UpdateProfile
     {
         public UpdateProfileCommandValidator()
         {
-            RuleFor(x => x.Name)
+            RuleFor(x => x.FirstName)
                 .MaximumLength(100)
-                .When(x => !string.IsNullOrWhiteSpace(x.Name));
+                .When(x => !string.IsNullOrWhiteSpace(x.FirstName));
+
+            RuleFor(x => x.LastName)
+                .MaximumLength(100)
+                .When(x => !string.IsNullOrWhiteSpace(x.LastName));
 
             RuleFor(x => x.Email)
                 .EmailAddress()
