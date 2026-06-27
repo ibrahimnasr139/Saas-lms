@@ -48,11 +48,26 @@ namespace Application.Features.Students.Dtos
                 .ForMember(dest => dest.Level, opt => opt.Ignore())
                 .ForMember(dest => dest.NextLevelXp, opt => opt.Ignore());
 
-            CreateMap<StudentStreak, StreakDto>();
+            CreateMap<StudentStreak, ProfileStreakDto>();
 
-            //CreateMap<Student, ProfileDetailsDto>()
+            CreateMap<Student, ProfileDetailsDto>()
+                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => $"{src.User.FirstName} {src.User.LastName}"))
+                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.User.Email))
+                .ForMember(dest => dest.Phone, opt => opt.MapFrom(src => src.User.PhoneNumber))
+                .ForMember(dest => dest.Avatar, opt => opt.MapFrom(src => src.User.ProfilePicture))
+                .ForMember(dest => dest.JoinedAt, opt => opt.MapFrom(src => src.CreatedAt))
+                .ForMember(dest => dest.Subjects, opt => opt.MapFrom(src => src.StudentSubjects))
+                .ForMember(dest => dest.Gamification, opt => opt.MapFrom(src => src))
+                .ForMember(dest => dest.Streak, opt => opt.MapFrom(src => src.StudentStreak));
 
+            CreateMap<StudentSubject, StudentSubjectProfileDto>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.AvailableSubjectId))
+                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.AvailableSubject.DisplayName));
+
+            CreateMap<Student, StudentGamificationDto>()
+                .ForMember(dest => dest.Xp, opt => opt.MapFrom(src => src.XP))
+                .ForMember(dest => dest.Level, opt => opt.MapFrom(src => src.Level))
+                .ForMember(dest => dest.NextLevelXp, opt => opt.Ignore());
         }
     }
-                        
 }

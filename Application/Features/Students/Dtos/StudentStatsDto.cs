@@ -2,8 +2,8 @@
 {
     public sealed class StudentStatsDto
     {
-        public int TotalStudyHours { get; set; }
-        public int AverageScore { get; set; }
+        public double TotalStudyHours { get; set; }
+        public double AverageScore { get; set; }
         public int Rank { get; set; }
         public int TotalStudents { get; set; }
     }

@@ -7,6 +7,6 @@
         public string? InviteCode { get; set; }
         public ProfileDto Profile { get; set; } = new();
         public GamificationDto Gamification { get; set; } = new();
-        public StreakDto Streak { get; set; } = new();
+        public ProfileStreakDto Streak { get; set; } = new();
     }
 }

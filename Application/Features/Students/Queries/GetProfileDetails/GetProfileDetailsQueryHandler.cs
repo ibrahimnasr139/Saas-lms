@@ -27,7 +27,7 @@ namespace Application.Features.Students.Queries.GetProfileDetails
             );
             if (session is null)
                 return UserErrors.Unauthorized;
-            throw new NotImplementedException();
+            return await _studentRepository.GetProfileDetailsAsync(session.StudentId, cancellationToken);
         }
     }
 }

@@ -256,7 +256,17 @@ namespace Infrastructure.Repositories
                 .Where(s => s.Id == studentId)
                 .ProjectTo<ProfileDetailsDto>(_mapper.ConfigurationProvider)
                 .FirstOrDefaultAsync(cancellationToken);
-            return student!;
+
+            if (student is null)
+                return null!;
+
+            var nextLevel = await _context.Levels
+                .Where(l => l.LevelNumber == student.Gamification.Level + 1)
+                .Select(l => new { l.RequiredXp })
+                .FirstOrDefaultAsync(cancellationToken);
+
+            student.Gamification.NextLevelXp = nextLevel?.RequiredXp ?? 0;
+            return student;
         }
     }
 }
