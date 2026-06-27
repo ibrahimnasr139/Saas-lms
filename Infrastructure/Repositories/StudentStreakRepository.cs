@@ -1,4 +1,4 @@
-﻿using Application.Features.StudentUsers.Dtos;
+﻿using Application.Features.Students.Dtos;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 

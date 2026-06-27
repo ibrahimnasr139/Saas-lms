@@ -1,4 +1,4 @@
-﻿namespace Application.Features.StudentUsers.Dtos
+﻿namespace Application.Features.Students.Dtos
 {
     public sealed class GamificationDto
     {

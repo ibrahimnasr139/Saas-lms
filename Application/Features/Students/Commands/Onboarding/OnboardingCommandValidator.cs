@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace Application.Features.StudentUsers.Commands.Onboarding
+namespace Application.Features.Students.Commands.Onboarding
 {
     public sealed class OnboardingCommandValidator : AbstractValidator<OnboardingCommand>
     {

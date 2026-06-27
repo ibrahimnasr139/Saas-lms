@@ -1,5 +1,5 @@
-﻿using Application.Features.Students.Dtos;
-using Application.Features.StudentUsers.Dtos;
+﻿using Application.Features.Students.Commands.UpdateProfile;
+using Application.Features.Students.Dtos;
 using Application.Features.TenantStudents.Dtos;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
@@ -182,13 +182,81 @@ namespace Infrastructure.Repositories
                 .Where(s => s.Id == studentId)
                 .ExecuteUpdateAsync(s => s.SetProperty(p => p.XP, p => p.XP + xpGained), cancellationToken);
         }
-        public Task<string?> GetStudentGradeAsync(int studentId, CancellationToken cancellationToken)
+        public async Task<string?> GetStudentGradeAsync(int studentId, CancellationToken cancellationToken)
         {
-            return _context.Students
+            return await _context.Students
                 .AsNoTracking()
                 .Where(sg => sg.Id == studentId)
                 .Select(sg => sg.Grade)
                 .FirstOrDefaultAsync(cancellationToken);
+        }
+        public async Task<StudentUserProfileDto> GetUserProfileAsync(string userId, string role, CancellationToken cancellationToken)
+        {
+            var user = await _context.Users
+                .Where(u => u.Id == userId)
+                .ProjectTo<StudentUserProfileDto>(_mapper.ConfigurationProvider)
+                .FirstOrDefaultAsync(cancellationToken);
+
+            user!.Role = role;
+            return user;
+        }
+        public async Task<bool> UpdateUserProfileAsync(int studentId, UpdateProfileCommand request, CancellationToken cancellationToken)
+        {
+            var student = await _context.Students
+                .Include(s => s.User)
+                .Include(s => s.StudentSubjects)
+                .FirstOrDefaultAsync(s => s.Id == studentId, cancellationToken);
+
+            if (student is null)
+                return false;
+
+            if (request.FirstName is not null)
+                student.User.FirstName = request.FirstName;
+
+            if (request.LastName is not null)
+                student.User.LastName = request.LastName;
+
+            if (request.Email is not null)
+                student.User.Email = request.Email;
+
+            if (request.Phone is not null)
+                student.User.PhoneNumber = request.Phone;
+
+            if (request.Avatar is not null)
+                student.User.ProfilePicture = request.Avatar;
+
+            if (request.Grade is not null)
+                student.Grade = request.Grade;
+
+            if (request.Semester is not null)
+                student.Semester = request.Semester;
+
+            if (request.Goal is not null)
+                student.Goal = request.Goal;
+
+            if (request.Bio is not null)
+                student.Bio = request.Bio;
+
+            if (request.Subjects is not null)
+            {
+                student.StudentSubjects.Clear();
+                foreach (var subject in request.Subjects)
+                    student.StudentSubjects.Add(new StudentSubject
+                    {
+                        AvailableSubjectId = subject.Id,
+                        Confidence = subject.Confidence,
+                    });
+            }
+            return true;
+        }
+        public async Task<ProfileDetailsDto> GetProfileDetailsAsync(int studentId, CancellationToken cancellationToken)
+        {
+            var student = await _context.Students
+                .AsNoTracking()
+                .Where(s => s.Id == studentId)
+                .ProjectTo<ProfileDetailsDto>(_mapper.ConfigurationProvider)
+                .FirstOrDefaultAsync(cancellationToken);
+            return student!;
         }
     }
 }

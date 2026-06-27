@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using System.Net;
 
-namespace Application.Features.StudentUsers.Commands.Onboarding
+namespace Application.Features.Students.Commands.Onboarding
 {
     internal sealed class OnboardingCommandHandler : IRequestHandler<OnboardingCommand, OneOf<StudentResponse, Error>>
     {

@@ -1,5 +1,5 @@
+using Application.Features.Students.Commands.UpdateProfile;
 using Application.Features.Students.Dtos;
-using Application.Features.StudentUsers.Dtos;
 using Application.Features.TenantStudents.Dtos;
 
 namespace Application.Contracts.Repositories
@@ -23,5 +23,8 @@ namespace Application.Contracts.Repositories
         Task<CurrentStudentDto> GetCurrentStudentAsync(string userId, int studentId, CancellationToken cancellationToken);
         Task UpdateStudentXPAsync(int studentId, int xpGained, CancellationToken cancellationToken);
         Task<string?> GetStudentGradeAsync(int studentId, CancellationToken cancellationToken);
+        Task<StudentUserProfileDto> GetUserProfileAsync(string userId, string role, CancellationToken cancellationToken);
+        Task<bool> UpdateUserProfileAsync(int studentId, UpdateProfileCommand request, CancellationToken cancellationToken);
+        Task<ProfileDetailsDto> GetProfileDetailsAsync(int studentId, CancellationToken cancellationToken);
     }
 }

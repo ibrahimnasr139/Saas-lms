@@ -13,6 +13,7 @@ namespace Domain.Entites
         public string? Goal { get; set; }
         public string? Semester { get; set; }
         public string? InviteCode { get; set; }
+        public string? Bio { get; set; }
         public string UserId { get; set; } = string.Empty;
         public ApplicationUser User { get; set; } = null!;
         public LessonView? LessonView { get; set; }

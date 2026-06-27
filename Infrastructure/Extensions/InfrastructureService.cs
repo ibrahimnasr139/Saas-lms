@@ -150,7 +150,6 @@ namespace Infrastructure.Extensions
             builder.Services.AddScoped<IDiscussionRepository, DiscussionRepository>();
             builder.Services.AddScoped<IAnnouncementRepository, AnnouncementRepository>();
             builder.Services.AddScoped<IScheduleRepository, ScheduleRepository>();
-            builder.Services.AddScoped<IStudentUserRepository, StudentUserRepository>();
             builder.Services.AddScoped<IStudentSubscriptionRepository, StudentSubscriptionRepository>();
             builder.Services.AddScoped<IStudentSubjectRepository, StudentSubjectRepository>();
             builder.Services.AddScoped<IStudentStreakRepository, StudentStreakRepository>();

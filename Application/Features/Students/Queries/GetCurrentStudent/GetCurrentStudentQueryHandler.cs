@@ -1,7 +1,7 @@
-﻿using Application.Features.StudentUsers.Dtos;
+﻿using Application.Features.Students.Dtos;
 using Microsoft.AspNetCore.Http;
 
-namespace Application.Features.StudentUsers.Queries.GetCurrentStudent
+namespace Application.Features.Students.Queries.GetCurrentStudent
 {
     internal sealed class GetCurrentStudentQueryHandler : IRequestHandler<GetCurrentStudentQuery, OneOf<CurrentStudentDto, Error>>
     {

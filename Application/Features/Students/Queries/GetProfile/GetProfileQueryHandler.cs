@@ -1,22 +1,22 @@
-﻿using Application.Features.StudentUsers.Dtos;
+﻿using Application.Features.Students.Dtos;
 using Microsoft.AspNetCore.Http;
 
-namespace Application.Features.StudentUsers.Queries.GetStudentStreak
+namespace Application.Features.Students.Queries.GetProfile
 {
-    internal sealed class GetStudentStreakQueryHandler : IRequestHandler<GetStudentStreakQuery, OneOf<StudentStreakDto, Error>>
+    internal sealed class GetProfileQueryHandler : IRequestHandler<GetProfileQuery, OneOf<StudentUserProfileDto, Error>>
     {
         private readonly HybridCache _hybridCache;
+        private readonly IStudentRepository _studentRepository;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly IStudentStreakRepository _studentStreakRepository;
 
-        public GetStudentStreakQueryHandler(HybridCache hybridCache, IHttpContextAccessor httpContextAccessor,
-            IStudentStreakRepository studentStreakRepository)
+        public GetProfileQueryHandler(HybridCache hybridCache, IStudentRepository studentUserRepository,
+            IHttpContextAccessor httpContextAccessor)
         {
             _hybridCache = hybridCache;
+            _studentRepository = studentUserRepository;
             _httpContextAccessor = httpContextAccessor;
-            _studentStreakRepository = studentStreakRepository;
         }
-        public async Task<OneOf<StudentStreakDto, Error>> Handle(GetStudentStreakQuery request, CancellationToken cancellationToken)
+        public async Task<OneOf<StudentUserProfileDto, Error>> Handle(GetProfileQuery request, CancellationToken cancellationToken)
         {
             var sessionId = _httpContextAccessor.HttpContext?.Request.Cookies[AuthConstants.SessionId];
             var cachedSessionKey = $"{CacheKeysConstants.SessionKey}_{sessionId}";
@@ -27,7 +27,7 @@ namespace Application.Features.StudentUsers.Queries.GetStudentStreak
             );
             if (session is null)
                 return UserErrors.Unauthorized;
-            return await _studentStreakRepository.GetStudentStreakAsync(session.StudentId, cancellationToken);
+            return await _studentRepository.GetUserProfileAsync(session.UserId, session.Role, cancellationToken);
         }
     }
 }
