@@ -262,9 +262,10 @@ namespace Infrastructure.Repositories
 
             var nextLevel = await _context.Levels
                 .Where(l => l.LevelNumber == student.Gamification.Level + 1)
-                .Select(l => new { l.RequiredXp })
+                .Select(l => new { l.RequiredXp, l.LevelNumber })
                 .FirstOrDefaultAsync(cancellationToken);
 
+            student.Gamification.Level = nextLevel?.LevelNumber ?? 0;
             student.Gamification.NextLevelXp = nextLevel?.RequiredXp ?? 0;
             return student;
         }

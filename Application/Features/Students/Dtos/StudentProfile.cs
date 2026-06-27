@@ -51,7 +51,8 @@ namespace Application.Features.Students.Dtos
             CreateMap<StudentStreak, ProfileStreakDto>();
 
             CreateMap<Student, ProfileDetailsDto>()
-                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => $"{src.User.FirstName} {src.User.LastName}"))
+                .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.User.FirstName))
+                .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.User.LastName))
                 .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.User.Email))
                 .ForMember(dest => dest.Phone, opt => opt.MapFrom(src => src.User.PhoneNumber))
                 .ForMember(dest => dest.Avatar, opt => opt.MapFrom(src => src.User.ProfilePicture))
