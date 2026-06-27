@@ -1,6 +1,4 @@
 ﻿using Application.Features.Friends.Dtos;
-using AutoMapper;
-using AutoMapper.QueryableExtensions;
 using Domain.Enums;
 
 namespace Infrastructure.Repositories
@@ -8,12 +6,9 @@ namespace Infrastructure.Repositories
     internal sealed class FriendRepository : IFriendRepository
     {
         private readonly AppDbContext _context;
-        private readonly IMapper _mapper;
-
-        public FriendRepository(AppDbContext context, IMapper mapper)
+        public FriendRepository(AppDbContext context)
         {
             _context = context;
-            _mapper = mapper;
         }
 
         public async Task CreateRequestAsync(Friend friend, CancellationToken cancellationToken)
@@ -22,7 +17,7 @@ namespace Infrastructure.Repositories
         }
         public async Task<List<FriendsDto>> GetFriendsAsync(int studentId, CancellationToken cancellationToken)
         {
-            return await _context.Friends
+            var friends = await _context.Friends
                 .AsNoTracking()
                 .Where(f => f.Status == FriendStatus.Accepted && (f.Student1Id == studentId || f.Student2Id == studentId))
                 .Select(f => new FriendsDto
@@ -54,6 +49,22 @@ namespace Infrastructure.Repositories
                         ? (f.Student2.StudentStreak != null ? f.Student2.StudentStreak.CurrentStreak : 0)
                         : (f.Student1.StudentStreak != null ? f.Student1.StudentStreak.CurrentStreak : 0)
                 }).ToListAsync(cancellationToken);
+
+            if (friends.Count == 0)
+                return friends;
+
+            var levels = await _context.Levels
+                .AsNoTracking()
+                .OrderBy(l => l.RequiredXp)
+                .Select(l => new { l.LevelNumber, l.RequiredXp })
+                .ToListAsync(cancellationToken);
+
+            foreach (var friend in friends)
+            {
+                var level = levels.FirstOrDefault(l => l.RequiredXp > friend.XP);
+                friend.Level = level?.LevelNumber ?? levels.LastOrDefault()?.LevelNumber ?? 0;
+            }
+            return friends;
         }
         public async Task<RequestsDto> GetRequestsAsync(int studentId, CancellationToken cancellationToken)
         {
