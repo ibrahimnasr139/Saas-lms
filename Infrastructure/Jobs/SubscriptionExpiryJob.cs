@@ -22,6 +22,7 @@ namespace Infrastructure.Jobs
             await ExpireSubscriptionsAsync();
             await SendExpiringSoonRemindersAsync();
         }
+        public static string GetRenewalLink(string subdomain) => $"https://{subdomain}.waey.online/dashboard/billing";
         private async Task ExpireSubscriptionsAsync()
         {
             var expired = await _subscriptionRepository.GetExpiredSubscriptionsAsync(CancellationToken.None);
@@ -39,9 +40,9 @@ namespace Infrastructure.Jobs
                         new Dictionary<string, string>
                         {
                             { "{{TenantName}}", subscription.TenantName },
-                            { "{{RenewalUrl}}", EmailConstants.RenewalLink }
+                            { "{{RenewalUrl}}", GetRenewalLink(subscription.SubDomain) }
                         });
-                    await _emailSender.SendEmailAsync(subscription.TenantEmail, "انتهى اشتراكك في Waey", emailBody);
+                    await _emailSender.SendEmailAsync(subscription.TenantEmail, "انتهى اشتراكك في Nabra", emailBody);
                 }
                 catch (Exception ex)
                 {
@@ -52,7 +53,6 @@ namespace Infrastructure.Jobs
         private async Task SendExpiringSoonRemindersAsync()
         {
             var expiringSoon = await _subscriptionRepository.GetSubscriptionsExpiringSoonAsync(CancellationToken.None);
-
             foreach (var subscription in expiringSoon)
             {
                 try
@@ -63,7 +63,7 @@ namespace Infrastructure.Jobs
                         {
                             { "{{TenantName}}", subscription.TenantName },
                             { "{{EndDate}}", subscription.EndsAt.ToString("yyyy-MM-dd") },
-                            { "{{RenewalUrl}}", EmailConstants.RenewalLink }
+                            { "{{RenewalUrl}}", GetRenewalLink(subscription.SubDomain) }
                         });
                     await _emailSender.SendEmailAsync(subscription.TenantEmail, "تذكير: اشتراكك على وشك الانتهاء", emailBody);
                 }

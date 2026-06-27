@@ -51,6 +51,5 @@
 
         public const string SubscriptionExpiredTemplate = "SubscriptionExpiredTemplate";
         public const string SubscriptionExpiringSoonTemplate = "SubscriptionExpiringSoonTemplate";
-        public const string RenewalLink = "https://www.waey.online/renew-subscription";
     }
 }

@@ -2,38 +2,78 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>اشتراكك على وشك الانتهاء</title>
+    <title>تذكير بتجديد الاشتراك</title>
 </head>
-<body style="margin:0;padding:0;background-color:#f4f7fa;font-family:Arial,Helvetica,sans-serif;direction:rtl;">
-    <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#f4f7fa;padding:30px 15px;">
+<body style="margin:0;padding:0;background-color:#f4f7fc;font-family:Arial,Helvetica,sans-serif;">
+
+    <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#f4f7fc;padding:40px 0;">
         <tr>
             <td align="center">
                 <table width="600" cellpadding="0" cellspacing="0"
-                       style="background:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,0.08);">
+                       style="background-color:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,0.08);">
+
+                    <!-- Header -->
                     <tr>
-                        <td style="background:#d69e2e;padding:25px;text-align:center;">
-                            <h1 style="margin:0;color:#ffffff;font-size:28px;">اشتراكك على وشك الانتهاء</h1>
+                        <td align="center"
+                            style="background:linear-gradient(135deg,#3182ce,#2b6cb0);padding:35px;">
+                            <h1 style="margin:0;color:#ffffff;font-size:28px;">
+                                Nabra
+                            </h1>
+                            <p style="margin:10px 0 0;color:#e2e8f0;font-size:16px;">
+                                تذكير بتجديد الاشتراك
+                            </p>
                         </td>
                     </tr>
+
+                    <!-- Body -->
                     <tr>
-                        <td style="padding:35px;color:#2d3748;font-size:16px;line-height:1.8;">
-                            <p>مرحباً <strong>إبراهيم</strong>،</p>
-                            <p>نود تذكيرك بأن اشتراكك في منصة <strong>Waey</strong> سينتهي بتاريخ <strong>31/12/2026</strong>.</p>
-                            <p>جدّد اشتراكك الآن لضمان استمرارية الخدمة دون انقطاع.</p>
+                        <td style="padding:40px 35px;color:#2d3748;line-height:1.8;">
+
+                            <p style="font-size:18px;margin-top:0;">
+                                مرحباً <strong>{{TenantName}}</strong> 👋
+                            </p>
+
+                            <p style="font-size:16px;">
+                                نود تذكيرك بأن اشتراكك في منصة
+                                <strong>Nabra</strong>
+                                سينتهي بتاريخ
+                                <strong>{{EndDate}}</strong>.
+                            </p>
+
+                            <p style="font-size:16px;">
+                                لضمان استمرار خدماتك وعدم فقدان الوصول إلى المنصة،
+                                يرجى تجديد اشتراكك قبل تاريخ الانتهاء.
+                            </p>
+
                             <div style="text-align:center;margin:40px 0;">
-                                <a href="#" style="display:inline-block;background-color:#3182ce;color:#ffffff;text-decoration:none;padding:14px 32px;border-radius:8px;font-size:16px;font-weight:bold;">تجديد الاشتراك</a>
+                                <a href="{{RenewalUrl}}"
+                                   style="display:inline-block;
+                                          background-color:#3182ce;
+                                          color:#ffffff;
+                                          text-decoration:none;
+                                          padding:14px 32px;
+                                          border-radius:8px;
+                                          font-size:16px;
+                                          font-weight:bold;">
+                                    تجديد الاشتراك
+                                </a>
                             </div>
-                            <p>شكراً لاستخدامك منصة <strong>Waey</strong>.</p>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="background:#f7fafc;padding:20px;text-align:center;color:#718096;font-size:13px;">
-                            إذا كان لديك أي استفسار، يرجى التواصل معنا عبر support@waey.online
+
+                            <p style="font-size:15px;color:#718096;">
+                                إذا كنت قد قمت بالتجديد بالفعل، يرجى تجاهل هذه الرسالة.
+                            </p>
+
+                            <p style="font-size:15px;margin-bottom:0;">
+                                شكراً لاستخدامك منصة <strong>Nabra</strong>،
+                                ونتطلع دائماً لتقديم أفضل تجربة لك.
+                            </p>
+
                         </td>
                     </tr>
                 </table>
             </td>
         </tr>
     </table>
+
 </body>
 </html>

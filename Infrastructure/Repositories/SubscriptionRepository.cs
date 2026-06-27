@@ -63,9 +63,9 @@ namespace Infrastructure.Repositories
                 {
                     SubscriptionId = s.Id,
                     TenantEmail = s.Tenant.Owner.Email!,
-                    TenantName = $"{s.Tenant.Owner.FirstName} {s.Tenant.Owner.LastName}"
-                })
-                .ToListAsync(cancellationToken);
+                    TenantName = $"{s.Tenant.Owner.FirstName} {s.Tenant.Owner.LastName}",
+                    SubDomain = s.Tenant.SubDomain
+                }).ToListAsync(cancellationToken);
         }
         public async Task<List<ExpiringSubscriptionDto>> GetSubscriptionsExpiringSoonAsync(CancellationToken cancellationToken)
         {
@@ -78,9 +78,9 @@ namespace Infrastructure.Repositories
                 {
                     TenantEmail = s.Tenant.Owner.Email!,
                     TenantName = $"{s.Tenant.Owner.FirstName} {s.Tenant.Owner.LastName}",
-                    EndsAt = s.EndsAt
-                })
-                .ToListAsync(cancellationToken);
+                    EndsAt = s.EndsAt,
+                    SubDomain = s.Tenant.SubDomain
+                }).ToListAsync(cancellationToken);
         }
         public async Task BulkExpireSubscriptionsAsync(List<int> subscriptionIds, CancellationToken cancellationToken)
         {
