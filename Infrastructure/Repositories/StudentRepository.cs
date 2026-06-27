@@ -3,6 +3,7 @@ using Application.Features.Students.Dtos;
 using Application.Features.TenantStudents.Dtos;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
+using OneOf.Types;
 
 namespace Infrastructure.Repositories
 {
@@ -260,13 +261,14 @@ namespace Infrastructure.Repositories
             if (student is null)
                 return null!;
 
-            var nextLevel = await _context.Levels
-                .Where(l => l.LevelNumber == student.Gamification.Level + 1)
+            var studentLevel = await _context.Levels
+                .Where(l => l.RequiredXp > student!.Gamification.Xp)
+                .OrderBy(l => l.RequiredXp)
                 .Select(l => new { l.RequiredXp, l.LevelNumber })
                 .FirstOrDefaultAsync(cancellationToken);
 
-            student.Gamification.Level = nextLevel?.LevelNumber ?? 0;
-            student.Gamification.NextLevelXp = nextLevel?.RequiredXp ?? 0;
+            student!.Gamification.Level = studentLevel!.LevelNumber;
+            student!.Gamification.NextLevelXp = studentLevel.RequiredXp;
             return student;
         }
     }

@@ -67,7 +67,7 @@ namespace Application.Features.Students.Dtos
 
             CreateMap<Student, StudentGamificationDto>()
                 .ForMember(dest => dest.Xp, opt => opt.MapFrom(src => src.XP))
-                .ForMember(dest => dest.Level, opt => opt.MapFrom(src => src.Level))
+                .ForMember(dest => dest.Level, opt => opt.Ignore())
                 .ForMember(dest => dest.NextLevelXp, opt => opt.Ignore());
         }
     }
