@@ -1,5 +1,6 @@
 ﻿using Application.Common;
 using Application.Constants;
+using Application.Features.Discussions.Commands.CreateDiscussionReply;
 using Application.Features.Discussions.Commands.CreateDiscussionThreadRead;
 using Application.Features.Discussions.Commands.DeleteDiscussionReply;
 using Application.Features.Discussions.Commands.DeleteDiscussionThread;
@@ -87,6 +88,17 @@ namespace Api.Controllers
         public async Task<IActionResult> UpdateDiscussionReply([FromRoute] int threadId, [FromRoute] int replyId, [FromBody] UpdateDiscussionReplyCommand command, CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(command with { ThreadId = threadId, ReplyId = replyId }, cancellationToken);
+            return result.Match<IActionResult>(
+               success => Ok(success),
+                error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message })
+            );
+        }
+
+
+        [HttpPost("{threadId}/replies")]
+        public async Task<IActionResult> CreateDiscussionReply([FromRoute] int threadId, [FromBody] CreateDiscussionReplyCommand command, CancellationToken cancellationToken)
+        {
+            var result = await _mediator.Send(command with { ThreadId = threadId }, cancellationToken);
             return result.Match<IActionResult>(
                success => Ok(success),
                 error => StatusCode((int)error.HttpStatusCode, new ErrorDto { Error = error.Message })
