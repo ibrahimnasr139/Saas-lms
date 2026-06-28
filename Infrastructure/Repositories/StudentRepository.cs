@@ -239,8 +239,19 @@ namespace Infrastructure.Repositories
 
             if (request.Subjects is not null)
             {
-                student.StudentSubjects.Clear();
-                foreach (var subject in request.Subjects)
+                var requestedIds = request.Subjects.Select(s => s.Id).ToHashSet();
+                var existingIds = student.StudentSubjects.Select(s => s.AvailableSubjectId).ToHashSet();
+
+                var toRemove = student.StudentSubjects
+                    .Where(s => !requestedIds.Contains(s.AvailableSubjectId))
+                    .ToList();
+                foreach (var subject in toRemove)
+                    student.StudentSubjects.Remove(subject);
+
+                var toAdd = request.Subjects
+                    .Where(s => !existingIds.Contains(s.Id))
+                    .ToList();
+                foreach (var subject in toAdd)
                     student.StudentSubjects.Add(new StudentSubject
                     {
                         AvailableSubjectId = subject.Id,
