@@ -10,18 +10,16 @@ namespace Application.Features.Discussions.Commands.CreateDiscussionReply
         private readonly ITenantRepository _tenantRepository;
         private readonly ISubscriptionRepository _subscriptionRepository;
         private readonly IDiscussionRepository _discussionRepository;
-        private readonly IModuleItemRepository _moduleItemRepository;
         private readonly IUnitOfWork _unitOfWork;
         public CreateDiscussionReplyCommandHandler(ICurrentUserId currentUserId, IHttpContextAccessor httpContextAccessor,
-            ITenantRepository tenantRepository, ISubscriptionRepository subscriptionRepository,
-            IDiscussionRepository discussionRepository, IModuleItemRepository moduleItemRepository, IUnitOfWork unitOfWork)
+            ITenantRepository tenantRepository, ISubscriptionRepository subscriptionRepository, IUnitOfWork unitOfWork,
+            IDiscussionRepository discussionRepository)
         {
             _currentUserId = currentUserId;
             _httpContextAccessor = httpContextAccessor;
             _tenantRepository = tenantRepository;
             _subscriptionRepository = subscriptionRepository;
             _discussionRepository = discussionRepository;
-            _moduleItemRepository = moduleItemRepository;
             _unitOfWork = unitOfWork;
         }
         public async Task<OneOf<StudentLessonResponse, Error>> Handle(CreateDiscussionReplyCommand request, CancellationToken cancellationToken)
@@ -33,10 +31,6 @@ namespace Application.Features.Discussions.Commands.CreateDiscussionReply
             var isSubscribed = await _subscriptionRepository.HasActiveSubscriptionByTenantDomain(subDomain!, cancellationToken);
             if (!isSubscribed)
                 return TenantErrors.NotSubscribed;
-
-            var moduleItemIsExist = await _moduleItemRepository.ModuleItemIsExistAsync(request.ItemId, request.CourseId, cancellationToken);
-            if (!moduleItemIsExist)
-                return ModuleItemErrors.ModuleItemNotFound;
 
             var discussion = await _discussionRepository.GetDicussionThreadAsync(request.ThreadId, cancellationToken);
             if (discussion is null)
