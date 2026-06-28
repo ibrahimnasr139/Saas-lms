@@ -48,17 +48,32 @@ namespace Application.Features.StudentLessons.Commands.CreateStudentDiscussionRe
             if (!moduleItemIsExist)
                 return ModuleItemErrors.ModuleItemNotFound;
 
+            var discussion = await _discussionRepository.GetDicussionThreadAsync(request.DiscussionId, cancellationToken);
+            if (discussion is null)
+                return DiscussionErrors.DiscussionThreadNotFound;
+            
             var tenantId = await _enrollmentRepository.GetTenantIdAsync(session.StudentId, request.CourseId, cancellationToken);
-            var newDiscussionReply = new DicussionThreadReply
+            await _unitOfWork.BeginTransactionAsync(cancellationToken);
+            try
             {
-                Body = request.Content,
-                AuthorId = session.UserId,
-                DicussionId = request.DiscussionId,
-                TenantId = tenantId,
-            };
-            await _discussionRepository.CreateDiscussionThreadReplyAsync(newDiscussionReply, cancellationToken);
-            await _unitOfWork.SaveAsync(cancellationToken);
-            return new StudentLessonResponse { Messsage = MessagesConstants.DiscussionReplyCreated };
+                discussion.RepliesCount += 1;
+
+                var newDiscussionReply = new DicussionThreadReply
+                {
+                    Body = request.Content,
+                    AuthorId = session.UserId,
+                    DicussionId = request.DiscussionId,
+                    TenantId = tenantId,
+                };
+                await _discussionRepository.CreateDiscussionThreadReplyAsync(newDiscussionReply, cancellationToken);
+                await _unitOfWork.SaveAsync(cancellationToken);
+                return new StudentLessonResponse { Messsage = MessagesConstants.DiscussionReplyCreated };
+            }
+            catch
+            {
+                await _unitOfWork.RollbackTransactionAsync(cancellationToken);
+                throw;
+            }
         }
     }
 }
